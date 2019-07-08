@@ -1,5 +1,5 @@
 dist
-*.nix
+dist-newstyle
 .cabal-sandbox
 cabal.sandbox.config
 /src/Web/.DS_Store
