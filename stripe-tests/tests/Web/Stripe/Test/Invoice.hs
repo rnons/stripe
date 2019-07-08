@@ -28,7 +28,7 @@ invoiceTests stripe = do
       planid <- makePlanId
       result <- stripe $ do
         Customer { customerId = cid } <- createCustomer
-        Plan { planId = pid} <- createPlan planid (Amount 20) USD Day (PlanName "testplan")
+        Plan { planId = pid} <- createPlan planid (Amount 20) USD Day
         InvoiceItem { invoiceItemId = iiid } <- createInvoiceItem cid (Amount 100) USD
         Invoice { invoiceId = Just iid } <- createInvoice cid -&- meta
         i <- getInvoice iid
@@ -41,7 +41,7 @@ invoiceTests stripe = do
       planid <- makePlanId
       result <- stripe $ do
         Customer { customerId = cid } <- createCustomer
-        Plan { planId = pid} <- createPlan planid (Amount 20) USD Day (PlanName "testplan")
+        Plan { planId = pid} <- createPlan planid (Amount 20) USD Day
         InvoiceItem { invoiceItemId = iiid } <- createInvoiceItem cid (Amount 100) USD
         Invoice { invoiceId = Just iid } <- createInvoice cid -&- meta
         i <- getInvoice iid -&- ExpandParams ["customer", "charge"]
@@ -54,7 +54,7 @@ invoiceTests stripe = do
       planid <- makePlanId
       result <- stripe $ do
         Customer { customerId = cid } <- createCustomer
-        Plan { planId = pid } <- createPlan planid (Amount 20) USD Day (PlanName "testplan")
+        Plan { planId = pid } <- createPlan planid (Amount 20) USD Day
         InvoiceItem { invoiceItemId = iiid } <- createInvoiceItem cid (Amount 100) USD
         Invoice { invoiceId = Just iid } <- createInvoice cid -&- meta
         i <- getInvoiceLineItems iid
@@ -74,7 +74,7 @@ invoiceTests stripe = do
       planid <- makePlanId
       result <- stripe $ do
         Customer { customerId = cid } <- createCustomer
-        Plan { planId = pid } <- createPlan planid (Amount 20) USD Day (PlanName "testplan")
+        Plan { planId = pid } <- createPlan planid (Amount 20) USD Day
         InvoiceItem { invoiceItemId = iiid } <- createInvoiceItem cid (Amount 100) USD
         Invoice { invoiceId = Just iid } <- createInvoice cid -&- meta
         i <- updateInvoice iid -&- (MetaData [("some", "thing")])
@@ -89,7 +89,7 @@ invoiceTests stripe = do
       planid <- makePlanId
       result <- stripe $ do
         Customer { customerId = cid } <- createCustomer
-        Plan { planId = pid } <- createPlan planid (Amount 20) USD Day (PlanName "testplan")
+        Plan { planId = pid } <- createPlan planid (Amount 20) USD Day
         InvoiceItem { invoiceItemId = iiid } <- createInvoiceItem cid (Amount 100) USD
         i <- getUpcomingInvoice cid
         void $ deleteInvoiceItem iiid
@@ -101,7 +101,7 @@ invoiceTests stripe = do
       planid <- makePlanId
       result <- stripe $ do
         Customer { customerId = cid } <- createCustomer -&- cardinfo
-        Plan { planId = pid } <- createPlan planid (Amount 20) USD Day (PlanName "testplan")
+        Plan { planId = pid } <- createPlan planid (Amount 20) USD Day
         InvoiceItem { } <- createInvoiceItem cid (Amount 100) USD
         Invoice { invoiceId = Just iid } <- createInvoice cid -&- meta
         i <- payInvoice iid

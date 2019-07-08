@@ -1,6 +1,8 @@
+{-# LANGUAGE DuplicateRecordFields #-}
 {-# LANGUAGE FlexibleInstances     #-}
 {-# LANGUAGE MultiParamTypeClasses #-}
 {-# LANGUAGE OverloadedStrings     #-}
+{-# LANGUAGE RecordWildCards       #-}
 {-# LANGUAGE TypeFamilies          #-}
 -------------------------------------------
 -- |
@@ -43,6 +45,7 @@ module Web.Stripe.Subscription
     ( -- * API
       CreateSubscription
     , createSubscription
+    , CreateSubscriptionSubscriptionItem(..)
     , GetSubscription
     , getSubscription
     , UpdateSubscription
@@ -75,36 +78,41 @@ module Web.Stripe.Subscription
     , TrialEnd           (..)
     ) where
 
-import           Web.Stripe.StripeRequest   (Method (GET, POST, DELETE),
-                                             StripeHasParam, StripeReturn,
-                                             StripeRequest (..),
-                                             ToStripeParam(..), mkStripeRequest)
-import           Web.Stripe.Util            ((</>))
-import           Web.Stripe.Types           (ApplicationFeePercent(..),
-                                             AtPeriodEnd(..), CardId(..),
-                                             CustomerId (..), Coupon(..),
-                                             CouponId(..), EndingBefore(..),
-                                             ExpandParams(..), Limit(..), MetaData(..),
-                                             PlanId (..), Prorate(..), Quantity(..),
-                                             StartingAfter(..),
-                                             Subscription (..), StripeList(..),
-                                             SubscriptionId (..),
-                                             SubscriptionStatus (..), TaxPercent(..), 
-                                             TrialEnd(..))
-import           Web.Stripe.Types.Util      (getCustomerId)
+import qualified Data.ByteString.Char8    as B8
+import qualified Data.Text                as T
+import           Web.Stripe.StripeRequest (Method (DELETE, GET, POST),
+                                           StripeHasParam, StripeRequest (..),
+                                           StripeReturn, ToStripeParam (..),
+                                           mkStripeRequest)
+import           Web.Stripe.Types         (ApplicationFeePercent (..),
+                                           AtPeriodEnd (..), CardId (..),
+                                           Coupon (..), CouponId (..),
+                                           CustomerId (..), EndingBefore (..),
+                                           ExpandParams (..), Limit (..),
+                                           MetaData (..), PlanId (..),
+                                           Prorate (..), Quantity (..),
+                                           StartingAfter (..), StripeList (..),
+                                           Subscription (..),
+                                           SubscriptionId (..),
+                                           SubscriptionStatus (..),
+                                           TaxPercent (..), TrialEnd (..))
+import           Web.Stripe.Types.Util    (getCustomerId)
+import           Web.Stripe.Util          ((</>))
 
 ------------------------------------------------------------------------------
 -- | Create a `Subscription` by `CustomerId` and `PlanId`
 createSubscription
     :: CustomerId -- ^ The `CustomerId` upon which to create the `Subscription`
-    -> PlanId     -- ^ The `PlanId` to associate the `Subscription` with
+    -> [CreateSubscriptionSubscriptionItem]     -- ^ The `SubscriptionItem` list
     -> StripeRequest CreateSubscription
 createSubscription
     customerid
-    planId = request
+    items = request
   where request = mkStripeRequest POST url params
         url     = "customers" </> getCustomerId customerid </> "subscriptions"
-        params  = toStripeParam planId []
+        params =
+          [ ("items[0][plan]", B8.pack $ T.unpack $ (\(PlanId x) -> x) $ planId $ head items)
+          ]
 
 data CreateSubscription
 type instance StripeReturn CreateSubscription = Subscription
@@ -116,6 +124,12 @@ instance StripeHasParam CreateSubscription Quantity
 instance StripeHasParam CreateSubscription ApplicationFeePercent
 instance StripeHasParam CreateSubscription MetaData
 instance StripeHasParam CreateSubscription TaxPercent
+
+------------------------------------------------------------------------------
+-- | The `SubscriptionItem` when creating a `Subscription`
+data CreateSubscriptionSubscriptionItem = CreateSubscriptionSubscriptionItem
+    { planId :: PlanId
+    }
 
 ------------------------------------------------------------------------------
 -- | Retrieve a `Subscription` by `CustomerId` and `SubscriptionId`

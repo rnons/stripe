@@ -1,12 +1,12 @@
-{-# LANGUAGE OverloadedStrings    #-}
 {-# LANGUAGE DeriveDataTypeable   #-}
 {-# LANGUAGE FlexibleContexts     #-}
+{-# LANGUAGE OverloadedStrings    #-}
 {-# LANGUAGE RecordWildCards      #-}
 {-# LANGUAGE StandaloneDeriving   #-}
 {-# LANGUAGE TypeFamilies         #-}
 {-# LANGUAGE UndecidableInstances #-}
 ------------------------------------------------------------------------------
--- | 
+-- |
 -- Module      : Web.Stripe.Types
 -- Copyright   : (c) David Johnson, 2014
 -- Maintainer  : djohnson.m@gmail.com
@@ -18,9 +18,8 @@ module Web.Stripe.Types where
 ------------------------------------------------------------------------------
 import           Control.Applicative (pure, (<$>), (<*>), (<|>))
 import           Control.Monad       (mzero)
-import           Data.Aeson          (FromJSON (parseJSON), ToJSON(..),
-                                      Value (String, Object, Bool), (.:),
-                                      (.:?))
+import           Data.Aeson          (FromJSON (parseJSON), ToJSON (..),
+                                      Value (Bool, Object, String), (.:), (.:?))
 import           Data.Data           (Data, Typeable)
 import qualified Data.HashMap.Strict as H
 import           Data.Ratio          ((%))
@@ -109,8 +108,8 @@ newtype ChargeId
 ------------------------------------------------------------------------------
 -- | JSON Instance for `ChargeId`
 instance FromJSON ChargeId where
-   parseJSON (String x)   = pure $ ChargeId x
-   parseJSON _ = mzero
+   parseJSON (String x) = pure $ ChargeId x
+   parseJSON _          = mzero
 
 ------------------------------------------------------------------------------
 -- | `StatementDescription` to be added to a `Charge`
@@ -237,8 +236,8 @@ newtype CustomerId
 ------------------------------------------------------------------------------
 -- | JSON Instance for `CustomerId`
 instance FromJSON CustomerId where
-    parseJSON (String x)   = pure (CustomerId x)
-    parseJSON _            = mzero
+    parseJSON (String x) = pure (CustomerId x)
+    parseJSON _          = mzero
 
 ------------------------------------------------------------------------------
 -- | `Customer` object
@@ -253,7 +252,7 @@ data Customer = Customer {
     , customerSubscriptions  :: StripeList Subscription
     , customerDiscount       :: Maybe Discount
     , customerAccountBalance :: Int
-    , customerCards          :: StripeList Card
+    -- , customerCards          :: StripeList Card
     , customerCurrency       :: Maybe Currency
     , customerDefaultCard    :: Maybe (Expandable CardId)
     , customerMetaData       :: MetaData
@@ -277,16 +276,17 @@ instance FromJSON Customer where
            <*> o .: "subscriptions"
            <*> o .:? "discount"
            <*> o .: "account_balance"
-           <*> o .: "cards"
+           -- <*> o .: "cards"
            <*> o .:? "currency"
            <*> o .:? "default_card"
            <*> o .: "metadata"
-           <|> DeletedCustomer
-           <$> o .: "deleted"
-           <*> (CustomerId <$> o .: "id"))
-           <|> DeletedCustomer
-           <$> o .:? "deleted"
-           <*> (CustomerId <$> o .: "id")
+          )
+           -- <|> DeletedCustomer
+           -- <$> o .: "deleted"
+           -- <*> (CustomerId <$> o .: "id"))
+           -- <|> DeletedCustomer
+           -- <$> o .:? "deleted"
+           -- <*> (CustomerId <$> o .: "id")
     parseJSON _ = mzero
 
 ------------------------------------------------------------------------------
@@ -307,14 +307,14 @@ newtype RecipientCardId = RecipientCardId Text
 ------------------------------------------------------------------------------
 -- | JSON Instance for `CardId`
 instance FromJSON CardId where
-   parseJSON (String x)   = pure $ CardId x
-   parseJSON _ = mzero
+   parseJSON (String x) = pure $ CardId x
+   parseJSON _          = mzero
 
 ------------------------------------------------------------------------------
 -- | JSON Instance for `RecipientCardId`
 instance FromJSON RecipientCardId where
-   parseJSON (String x)   = pure $ RecipientCardId x
-   parseJSON _ = mzero
+   parseJSON (String x) = pure $ RecipientCardId x
+   parseJSON _          = mzero
 
 ------------------------------------------------------------------------------
 -- | Number associated with a `Card`
@@ -376,12 +376,12 @@ data Brand = Visa
 -- | JSON Instance for `Brand`
 instance FromJSON Brand where
    parseJSON (String "American Express") = pure AMEX
-   parseJSON (String "MasterCard") = pure MasterCard
-   parseJSON (String "Discover") = pure Discover
-   parseJSON (String "JCB") = pure JCB
-   parseJSON (String "Visa") = pure Visa
-   parseJSON (String "DinersClub") = pure DinersClub
-   parseJSON _ = mzero
+   parseJSON (String "MasterCard")       = pure MasterCard
+   parseJSON (String "Discover")         = pure Discover
+   parseJSON (String "JCB")              = pure JCB
+   parseJSON (String "Visa")             = pure Visa
+   parseJSON (String "DinersClub")       = pure DinersClub
+   parseJSON _                           = mzero
 
 ------------------------------------------------------------------------------
 -- | `Card` Object
@@ -542,8 +542,8 @@ newtype SubscriptionId = SubscriptionId { getSubscriptionId :: Text }
 ------------------------------------------------------------------------------
 -- | JSON Instance for `SubscriptionId`
 instance FromJSON SubscriptionId where
-    parseJSON (String x)   = pure (SubscriptionId x)
-    parseJSON _            = mzero
+    parseJSON (String x) = pure (SubscriptionId x)
+    parseJSON _          = mzero
 
 ------------------------------------------------------------------------------
 -- | Subscription Object
@@ -625,7 +625,7 @@ newtype PlanId = PlanId Text deriving (Read, Show, Eq, Ord, Data, Typeable)
 -- | Plan object
 data Plan = Plan {
       planInterval        :: Interval
-    , planName            :: Text
+    -- , planName            :: Text
     , planCreated         :: UTCTime
     , planAmount          :: Int
     , planCurrency        :: Currency
@@ -643,7 +643,7 @@ data Plan = Plan {
 instance FromJSON Plan where
    parseJSON (Object o) =
         Plan <$> o .: "interval"
-             <*> o .: "name"
+             -- <*> o .: "name"
              <*> (fromSeconds <$> o .: "created")
              <*> o .: "amount"
              <*> o .: "currency"
@@ -672,11 +672,11 @@ data Interval = Day | Week | Month | Year deriving (Eq, Ord, Data, Typeable)
 ------------------------------------------------------------------------------
 -- | JSON Instance for `Interval`
 instance FromJSON Interval where
-   parseJSON (String "day") = pure Day
-   parseJSON (String "week") = pure Week
+   parseJSON (String "day")   = pure Day
+   parseJSON (String "week")  = pure Week
    parseJSON (String "month") = pure Month
-   parseJSON (String "year") = pure Year
-   parseJSON _ = mzero
+   parseJSON (String "year")  = pure Year
+   parseJSON _                = mzero
 
 ------------------------------------------------------------------------------
 -- | `Show` instance for `Interval`
@@ -837,8 +837,8 @@ newtype InvoiceId =
 ------------------------------------------------------------------------------
 -- | JSON Instance for `InvoiceId`
 instance FromJSON InvoiceId where
-   parseJSON (String x)   = pure $ InvoiceId x
-   parseJSON _ = mzero
+   parseJSON (String x) = pure $ InvoiceId x
+   parseJSON _          = mzero
 
 ------------------------------------------------------------------------------
 -- | `Invoice` Object
@@ -967,7 +967,7 @@ data InvoiceLineItemType
 instance FromJSON InvoiceLineItemType where
    parseJSON (String "invoiceitem")  = pure InvoiceItemType
    parseJSON (String "subscription") = pure SubscriptionItemType
-   parseJSON _ = mzero
+   parseJSON _                       = mzero
 
 ------------------------------------------------------------------------------
 -- | `InvoiceLineItem` Object
@@ -1047,14 +1047,14 @@ data DisputeStatus
 ------------------------------------------------------------------------------
 -- | JSON Instance for `DisputeReason`
 instance FromJSON DisputeReason where
-   parseJSON (String "duplicate") = pure Duplicate
-   parseJSON (String "fraudulent") = pure Fraudulent
+   parseJSON (String "duplicate")             = pure Duplicate
+   parseJSON (String "fraudulent")            = pure Fraudulent
    parseJSON (String "subscription_canceled") = pure SubscriptionCanceled
-   parseJSON (String "product_unacceptable") = pure ProductUnacceptable
-   parseJSON (String "product_not_received") = pure ProductNotReceived
-   parseJSON (String "credit_not_processed") = pure CreditNotProcessed
-   parseJSON (String "general") = pure General
-   parseJSON _ = mzero
+   parseJSON (String "product_unacceptable")  = pure ProductUnacceptable
+   parseJSON (String "product_not_received")  = pure ProductNotReceived
+   parseJSON (String "credit_not_processed")  = pure CreditNotProcessed
+   parseJSON (String "general")               = pure General
+   parseJSON _                                = mzero
 
 ------------------------------------------------------------------------------
 -- | Reason of a `Dispute`
@@ -1072,14 +1072,14 @@ data DisputeReason
 ------------------------------------------------------------------------------
 -- | JSON Instance for `DisputeStatus`
 instance FromJSON DisputeStatus where
-   parseJSON (String "needs_response") = pure NeedsResponse
+   parseJSON (String "needs_response")         = pure NeedsResponse
    parseJSON (String "warning_needs_response") = pure WarningNeedsResponse
-   parseJSON (String "warning_under_review") = pure WarningUnderReview
-   parseJSON (String "under_review") = pure UnderReview
-   parseJSON (String "charge_refunded") = pure ChargeRefunded
-   parseJSON (String "won") = pure Won
-   parseJSON (String "lost") = pure Lost
-   parseJSON _ = mzero
+   parseJSON (String "warning_under_review")   = pure WarningUnderReview
+   parseJSON (String "under_review")           = pure UnderReview
+   parseJSON (String "charge_refunded")        = pure ChargeRefunded
+   parseJSON (String "won")                    = pure Won
+   parseJSON (String "lost")                   = pure Lost
+   parseJSON _                                 = mzero
 
 ------------------------------------------------------------------------------
 -- | `Dispute` Object
@@ -1161,7 +1161,7 @@ instance FromJSON TransferStatus where
 ------------------------------------------------------------------------------
 -- | `Transfer` Object
 data Transfer = Transfer {
-      transferId                   :: TransferId
+      transferId                    :: TransferId
      , transferObject               :: Text
      , transferCreated              :: UTCTime
      , transferDate                 :: UTCTime
@@ -1244,11 +1244,11 @@ data BankAccountStatus =
 ------------------------------------------------------------------------------
 -- | `BankAccountStatus` JSON instance
 instance FromJSON BankAccountStatus where
-   parseJSON (String "new") = pure $ New
+   parseJSON (String "new")       = pure $ New
    parseJSON (String "validated") = pure Validated
-   parseJSON (String "verified") = pure Verified
-   parseJSON (String "errored") = pure Errored
-   parseJSON _ = mzero
+   parseJSON (String "verified")  = pure Verified
+   parseJSON (String "errored")   = pure Errored
+   parseJSON _                    = mzero
 
 ------------------------------------------------------------------------------
 -- | Routing Number for Bank Account
@@ -1298,8 +1298,8 @@ newtype RecipientId =
 ------------------------------------------------------------------------------
 -- | JSON Instance for `RecipientId`
 instance FromJSON RecipientId where
-   parseJSON (String x)   = pure $ RecipientId x
-   parseJSON _ = mzero
+   parseJSON (String x) = pure $ RecipientId x
+   parseJSON _          = mzero
 
 ------------------------------------------------------------------------------
 -- | `TaxID`
@@ -1333,7 +1333,7 @@ instance Read RecipientType where
 instance FromJSON RecipientType where
    parseJSON (String "individual")  = pure Individual
    parseJSON (String "corporation") = pure Corporation
-   parseJSON _ = mzero
+   parseJSON _                      = mzero
 
 ------------------------------------------------------------------------------
 -- | Recipient Object
@@ -1480,27 +1480,27 @@ newtype AccountId
 -- | JSON Instance for `AccountId`
 instance FromJSON AccountId where
    parseJSON (String aid) = pure $ AccountId aid
-   parseJSON _ = mzero
+   parseJSON _            = mzero
 
 ------------------------------------------------------------------------------
 -- | `Account` Object
 data Account = Account {
-       accountId                   :: AccountId
-     , accountEmail                :: Email
-     , accountStatementDescriptor  :: Maybe Description
-     , accountDisplayName          :: Maybe Text
-     , accountTimeZone             :: Text
-     , accountDetailsSubmitted     :: Bool
-     , accountChargeEnabled        :: Bool
-     , accountTransferEnabled      :: Bool
-     , accountCurrenciesSupported  :: [Currency]
-     , accountDefaultCurrency      :: Currency
-     , accountCountry              :: Text
-     , accountObject               :: Text
-     , accountBusinessName         :: Maybe Text
-     , accountBusinessURL          :: Maybe Text
-     , accountBusinessLogo         :: Maybe Text
-     , accountSupportPhone         :: Maybe Text
+       accountId                  :: AccountId
+     , accountEmail               :: Email
+     , accountStatementDescriptor :: Maybe Description
+     , accountDisplayName         :: Maybe Text
+     , accountTimeZone            :: Text
+     , accountDetailsSubmitted    :: Bool
+     , accountChargeEnabled       :: Bool
+     , accountTransferEnabled     :: Bool
+     , accountCurrenciesSupported :: [Currency]
+     , accountDefaultCurrency     :: Currency
+     , accountCountry             :: Text
+     , accountObject              :: Text
+     , accountBusinessName        :: Maybe Text
+     , accountBusinessURL         :: Maybe Text
+     , accountBusinessLogo        :: Maybe Text
+     , accountSupportPhone        :: Maybe Text
 } deriving (Read, Show, Eq, Ord, Data, Typeable)
 
 ------------------------------------------------------------------------------
@@ -1604,8 +1604,8 @@ newtype TransactionId = TransactionId Text
 ------------------------------------------------------------------------------
 -- | JSON Instance for `TransactionId`
 instance FromJSON TransactionId where
-    parseJSON (String x)   = pure (TransactionId x)
-    parseJSON _            = mzero
+    parseJSON (String x) = pure (TransactionId x)
+    parseJSON _          = mzero
 
 ------------------------------------------------------------------------------
 -- | `FeeDetails` Object
@@ -1648,25 +1648,25 @@ data TransactionType
     deriving (Read, Show, Eq, Ord, Data, Typeable)
 
 instance FromJSON TransactionType where
-  parseJSON (String "charge")           = pure ChargeTxn
-  parseJSON (String "refund")           = pure RefundTxn
-  parseJSON (String "adjustment")       = pure AdjustmentTxn
-  parseJSON (String "application_fee")  = pure ApplicationFeeTxn
+  parseJSON (String "charge")                 = pure ChargeTxn
+  parseJSON (String "refund")                 = pure RefundTxn
+  parseJSON (String "adjustment")             = pure AdjustmentTxn
+  parseJSON (String "application_fee")        = pure ApplicationFeeTxn
   parseJSON (String "application_fee_refund") = pure ApplicationFeeRefundTxn
-  parseJSON (String "transfer")         = pure TransferTxn
-  parseJSON (String "transfer_cancel")  = pure TransferCancelTxn
-  parseJSON (String "transfer_failure") = pure TransferFailureTxn
-  parseJSON _                           = mzero
+  parseJSON (String "transfer")               = pure TransferTxn
+  parseJSON (String "transfer_cancel")        = pure TransferCancelTxn
+  parseJSON (String "transfer_failure")       = pure TransferFailureTxn
+  parseJSON _                                 = mzero
 
 instance ToJSON TransactionType where
-  toJSON ChargeTxn          = String "charge"
-  toJSON RefundTxn          = String "refund"
-  toJSON AdjustmentTxn      = String "adjustment"
-  toJSON ApplicationFeeTxn  = String "application_fee"
+  toJSON ChargeTxn               = String "charge"
+  toJSON RefundTxn               = String "refund"
+  toJSON AdjustmentTxn           = String "adjustment"
+  toJSON ApplicationFeeTxn       = String "application_fee"
   toJSON ApplicationFeeRefundTxn = String "application_fee_refund"
-  toJSON TransferTxn        = String "transfer"
-  toJSON TransferCancelTxn  = String "transfer_cancel"
-  toJSON TransferFailureTxn = String "transfer_failure"
+  toJSON TransferTxn             = String "transfer"
+  toJSON TransferCancelTxn       = String "transfer_cancel"
+  toJSON TransferFailureTxn      = String "transfer_failure"
 
 ------------------------------------------------------------------------------
 -- | `Event` Types
@@ -1920,8 +1920,8 @@ data TokenType = TokenCard
 -- | JSON Instance for `TokenType`
 instance FromJSON TokenType where
    parseJSON (String "bank_account") = pure TokenBankAccount
-   parseJSON (String "card") = pure TokenCard
-   parseJSON _ = mzero
+   parseJSON (String "card")         = pure TokenCard
+   parseJSON _                       = mzero
 
 ------------------------------------------------------------------------------
 -- | `Token` Object
@@ -1948,7 +1948,7 @@ instance FromJSON a => FromJSON (Token a) where
      tokenType <- pure $ case typ of
                       "card"         -> TokenCard
                       "bank_account" -> TokenBankAccount
-                      _ -> error "unspecified type"
+                      _              -> error "unspecified type"
      tokenData <-
        case typ of
         "bank_account" -> o .: "bank_account"
@@ -2360,7 +2360,7 @@ instance FromJSON Currency where
    parseJSON (String "yer") = pure YER
    parseJSON (String "zar") = pure ZAR
    parseJSON (String "zmw") = pure ZMW
-   parseJSON _ = pure UnknownCurrency
+   parseJSON _              = pure UnknownCurrency
 
 ------------------------------------------------------------------------------
 -- | BTC ReceiverObject
@@ -2384,7 +2384,7 @@ data BitcoinReceiver = BitcoinReceiver {
     ,  btcMetadata              :: MetaData
     ,  btcRefundAddress         :: Maybe Text
     ,  btcTransactions          :: Maybe Transactions
-    ,  btcPayment               :: Maybe PaymentId 
+    ,  btcPayment               :: Maybe PaymentId
     ,  btcCustomer              :: Maybe CustomerId
     } deriving (Show, Eq)
 
@@ -2393,23 +2393,23 @@ data BitcoinReceiver = BitcoinReceiver {
 instance FromJSON BitcoinReceiver where
    parseJSON (Object o) =
      BitcoinReceiver <$> (BitcoinReceiverId <$> o .: "id")
-                     <*> o .: "object"  
-                     <*> (fromSeconds <$> o .: "created") 
-                     <*> o .: "livemode"  
-                     <*> o .: "active"  
-                     <*> o .: "amount"  
-                     <*> o .: "amount_received"  
-                     <*> o .: "bitcoin_amount"  
-                     <*> o .: "bitcoin_amount_received"  
-                     <*> o .: "bitcoin_uri"  
-                     <*> o .: "currency"  
-                     <*> o .: "filled"  
-                     <*> o .: "inbound_address"  
-                     <*> o .: "uncaptured_funds"  
-                     <*> o .:? "description"  
-                     <*> o .: "email"  
+                     <*> o .: "object"
+                     <*> (fromSeconds <$> o .: "created")
+                     <*> o .: "livemode"
+                     <*> o .: "active"
+                     <*> o .: "amount"
+                     <*> o .: "amount_received"
+                     <*> o .: "bitcoin_amount"
+                     <*> o .: "bitcoin_amount_received"
+                     <*> o .: "bitcoin_uri"
+                     <*> o .: "currency"
+                     <*> o .: "filled"
+                     <*> o .: "inbound_address"
+                     <*> o .: "uncaptured_funds"
+                     <*> o .:? "description"
+                     <*> o .: "email"
                      <*> (MetaData . H.toList <$> o .: "metadata")
-                     <*> o .:? "refund_address"  
+                     <*> o .:? "refund_address"
                      <*> o .:? "transactions"
                      <*> (fmap PaymentId <$> o .:? "payment")
                      <*> (fmap CustomerId <$> o .:? "customer")
@@ -2429,11 +2429,11 @@ data Transactions = Transactions {
 -- | Bitcoin Transactions data
 instance FromJSON Transactions where
    parseJSON (Object o) =
-     Transactions <$> o .: "object"  
-                  <*> o .: "total_count"  
-                  <*> o .: "has_more"  
-                  <*> o .: "url"  
-                  <*> o .: "data"  
+     Transactions <$> o .: "object"
+                  <*> o .: "total_count"
+                  <*> o .: "has_more"
+                  <*> o .: "url"
+                  <*> o .: "data"
    parseJSON _ = mzero
 
 ------------------------------------------------------------------------------
@@ -2471,7 +2471,7 @@ newtype BitcoinTransactionId =
 -- | FromJSON BitcoinTransactionId
 instance FromJSON BitcoinTransactionId where
    parseJSON (String o) = pure $ BitcoinTransactionId o
-   parseJSON _ = mzero
+   parseJSON _          = mzero
 
 ------------------------------------------------------------------------------
 -- | BTC ReceiverId
@@ -2482,7 +2482,7 @@ newtype BitcoinReceiverId = BitcoinReceiverId Text
 -- | FromJSON for BitcoinReceiverId
 instance FromJSON BitcoinReceiverId where
    parseJSON (String x) = pure $ BitcoinReceiverId x
-   parseJSON _ = mzero
+   parseJSON _          = mzero
 
 ------------------------------------------------------------------------------
 -- | BTC PaymentId
@@ -2493,7 +2493,7 @@ newtype PaymentId = PaymentId Text
 -- | FromJSON for PaymentId
 instance FromJSON PaymentId where
    parseJSON (String x) = pure $ PaymentId x
-   parseJSON _ = mzero
+   parseJSON _          = mzero
 
 ------------------------------------------------------------------------------
 -- | Show an amount accounting for zero currencies

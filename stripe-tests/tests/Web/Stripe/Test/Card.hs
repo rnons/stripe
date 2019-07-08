@@ -33,33 +33,33 @@ cardTests stripe = do
           return card
         result `shouldSatisfy` isRight
 
-      it "Can retrieve a Customer Card" $ do
-        result <- stripe $ do
-          Customer { customerId = customerid
-                   , customerCards = StripeList { list = [ Card { cardId = cardid } ] }
-                   } <- createCustomer -&- cardinfo
-          card <- getCustomerCard customerid cardid
-          void $ deleteCustomer customerid
-          return card
-        result `shouldSatisfy` isRight
-        let Right Card{..} = result
-        cardLastFour `shouldBe` "4242"
-        cardExpMonth `shouldBe` em
-        cardExpYear `shouldBe` ey
+      -- it "Can retrieve a Customer Card" $ do
+      --   result <- stripe $ do
+      --     Customer { customerId = customerid
+      --              , customerCards = StripeList { list = [ Card { cardId = cardid } ] }
+      --              } <- createCustomer -&- cardinfo
+      --     card <- getCustomerCard customerid cardid
+      --     void $ deleteCustomer customerid
+      --     return card
+      --   result `shouldSatisfy` isRight
+      --   let Right Card{..} = result
+      --   cardLastFour `shouldBe` "4242"
+      --   cardExpMonth `shouldBe` em
+      --   cardExpYear `shouldBe` ey
 
-      it "Can retrieve a Customer's Card with expansion" $ do
-        result <- stripe $ do
-          Customer { customerId = customerid
-                   , customerCards = StripeList { list = [ Card { cardId = cardid } ] }
-                   } <- createCustomer -&- cardinfo
-          card <- getCustomerCard customerid cardid -&- ExpandParams ["customer"]
-          void $ deleteCustomer customerid
-          return card
-        result `shouldSatisfy` isRight
-        let Right Card{..} = result
-        cardLastFour `shouldBe` "4242"
-        cardExpMonth `shouldBe` em
-        cardExpYear `shouldBe` ey
+      -- it "Can retrieve a Customer's Card with expansion" $ do
+      --   result <- stripe $ do
+      --     Customer { customerId = customerid
+      --              , customerCards = StripeList { list = [ Card { cardId = cardid } ] }
+      --              } <- createCustomer -&- cardinfo
+      --     card <- getCustomerCard customerid cardid -&- ExpandParams ["customer"]
+      --     void $ deleteCustomer customerid
+      --     return card
+      --   result `shouldSatisfy` isRight
+      --   let Right Card{..} = result
+      --   cardLastFour `shouldBe` "4242"
+      --   cardExpMonth `shouldBe` em
+      --   cardExpYear `shouldBe` ey
 
       it "Can retrieve a Customer's Cards" $ do
         result <- stripe $ do

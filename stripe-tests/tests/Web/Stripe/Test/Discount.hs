@@ -1,12 +1,12 @@
-{-# LANGUAGE RecordWildCards #-}
 {-# LANGUAGE OverloadedStrings #-}
-{-# LANGUAGE RebindableSyntax #-}
+{-# LANGUAGE RebindableSyntax  #-}
+{-# LANGUAGE RecordWildCards   #-}
 module Web.Stripe.Test.Discount where
 
 import           Data.Either
 import           Test.Hspec
-import           Web.Stripe.Test.Util
 import           Web.Stripe.Test.Prelude
+import           Web.Stripe.Test.Util
 
 import           Web.Stripe.Coupon
 import           Web.Stripe.Customer
@@ -45,7 +45,7 @@ discountTests stripe = do
           (Amount 0) -- free plan
           USD
           Month
-          (PlanName "sample plan")
+          -- (PlanName "sample plan")
         Coupon { couponId = couponid } <-
           createCoupon
              (Just coupon)
@@ -56,7 +56,8 @@ discountTests stripe = do
           createCustomer
             -&- coupon
         Subscription { subscriptionId = sid } <-
-          createSubscription customerid plan
+          -- createSubscription customerid plan
+          createSubscription customerid []
         void $ updateSubscription customerid sid -&- coupon
         result <- deleteSubscriptionDiscount customerid sid
         void $ deletePlan planid
@@ -64,7 +65,3 @@ discountTests stripe = do
         void $ deleteCoupon couponid
         return result
       result `shouldSatisfy` isRight
-
-
-
-
