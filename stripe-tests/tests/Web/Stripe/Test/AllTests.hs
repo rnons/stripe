@@ -37,7 +37,7 @@ allTests stripe' = do
   hspec $ do
     -- chargeTests stripe
     -- refundTests stripe
-    -- customerTests stripe
+    customerTests stripe
     -- cardTests stripe
     subscriptionTests stripe
     -- planTests stripe
