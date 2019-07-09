@@ -734,7 +734,7 @@ instance FromJSON Duration where
 data Coupon = Coupon {
       couponId               :: CouponId
     , couponCreated          :: UTCTime
-    , couponPercentOff       :: Maybe Int
+    , couponPercentOff       :: Maybe Float
     , couponAmountOff        :: Maybe Int
     , couponCurrency         :: Maybe Currency
     , couponLiveMode         :: Bool

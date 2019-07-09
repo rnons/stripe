@@ -200,7 +200,6 @@ cancelSubscription
         params  = []
 
 data CancelSubscription
-instance StripeHasParam CancelSubscription AtPeriodEnd
 type instance StripeReturn CancelSubscription = Subscription
 
 ------------------------------------------------------------------------------
