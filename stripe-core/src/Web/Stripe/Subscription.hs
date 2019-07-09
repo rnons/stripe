@@ -1,4 +1,3 @@
-{-# LANGUAGE DuplicateRecordFields #-}
 {-# LANGUAGE FlexibleInstances     #-}
 {-# LANGUAGE MultiParamTypeClasses #-}
 {-# LANGUAGE OverloadedStrings     #-}
@@ -78,6 +77,7 @@ module Web.Stripe.Subscription
     , TrialEnd           (..)
     ) where
 
+import           Control.Monad            (join)
 import qualified Data.ByteString.Char8    as B8
 import qualified Data.Text                as T
 import           Web.Stripe.StripeRequest (Method (DELETE, GET, POST),
@@ -106,13 +106,13 @@ createSubscription
     -> [CreateSubscriptionSubscriptionItem]     -- ^ The `SubscriptionItem` list
     -> StripeRequest CreateSubscription
 createSubscription
-    customerid
+    customerId
     items = request
   where request = mkStripeRequest POST url params
-        url     = "customers" </> getCustomerId customerid </> "subscriptions"
+        url     = "subscriptions"
         params =
-          [ ("items[0][plan]", B8.pack $ T.unpack $ (\(PlanId x) -> x) $ planId $ head items)
-          ]
+            toStripeParam customerId $
+            toStripeParam items []
 
 data CreateSubscription
 type instance StripeReturn CreateSubscription = Subscription
@@ -130,6 +130,15 @@ instance StripeHasParam CreateSubscription TaxPercent
 data CreateSubscriptionSubscriptionItem = CreateSubscriptionSubscriptionItem
     { planId :: PlanId
     }
+
+instance ToStripeParam [CreateSubscriptionSubscriptionItem] where
+    toStripeParam items xs = xs <> join (map
+        (\(CreateSubscriptionSubscriptionItem{..}, index) ->
+            let item = "items[" <> B8.pack (show index) <> "]"
+            in  [ (item <> "[plan]", B8.pack $ T.unpack $ (\(PlanId x) -> x) planId)
+                ]
+        ) (zip items ([0,1..] :: [Int]))
+        )
 
 ------------------------------------------------------------------------------
 -- | Retrieve a `Subscription` by `CustomerId` and `SubscriptionId`
