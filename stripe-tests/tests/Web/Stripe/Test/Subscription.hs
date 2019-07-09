@@ -15,6 +15,7 @@ import           Web.Stripe.Customer
 import           Web.Stripe.Plan
 import           Web.Stripe.StripeRequest
 import           Web.Stripe.Subscription
+import           Web.Stripe.Types         (TaxRateId (..))
 
 createSubscription'
     :: CustomerId
@@ -34,8 +35,10 @@ subscriptionTests stripe = do
                         (Amount 0) -- free plan
                         USD
                         Month
-                        -- (PlanName "sample plan")
-        sub <- createSubscription' cid planid
+        sub <- createSubscription cid
+            [ CreateSubscriptionSubscriptionItem planid Nothing Nothing $
+                Just [TaxRateId "txr_123"]
+            ]
         void $ deletePlan planid
         void $ deleteCustomer cid
         return sub

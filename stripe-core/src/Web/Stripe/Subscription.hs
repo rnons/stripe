@@ -140,7 +140,7 @@ data CreateSubscriptionSubscriptionItem = CreateSubscriptionSubscriptionItem
     -- , billingThresholds
     , metaData :: Maybe MetaData
     , quantity :: Maybe Int
-    , taxRates :: Maybe TaxRateId
+    , taxRates :: Maybe [TaxRateId]
     }
 
 instance ToStripeParam [CreateSubscriptionSubscriptionItem] where
@@ -159,11 +159,11 @@ instance ToStripeParam [CreateSubscriptionSubscriptionItem] where
                         ]
                 rateParam = case taxRates of
                     Nothing -> []
-                    Just rateId ->
-                        [ ( item <> "[tax_rates]"
+                    Just rateIds -> map (\(rateId, index') ->
+                          ( item <> "[tax_rates][" <> B8.pack (show index') <> "]"
                           , B8.pack $ T.unpack $ (\(TaxRateId x) -> x) rateId
                           )
-                        ]
+                        ) (zip rateIds ([0,1..] :: [Int]))
             in  [ (item <> "[plan]", B8.pack $ T.unpack $ (\(PlanId x) -> x) plan)
                 ] <> metaDataParam <> quantityParam <> rateParam
         ) (zip items ([0,1..] :: [Int]))
