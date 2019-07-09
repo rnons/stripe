@@ -3,10 +3,10 @@
 {-# LANGUAGE FlexibleContexts      #-}
 {-# LANGUAGE FlexibleInstances     #-}
 {-# LANGUAGE MultiParamTypeClasses #-}
-{-# LANGUAGE ScopedTypeVariables   #-}
-{-# LANGUAGE TypeFamilies          #-}
 {-# LANGUAGE OverloadedStrings     #-}
 {-# LANGUAGE RecordWildCards       #-}
+{-# LANGUAGE ScopedTypeVariables   #-}
+{-# LANGUAGE TypeFamilies          #-}
 -- |
 -- Module      : Web.Stripe.StripeRequest
 -- Copyright   : (c) David Johnson, 2014
@@ -29,53 +29,59 @@ module Web.Stripe.StripeRequest
   ) where
 
 import           Control.Applicative ((<$>))
-import           Data.ByteString    (ByteString)
-import           Data.Monoid        ((<>))
-import           Data.String        (fromString)
-import           Data.Text          (Text)
-import qualified Data.Text.Encoding as Text
-import           Numeric            (showFFloat)
-import           Web.Stripe.Types   (AccountBalance(..), AccountNumber(..),
-                                     AddressCity(..), AddressCountry(..),
-                                     ApplicationFeeId(..), AddressLine1(..),
-                                     AddressLine2(..), AddressState(..),
-                                     AddressZip(..), Amount(..), AmountOff(..),
-                                     ApplicationFeeAmount(..),
-                                     ApplicationFeePercent(..),
-                                     AtPeriodEnd(..),
-                                     AvailableOn(..), BankAccountId(..),
-                                     CardId(..), CardNumber(..),
-                                     Capture(..), ChargeId(..), Closed(..),
-                                     CouponId(..),
-                                     Country(..), Created(..), Currency(..),
-                                     CustomerId(..), CVC(..), Date(..),
-                                     DefaultCard(..), Description(..),
-                                     Duration(..), DurationInMonths(..),
-                                     Email(..), EndingBefore(..), EventId(..),
-                                     Evidence(..), Expandable(..),
-                                     ExpandParams(..), ExpMonth(..),
-                                     ExpYear(..), Forgiven(..), Interval(..),
-                                     IntervalCount(..),
-                                     InvoiceId(..), InvoiceItemId(..),
-                                     InvoiceLineItemId(..),
-                                     IsVerified(..), MetaData(..), PlanId(..),
-                                     PlanName(..), Prorate(..), Limit(..),
-                                     MaxRedemptions(..), Name(..),
-                                     NewBankAccount(..), NewCard(..),
-                                     PercentOff(..), Quantity(..), ReceiptEmail(..),
-                                     RecipientId(..), RecipientType(..), RedeemBy(..),
-                                     RefundId(..),
-                                     RefundApplicationFee(..), RefundReason(..),
-                                     RoutingNumber(..), StartingAfter(..),
-                                     StatementDescription(..), Source(..),
-                                     SubscriptionId(..), TaxID(..), 
-                                     TaxPercent(..), TimeRange(..),
-                                     TokenId(..), TransactionId(..),
-                                     TransactionType(..), TransferId(..),
-                                     TransferStatus(..), TrialEnd(..),
-                                     TrialPeriodDays(..))
-import           Web.Stripe.Util    (toBytestring, toExpandable,toMetaData,
-                                     toSeconds, getParams, toText)
+import           Data.ByteString     (ByteString)
+import           Data.Monoid         ((<>))
+import           Data.String         (fromString)
+import           Data.Text           (Text)
+import qualified Data.Text.Encoding  as Text
+import           Numeric             (showFFloat)
+import           Web.Stripe.Types    (AccountBalance (..), AccountNumber (..),
+                                      AddressCity (..), AddressCountry (..),
+                                      AddressLine1 (..), AddressLine2 (..),
+                                      AddressState (..), AddressZip (..),
+                                      Amount (..), AmountOff (..),
+                                      ApplicationFeeAmount (..),
+                                      ApplicationFeeId (..),
+                                      ApplicationFeePercent (..),
+                                      AtPeriodEnd (..), AvailableOn (..),
+                                      BankAccountId (..),
+                                      BillingCycleAnchor (..), CVC (..),
+                                      Capture (..), CardId (..),
+                                      CardNumber (..), ChargeId (..),
+                                      Closed (..), Country (..), CouponId (..),
+                                      Created (..), Currency (..),
+                                      CustomerId (..), Date (..),
+                                      DefaultCard (..), Description (..),
+                                      Duration (..), DurationInMonths (..),
+                                      Email (..), EndingBefore (..),
+                                      EventId (..), Evidence (..),
+                                      ExpMonth (..), ExpYear (..),
+                                      ExpandParams (..), Expandable (..),
+                                      Forgiven (..), Interval (..),
+                                      IntervalCount (..), InvoiceId (..),
+                                      InvoiceItemId (..),
+                                      InvoiceLineItemId (..), IsVerified (..),
+                                      Limit (..), MaxRedemptions (..),
+                                      MetaData (..), Name (..),
+                                      NewBankAccount (..), NewCard (..),
+                                      PercentOff (..), PlanId (..),
+                                      PlanName (..), Prorate (..),
+                                      Quantity (..), ReceiptEmail (..),
+                                      RecipientId (..), RecipientType (..),
+                                      RedeemBy (..), RefundApplicationFee (..),
+                                      RefundId (..), RefundReason (..),
+                                      RoutingNumber (..), Source (..),
+                                      StartingAfter (..),
+                                      StatementDescription (..),
+                                      SubscriptionCollectionMethod (..),
+                                      SubscriptionId (..), TaxID (..),
+                                      TaxPercent (..), TimeRange (..),
+                                      TokenId (..), TransactionId (..),
+                                      TransactionType (..), TransferId (..),
+                                      TransferStatus (..), TrialEnd (..),
+                                      TrialPeriodDays (..))
+import           Web.Stripe.Util     (getParams, toBytestring, toExpandable,
+                                      toMetaData, toSeconds, toText)
 
 ------------------------------------------------------------------------------
 -- | HTTP Method
@@ -169,6 +175,10 @@ instance ToStripeParam AtPeriodEnd where
 instance ToStripeParam BankAccountId where
   toStripeParam (BankAccountId bid) =
     (("bank_account", Text.encodeUtf8 bid) :)
+
+instance ToStripeParam BillingCycleAnchor where
+  toStripeParam (BillingCycleAnchor time) =
+    (("billing_cycle_anchor", toBytestring $ toSeconds time) :)
 
 instance ToStripeParam Capture where
   toStripeParam (Capture b) =
@@ -438,13 +448,21 @@ instance ToStripeParam RefundApplicationFee where
 instance ToStripeParam RefundReason where
   toStripeParam reason =
     (("reason", case reason of
-         RefundDuplicate -> "duplicate"
-         RefundFraudulent -> "fraudulent"
+         RefundDuplicate           -> "duplicate"
+         RefundFraudulent          -> "fraudulent"
          RefundRequestedByCustomer -> "requested_by_customer") :)
 
 instance ToStripeParam StatementDescription where
   toStripeParam (StatementDescription txt) =
     (("statement_description", Text.encodeUtf8 txt) :)
+
+instance ToStripeParam SubscriptionCollectionMethod where
+  toStripeParam method =
+    (( "collection_method"
+     , case method of
+          ChargeAutomatically -> "charge_automatically"
+          SendInvoice         -> "send_invoice"
+     ) :)
 
 instance ToStripeParam TransactionType where
   toStripeParam txn =

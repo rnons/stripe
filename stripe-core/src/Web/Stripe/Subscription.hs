@@ -85,14 +85,15 @@ import           Web.Stripe.StripeRequest (Method (DELETE, GET, POST),
                                            StripeReturn, ToStripeParam (..),
                                            mkStripeRequest)
 import           Web.Stripe.Types         (ApplicationFeePercent (..),
-                                           AtPeriodEnd (..), CardId (..),
-                                           Coupon (..), CouponId (..),
-                                           CustomerId (..), EndingBefore (..),
-                                           ExpandParams (..), Limit (..),
-                                           MetaData (..), PlanId (..),
-                                           Prorate (..), Quantity (..),
-                                           StartingAfter (..), StripeList (..),
-                                           Subscription (..),
+                                           AtPeriodEnd (..), BillingCycleAnchor,
+                                           CardId (..), Coupon (..),
+                                           CouponId (..), CustomerId (..),
+                                           EndingBefore (..), ExpandParams (..),
+                                           Limit (..), MetaData (..),
+                                           PlanId (..), Prorate (..),
+                                           Quantity (..), StartingAfter (..),
+                                           StripeList (..), Subscription (..),
+                                           SubscriptionCollectionMethod,
                                            SubscriptionId (..),
                                            SubscriptionStatus (..),
                                            TaxPercent (..), TrialEnd (..))
@@ -116,14 +117,20 @@ createSubscription
 
 data CreateSubscription
 type instance StripeReturn CreateSubscription = Subscription
+instance StripeHasParam CreateSubscription ApplicationFeePercent
+instance StripeHasParam CreateSubscription BillingCycleAnchor
+-- instance StripeHasParam CreateSubscription BillingThresholds
+instance StripeHasParam CreateSubscription SubscriptionCollectionMethod
 instance StripeHasParam CreateSubscription CouponId
+-- instance StripeHasParam CreateSubscription DaysUntilDue
+-- instance StripeHasParam CreateSubscription DefaultPaymentMethod
+-- instance StripeHasParam CreateSubscription DefaultSource
+-- instance StripeHasParam CreateSubscription DefaultTaxRates
+instance StripeHasParam CreateSubscription MetaData
 instance StripeHasParam CreateSubscription Prorate
 instance StripeHasParam CreateSubscription TrialEnd
-instance StripeHasParam CreateSubscription CardId
-instance StripeHasParam CreateSubscription Quantity
-instance StripeHasParam CreateSubscription ApplicationFeePercent
-instance StripeHasParam CreateSubscription MetaData
-instance StripeHasParam CreateSubscription TaxPercent
+-- instance StripeHasParam CreateSubscription TrialFromPlan
+-- instance StripeHasParam CreateSubscription TrialPeriodDays
 
 ------------------------------------------------------------------------------
 -- | The `SubscriptionItem` when creating a `Subscription`

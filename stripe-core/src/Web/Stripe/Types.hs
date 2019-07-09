@@ -552,7 +552,7 @@ data Subscription = Subscription {
     , subscriptionObject                :: Text
     , subscriptionApplicationFeePercent :: Maybe Double
     -- , subscriptionBilling
-    , subscriptionBillingCycleAnchor    :: UTCTime
+    , subscriptionBillingCycleAnchor    :: BillingCycleAnchor
     -- , subscriptionBillingThresholds
     , subscriptionCancelAtPeriodEnd     :: Bool
     , subscriptionCanceledAt            :: Maybe UTCTime
@@ -587,7 +587,7 @@ instance FromJSON Subscription where
         <$> (SubscriptionId <$> o .: "id")
         <*> o .: "object"
         <*> o .:? "application_fee_percent"
-        <*> (fromSeconds <$> o .: "billing_cycle_anchor")
+        <*> (BillingCycleAnchor . fromSeconds <$> o .: "billing_cycle_anchor")
         <*> o .: "cancel_at_period_end"
         <*> (fmap fromSeconds <$> o .:? "canceled_at")
         <*> o .: "collection_method"
@@ -608,6 +608,9 @@ instance FromJSON Subscription where
         <*> (fmap fromSeconds <$> o .:? "trial_end")
         <*> (fmap fromSeconds <$> o .:? "trial_start")
     parseJSON _ = mzero
+
+newtype BillingCycleAnchor = BillingCycleAnchor UTCTime
+    deriving (Read, Show, Eq, Ord, Data, Typeable)
 
 ------------------------------------------------------------------------------
 -- | Collection method of a `Subscription`
