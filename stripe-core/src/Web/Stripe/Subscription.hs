@@ -96,7 +96,7 @@ import           Web.Stripe.Types         (ApplicationFeePercent (..),
                                            SubscriptionCollectionMethod,
                                            SubscriptionId (..),
                                            SubscriptionStatus (..),
-                                           TaxPercent (..), TaxRateId,
+                                           TaxPercent (..), TaxRateId (..),
                                            TrialEnd (..))
 import           Web.Stripe.Types.Util    (getCustomerId)
 import           Web.Stripe.Util          ((</>))
@@ -147,8 +147,25 @@ instance ToStripeParam [CreateSubscriptionSubscriptionItem] where
     toStripeParam items xs = xs <> join (map
         (\(CreateSubscriptionSubscriptionItem{..}, index) ->
             let item = "items[" <> B8.pack (show index) <> "]"
+                metaDataParam = case metaData of
+                    Nothing -> []
+                    Just _  -> []
+                quantityParam = case quantity of
+                    Nothing -> []
+                    Just q ->
+                        [ ( item <> "[quantity]"
+                          , B8.pack $ show q
+                          )
+                        ]
+                rateParam = case taxRates of
+                    Nothing -> []
+                    Just rateId ->
+                        [ ( item <> "[tax_rates]"
+                          , B8.pack $ T.unpack $ (\(TaxRateId x) -> x) rateId
+                          )
+                        ]
             in  [ (item <> "[plan]", B8.pack $ T.unpack $ (\(PlanId x) -> x) plan)
-                ]
+                ] <> metaDataParam <> quantityParam <> rateParam
         ) (zip items ([0,1..] :: [Int]))
         )
 
