@@ -654,6 +654,8 @@ instance FromJSON SubscriptionStatus where
 -- | `TaxPercent` for a `Subscription`
 newtype TaxPercent = TaxPercent Double deriving (Read, Show, Eq, Ord, Data, Typeable)
 
+-- | `TaxRateId` for a `TaxRate`
+newtype TaxRateId = TaxRateId Text deriving (Read, Show, Eq, Ord, Data, Typeable)
 
 ------------------------------------------------------------------------------
 -- | `PlanId` for a `Plan`

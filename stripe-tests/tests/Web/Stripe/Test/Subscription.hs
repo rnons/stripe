@@ -13,7 +13,15 @@ import           Web.Stripe.Test.Util
 import           Web.Stripe.Coupon
 import           Web.Stripe.Customer
 import           Web.Stripe.Plan
+import           Web.Stripe.StripeRequest
 import           Web.Stripe.Subscription
+
+createSubscription'
+    :: CustomerId
+    -> PlanId
+    -> StripeRequest CreateSubscription
+createSubscription' cid pid = createSubscription cid
+    [CreateSubscriptionSubscriptionItem pid Nothing Nothing Nothing]
 
 subscriptionTests :: StripeSpec
 subscriptionTests stripe = do
@@ -27,8 +35,7 @@ subscriptionTests stripe = do
                         USD
                         Month
                         -- (PlanName "sample plan")
-        sub <- createSubscription cid
-          [CreateSubscriptionSubscriptionItem planid]
+        sub <- createSubscription' cid planid
         void $ deletePlan planid
         void $ deleteCustomer cid
         return sub
@@ -41,8 +48,7 @@ subscriptionTests stripe = do
                         (Amount 0) -- free plan
                         USD
                         Month
-        Subscription { subscriptionId = sid } <- createSubscription cid
-          [CreateSubscriptionSubscriptionItem planid]
+        Subscription { subscriptionId = sid } <- createSubscription' cid planid
         sub <- getSubscription cid sid
         void $ deletePlan planid
         void $ deleteCustomer cid
@@ -56,8 +62,7 @@ subscriptionTests stripe = do
                         (Amount 0) -- free plan
                         USD
                         Month
-        Subscription { subscriptionId = sid } <- createSubscription cid
-          [CreateSubscriptionSubscriptionItem planid]
+        Subscription { subscriptionId = sid } <- createSubscription' cid planid
         sub <- getSubscription cid sid -&- ExpandParams ["customer"]
         void $ deletePlan planid
         void $ deleteCustomer cid
@@ -71,8 +76,7 @@ subscriptionTests stripe = do
                         (Amount 0) -- free plan
                         USD
                         Month
-        void $ createSubscription cid
-          [CreateSubscriptionSubscriptionItem planid]
+        void $ createSubscription' cid planid
         sub <- getSubscriptionsByCustomerId cid -&- ExpandParams ["data.customer"]
         void $ deletePlan planid
         void $ deleteCustomer cid
@@ -86,8 +90,7 @@ subscriptionTests stripe = do
                         (Amount 0) -- free plan
                         USD
                         Month
-        void $ createSubscription cid
-          [CreateSubscriptionSubscriptionItem planid]
+        void $ createSubscription' cid planid
         sub <- getSubscriptionsByCustomerId cid
         void $ deletePlan planid
         void $ deleteCustomer cid
@@ -101,8 +104,7 @@ subscriptionTests stripe = do
                         (Amount 0) -- free plan
                         USD
                         Month
-        void $ createSubscription cid
-          [CreateSubscriptionSubscriptionItem planid]
+        void $ createSubscription' cid planid
         sub <- getSubscriptions -&- ExpandParams ["data.customer"]
         void $ deletePlan planid
         void $ deleteCustomer cid
@@ -116,8 +118,7 @@ subscriptionTests stripe = do
                         (Amount 0) -- free plan
                         USD
                         Month
-        void $ createSubscription cid
-          [CreateSubscriptionSubscriptionItem planid]
+        void $ createSubscription' cid planid
         sub <- getSubscriptions
         void $ deletePlan planid
         void $ deleteCustomer cid
@@ -139,8 +140,7 @@ subscriptionTests stripe = do
                         (Amount 0) -- free plan
                         USD
                         Month
-        Subscription { subscriptionId = sid } <- createSubscription cid
-          [CreateSubscriptionSubscriptionItem planid]
+        Subscription { subscriptionId = sid } <- createSubscription' cid planid
         sub <- updateSubscription cid sid
                 -&- couponid
                 -&- MetaData [("hi","there")]
@@ -158,8 +158,7 @@ subscriptionTests stripe = do
                         (Amount 0) -- free plan
                         USD
                         Month
-        Subscription { subscriptionId = sid } <- createSubscription cid
-          [CreateSubscriptionSubscriptionItem planid]
+        Subscription { subscriptionId = sid } <- createSubscription' cid planid
         sub <- cancelSubscription cid sid
         void $ deletePlan planid
         void $ deleteCustomer cid

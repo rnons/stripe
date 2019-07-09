@@ -96,7 +96,8 @@ import           Web.Stripe.Types         (ApplicationFeePercent (..),
                                            SubscriptionCollectionMethod,
                                            SubscriptionId (..),
                                            SubscriptionStatus (..),
-                                           TaxPercent (..), TrialEnd (..))
+                                           TaxPercent (..), TaxRateId,
+                                           TrialEnd (..))
 import           Web.Stripe.Types.Util    (getCustomerId)
 import           Web.Stripe.Util          ((</>))
 
@@ -135,14 +136,18 @@ instance StripeHasParam CreateSubscription TrialEnd
 ------------------------------------------------------------------------------
 -- | The `SubscriptionItem` when creating a `Subscription`
 data CreateSubscriptionSubscriptionItem = CreateSubscriptionSubscriptionItem
-    { planId :: PlanId
+    { plan     :: PlanId
+    -- , billingThresholds
+    , metaData :: Maybe MetaData
+    , quantity :: Maybe Int
+    , taxRates :: Maybe TaxRateId
     }
 
 instance ToStripeParam [CreateSubscriptionSubscriptionItem] where
     toStripeParam items xs = xs <> join (map
         (\(CreateSubscriptionSubscriptionItem{..}, index) ->
             let item = "items[" <> B8.pack (show index) <> "]"
-            in  [ (item <> "[plan]", B8.pack $ T.unpack $ (\(PlanId x) -> x) planId)
+            in  [ (item <> "[plan]", B8.pack $ T.unpack $ (\(PlanId x) -> x) plan)
                 ]
         ) (zip items ([0,1..] :: [Int]))
         )
