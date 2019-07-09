@@ -549,68 +549,103 @@ instance FromJSON SubscriptionId where
 -- | Subscription Object
 data Subscription = Subscription {
       subscriptionId                    :: SubscriptionId
-    , subscriptionPlan                  :: Plan
     , subscriptionObject                :: Text
-    , subscriptionStart                 :: UTCTime
-    , subscriptionStatus                :: SubscriptionStatus
-    , subscriptionCustomerId            :: Expandable CustomerId
-    , subscriptionCancelAtPeriodEnd     :: Bool
-    , subscriptionCurrentPeriodStart    :: UTCTime
-    , subscriptionCurrentPeriodEnd      :: UTCTime
-    , subscriptionEndedAt               :: Maybe UTCTime
-    , subscriptionTrialStart            :: Maybe UTCTime
-    , subscriptionTrialEnd              :: Maybe UTCTime
-    , subscriptionCanceledAt            :: Maybe UTCTime
-    , subscriptionQuantity              :: Quantity
     , subscriptionApplicationFeePercent :: Maybe Double
+    -- , subscriptionBilling
+    , subscriptionBillingCycleAnchor    :: UTCTime
+    -- , subscriptionBillingThresholds
+    , subscriptionCancelAtPeriodEnd     :: Bool
+    , subscriptionCanceledAt            :: Maybe UTCTime
+    , subscriptionCollectionMethod      :: SubscriptionCollectionMethod
+    , subscriptionCreated               :: UTCTime
+    , subscriptionCurrentPeriodEnd      :: UTCTime
+    , subscriptionCurrentPeriodStart    :: UTCTime
+    , subscriptionCustomerId            :: Expandable CustomerId
+    , subscriptionDaysUntilDue          :: Maybe Int
+    -- , subscriptionDefaultPaymentMethod
+    -- , subscriptionDefaultSource
+    -- , subscriptionDefaultTaxRates
     , subscriptionDiscount              :: Maybe Discount
+    , subscriptionEndedAt               :: Maybe UTCTime
+    -- , subscriptionItems
+    -- , subscriptionLatestInvoice
+    , subscriptionLiveMode              :: Bool
     , subscriptionMetaData              :: MetaData
-    , subscriptionTaxPercent            :: Maybe Double
+    , subscriptionPlan                  :: Maybe Plan
+    , subscriptionQuantity              :: Quantity
+    , subscriptionStart                 :: UTCTime
+    , subscriptionStartDate             :: UTCTime
+    , subscriptionStatus                :: SubscriptionStatus
+    , subscriptionTrialEnd              :: Maybe UTCTime
+    , subscriptionTrialStart            :: Maybe UTCTime
 } deriving (Read, Show, Eq, Ord, Data, Typeable)
 
 ------------------------------------------------------------------------------
 -- | JSON Instance for `Subscription`
 instance FromJSON Subscription where
-   parseJSON (Object o) =
-       Subscription <$> (SubscriptionId <$> o .: "id")
-                    <*> o .: "plan"
-                    <*> o .: "object"
-                    <*> (fromSeconds <$> o .: "start")
-                    <*> o .: "status"
-                    <*> o .: "customer"
-                    <*> o .: "cancel_at_period_end"
-                    <*> (fromSeconds <$> o .: "current_period_start")
-                    <*> (fromSeconds <$> o .: "current_period_end")
-                    <*> (fmap fromSeconds <$> o .:? "ended_at")
-                    <*> (fmap fromSeconds <$> o .:? "trial_start")
-                    <*> (fmap fromSeconds <$> o .:? "trial_end")
-                    <*> (fmap fromSeconds <$> o .:? "canceled_at")
-                    <*> (Quantity <$> o .:  "quantity")
-                    <*> o .:? "application_fee_percent"
-                    <*> o .:? "discount"
-                    <*> o .: "metadata"
-                    <*> o .:? "tax_percent"
-   parseJSON _ = mzero
+    parseJSON (Object o) = Subscription
+        <$> (SubscriptionId <$> o .: "id")
+        <*> o .: "object"
+        <*> o .:? "application_fee_percent"
+        <*> (fromSeconds <$> o .: "billing_cycle_anchor")
+        <*> o .: "cancel_at_period_end"
+        <*> (fmap fromSeconds <$> o .:? "canceled_at")
+        <*> o .: "collection_method"
+        <*> (fromSeconds <$> o .: "created")
+        <*> (fromSeconds <$> o .: "current_period_end")
+        <*> (fromSeconds <$> o .: "current_period_start")
+        <*> o .: "customer"
+        <*> o .:? "days_until_due"
+        <*> o .:? "discount"
+        <*> (fmap fromSeconds <$> o .:? "ended_at")
+        <*> o .: "livemode"
+        <*> o .: "metadata"
+        <*> o .: "plan"
+        <*> (Quantity <$> o .:  "quantity")
+        <*> (fromSeconds <$> o .: "start")
+        <*> (fromSeconds <$> o .: "start_date")
+        <*> o .: "status"
+        <*> (fmap fromSeconds <$> o .:? "trial_end")
+        <*> (fmap fromSeconds <$> o .:? "trial_start")
+    parseJSON _ = mzero
+
+------------------------------------------------------------------------------
+-- | Collection method of a `Subscription`
+data SubscriptionCollectionMethod
+    = ChargeAutomatically
+    | SendInvoice
+    deriving (Read, Show, Eq, Ord, Data, Typeable)
+
+------------------------------------------------------------------------------
+-- | JSON Instance for `SubscriptionCollectionMethod`
+instance FromJSON SubscriptionCollectionMethod where
+   parseJSON (String "charge_automatically") = pure ChargeAutomatically
+   parseJSON (String "send_invoice")         = pure SendInvoice
+   parseJSON _                               = mzero
 
 ------------------------------------------------------------------------------
 -- | Status of a `Subscription`
-data SubscriptionStatus =
-          Trialing
-        | Active
-        | PastDue
-        | Canceled
-        | UnPaid
-        deriving (Read, Show, Eq, Ord, Data, Typeable)
+data SubscriptionStatus
+    = Incomplete
+    | IncompleteExpired
+    | Trialing
+    | Active
+    | PastDue
+    | Canceled
+    | UnPaid
+    deriving (Read, Show, Eq, Ord, Data, Typeable)
 
 ------------------------------------------------------------------------------
 -- | JSON Instance for `SubscriptionStatus`
 instance FromJSON SubscriptionStatus where
-   parseJSON (String "trialing") = pure Trialing
-   parseJSON (String "active")   = pure Active
-   parseJSON (String "past_due") = pure PastDue
-   parseJSON (String "canceled") = pure Canceled
-   parseJSON (String "unpaid")   = pure UnPaid
-   parseJSON _                   = mzero
+   parseJSON (String "incomplete")         = pure Incomplete
+   parseJSON (String "incomplete_expired") = pure IncompleteExpired
+   parseJSON (String "trialing")           = pure Trialing
+   parseJSON (String "active")             = pure Active
+   parseJSON (String "past_due")           = pure PastDue
+   parseJSON (String "canceled")           = pure Canceled
+   parseJSON (String "unpaid")             = pure UnPaid
+   parseJSON _                             = mzero
 
 ------------------------------------------------------------------------------
 -- | `TaxPercent` for a `Subscription`
