@@ -51,15 +51,15 @@ import           Web.Stripe.Types    (AccountBalance (..), AccountNumber (..),
                                       Closed (..), Country (..), CouponId (..),
                                       Created (..), Currency (..),
                                       CustomerId (..), Date (..),
-                                      DefaultCard (..), Description (..),
-                                      Duration (..), DurationInMonths (..),
-                                      Email (..), EndingBefore (..),
-                                      EventId (..), Evidence (..),
-                                      ExpMonth (..), ExpYear (..),
-                                      ExpandParams (..), Expandable (..),
-                                      Forgiven (..), Interval (..),
-                                      IntervalCount (..), InvoiceId (..),
-                                      InvoiceItemId (..),
+                                      DefaultCard (..), DefaultTaxRates (..),
+                                      Description (..), Duration (..),
+                                      DurationInMonths (..), Email (..),
+                                      EndingBefore (..), EventId (..),
+                                      Evidence (..), ExpMonth (..),
+                                      ExpYear (..), ExpandParams (..),
+                                      Expandable (..), Forgiven (..),
+                                      Interval (..), IntervalCount (..),
+                                      InvoiceId (..), InvoiceItemId (..),
                                       InvoiceLineItemId (..), IsVerified (..),
                                       Limit (..), MaxRedemptions (..),
                                       MetaData (..), Name (..),
@@ -75,13 +75,14 @@ import           Web.Stripe.Types    (AccountBalance (..), AccountNumber (..),
                                       StatementDescription (..),
                                       SubscriptionCollectionMethod (..),
                                       SubscriptionId (..), TaxID (..),
-                                      TaxPercent (..), TimeRange (..),
-                                      TokenId (..), TransactionId (..),
-                                      TransactionType (..), TransferId (..),
-                                      TransferStatus (..), TrialEnd (..),
-                                      TrialPeriodDays (..))
-import           Web.Stripe.Util     (getParams, toBytestring, toExpandable,
-                                      toMetaData, toSeconds, toText)
+                                      TaxPercent (..), TaxRateId (..),
+                                      TimeRange (..), TokenId (..),
+                                      TransactionId (..), TransactionType (..),
+                                      TransferId (..), TransferStatus (..),
+                                      TrialEnd (..), TrialPeriodDays (..))
+import           Web.Stripe.Util     (getParams, mapWithIndex, toBytestring,
+                                      toExpandable, toMetaData, toSeconds,
+                                      toText)
 
 ------------------------------------------------------------------------------
 -- | HTTP Method
@@ -389,6 +390,13 @@ instance ToStripeParam TaxID where
 instance ToStripeParam TaxPercent where
   toStripeParam (TaxPercent tax) =
     (("tax_percent", fromString $ showFFloat (Just 2) tax "") :)
+
+instance ToStripeParam DefaultTaxRates where
+  toStripeParam (DefaultTaxRates rates) xs =
+    xs <> mapWithIndex (\n rate ->
+      ( "default_tax_rates[" <> toBytestring n <> "]"
+      , Text.encodeUtf8 $ (\(TaxRateId x) -> x) rate)
+      ) rates
 
 instance ToStripeParam a => ToStripeParam (TimeRange a) where
   toStripeParam (TimeRange{..}) =

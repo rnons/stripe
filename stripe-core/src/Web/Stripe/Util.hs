@@ -17,6 +17,7 @@ module Web.Stripe.Util
     , (</>)
     , toMetaData
     , toExpandable
+    , mapWithIndex
     ) where
 
 import           Data.ByteString       (ByteString)
@@ -27,7 +28,8 @@ import           Data.Text             (Text)
 import qualified Data.Text             as T
 import qualified Data.Text.Encoding    as T
 import           Data.Time.Clock       (UTCTime)
-import           Data.Time.Clock.POSIX (posixSecondsToUTCTime, utcTimeToPOSIXSeconds)
+import           Data.Time.Clock.POSIX (posixSecondsToUTCTime,
+                                        utcTimeToPOSIXSeconds)
 
 ------------------------------------------------------------------------------
 -- | Conversion from a `Show` constrained type to `Text`
@@ -106,3 +108,5 @@ toExpandable = map toKV
   where
     toKV v = ("expand[]",  T.encodeUtf8 v)
 
+mapWithIndex :: (Int -> a -> b) -> [a] -> [b]
+mapWithIndex f = zipWith f [0..]

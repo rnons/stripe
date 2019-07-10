@@ -657,6 +657,9 @@ newtype TaxPercent = TaxPercent Double deriving (Read, Show, Eq, Ord, Data, Type
 -- | `TaxRateId` for a `TaxRate`
 newtype TaxRateId = TaxRateId Text deriving (Read, Show, Eq, Ord, Data, Typeable)
 
+-- | `DefaultTaxRates` for a `Subscription`
+newtype DefaultTaxRates = DefaultTaxRates [TaxRateId]
+
 ------------------------------------------------------------------------------
 -- | `PlanId` for a `Plan`
 newtype PlanId = PlanId Text deriving (Read, Show, Eq, Ord, Data, Typeable)

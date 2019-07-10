@@ -88,11 +88,12 @@ import           Web.Stripe.Types         (ApplicationFeePercent (..),
                                            AtPeriodEnd (..), BillingCycleAnchor,
                                            CardId (..), Coupon (..),
                                            CouponId (..), CustomerId (..),
-                                           EndingBefore (..), ExpandParams (..),
-                                           Limit (..), MetaData (..),
-                                           PlanId (..), Prorate (..),
-                                           Quantity (..), StartingAfter (..),
-                                           StripeList (..), Subscription (..),
+                                           DefaultTaxRates, EndingBefore (..),
+                                           ExpandParams (..), Limit (..),
+                                           MetaData (..), PlanId (..),
+                                           Prorate (..), Quantity (..),
+                                           StartingAfter (..), StripeList (..),
+                                           Subscription (..),
                                            SubscriptionCollectionMethod,
                                            SubscriptionId (..),
                                            SubscriptionStatus (..),
@@ -126,7 +127,7 @@ instance StripeHasParam CreateSubscription CouponId
 -- instance StripeHasParam CreateSubscription DaysUntilDue
 -- instance StripeHasParam CreateSubscription DefaultPaymentMethod
 -- instance StripeHasParam CreateSubscription DefaultSource
--- instance StripeHasParam CreateSubscription DefaultTaxRates
+instance StripeHasParam CreateSubscription DefaultTaxRates
 instance StripeHasParam CreateSubscription MetaData
 instance StripeHasParam CreateSubscription Prorate
 instance StripeHasParam CreateSubscription TrialEnd
