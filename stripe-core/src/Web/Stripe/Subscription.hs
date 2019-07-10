@@ -80,6 +80,7 @@ module Web.Stripe.Subscription
 import           Control.Monad            (join)
 import qualified Data.ByteString.Char8    as B8
 import qualified Data.Text                as T
+import qualified Data.Text.Encoding       as Text
 import           Web.Stripe.StripeRequest (Method (DELETE, GET, POST),
                                            StripeHasParam, StripeRequest (..),
                                            StripeReturn, ToStripeParam (..),
@@ -100,7 +101,7 @@ import           Web.Stripe.Types         (ApplicationFeePercent (..),
                                            TaxPercent (..), TaxRateId (..),
                                            TrialEnd (..))
 import           Web.Stripe.Types.Util    (getCustomerId)
-import           Web.Stripe.Util          ((</>))
+import           Web.Stripe.Util          (mapWithIndex, toBytestring, (</>))
 
 ------------------------------------------------------------------------------
 -- | Create a `Subscription` by `CustomerId` and `PlanId`
@@ -145,8 +146,8 @@ data CreateSubscriptionSubscriptionItem = CreateSubscriptionSubscriptionItem
     }
 
 instance ToStripeParam [CreateSubscriptionSubscriptionItem] where
-    toStripeParam items xs = xs <> join (map
-        (\(CreateSubscriptionSubscriptionItem{..}, index) ->
+    toStripeParam items xs = xs <> join (mapWithIndex
+        (\index CreateSubscriptionSubscriptionItem{..} ->
             let item = "items[" <> B8.pack (show index) <> "]"
                 metaDataParam = case metaData of
                     Nothing -> []
@@ -160,14 +161,14 @@ instance ToStripeParam [CreateSubscriptionSubscriptionItem] where
                         ]
                 rateParam = case taxRates of
                     Nothing -> []
-                    Just rateIds -> map (\(rateId, index') ->
-                          ( item <> "[tax_rates][" <> B8.pack (show index') <> "]"
+                    Just rateIds -> mapWithIndex (\n rateId ->
+                          ( item <> "[tax_rates][" <> toBytestring n <> "]"
                           , B8.pack $ T.unpack $ (\(TaxRateId x) -> x) rateId
                           )
-                        ) (zip rateIds ([0,1..] :: [Int]))
-            in  [ (item <> "[plan]", B8.pack $ T.unpack $ (\(PlanId x) -> x) plan)
+                        ) rateIds
+            in  [ (item <> "[plan]", Text.encodeUtf8 $ (\(PlanId x) -> x) plan)
                 ] <> metaDataParam <> quantityParam <> rateParam
-        ) (zip items ([0,1..] :: [Int]))
+        ) items
         )
 
 ------------------------------------------------------------------------------
