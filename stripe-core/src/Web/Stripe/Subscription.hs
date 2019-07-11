@@ -61,6 +61,7 @@ module Web.Stripe.Subscription
     , CustomerId         (..)
     , CouponId           (..)
     , Coupon             (..)
+    , DefaultTaxRates    (..)
     , EndingBefore       (..)
     , ExpandParams       (..)
     , Limit              (..)
@@ -89,7 +90,6 @@ import           Web.Stripe.StripeRequest      (Method (DELETE, GET, POST),
 import           Web.Stripe.Types              (ApplicationFeePercent (..),
                                                 CardId (..), Coupon (..),
                                                 CouponId (..), CustomerId (..),
-                                                DefaultTaxRates,
                                                 EndingBefore (..),
                                                 ExpandParams (..), Limit (..),
                                                 MetaData (..), PlanId (..),
@@ -102,6 +102,7 @@ import           Web.Stripe.Types              (ApplicationFeePercent (..),
 import           Web.Stripe.Types.Plan         (TrialEnd (..))
 import           Web.Stripe.Types.Subscription (AtPeriodEnd (..),
                                                 BillingCycleAnchor,
+                                                DefaultTaxRates (..),
                                                 Prorate (..),
                                                 SubscriptionStatus (..))
 import           Web.Stripe.Types.TaxRate      (TaxRateId (..))

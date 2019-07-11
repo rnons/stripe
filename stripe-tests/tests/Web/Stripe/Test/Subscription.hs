@@ -15,7 +15,7 @@ import           Web.Stripe.Customer
 import           Web.Stripe.Plan
 import           Web.Stripe.StripeRequest
 import           Web.Stripe.Subscription
-import           Web.Stripe.Types         (DefaultTaxRates (..), TaxRateId (..))
+import           Web.Stripe.Types.TaxRate (TaxRateId (..))
 
 createSubscription'
     :: CustomerId

@@ -51,10 +51,41 @@ library
                        Web.Stripe.Recipient
                        Web.Stripe.Refund
                        Web.Stripe.StripeRequest
+                       Web.Stripe.StripeRequest.Class
                        Web.Stripe.Subscription
                        Web.Stripe.Token
                        Web.Stripe.Transfer
                        Web.Stripe.Types
+                       Web.Stripe.Types.Balance
+                       Web.Stripe.Types.BankAccount
+                       Web.Stripe.Types.Card
+                       Web.Stripe.Types.Charge
+                       Web.Stripe.Types.Country
+                       Web.Stripe.Types.Coupon
+                       Web.Stripe.Types.Currency
+                       Web.Stripe.Types.Customer
+                       Web.Stripe.Types.Date
+                       Web.Stripe.Types.Description
+                       Web.Stripe.Types.Dispute
+                       Web.Stripe.Types.Email
+                       Web.Stripe.Types.Event
+                       Web.Stripe.Types.Invoice
+                       Web.Stripe.Types.InvoiceItem
+                       Web.Stripe.Types.MetaData
+                       Web.Stripe.Types.Plan
+                       Web.Stripe.Types.Quantity
+                       Web.Stripe.Types.Recipient
+                       Web.Stripe.Types.Refund
+                       Web.Stripe.Types.Source
+                       Web.Stripe.Types.StatementDescriptor
+                       Web.Stripe.Types.StripeList
+                       Web.Stripe.Types.Subscription
+                       Web.Stripe.Types.TaxID
+                       Web.Stripe.Types.TaxRate
+                       Web.Stripe.Types.TimeRange
+                       Web.Stripe.Types.Token
+                       Web.Stripe.Types.Transaction
+                       Web.Stripe.Types.Transfer
                        Web.Stripe.Util
 
   ghc-options:        -Wall
