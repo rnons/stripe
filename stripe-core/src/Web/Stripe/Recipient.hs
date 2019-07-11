@@ -74,31 +74,38 @@ module Web.Stripe.Recipient
     , TokenId        (..)
     ) where
 
-import           Web.Stripe.StripeRequest (Method (GET, POST, DELETE),
+import           Web.Stripe.StripeRequest (Method (DELETE, GET, POST),
                                            StripeHasParam, StripeRequest (..),
-                                           ToStripeParam(..), StripeReturn,
+                                           StripeReturn, ToStripeParam (..),
                                            mkStripeRequest)
-import           Web.Stripe.Util          ((</>))
 import           Web.Stripe.Types         (AccountNumber (..),
-                                           BankAccount (..), CVC (..),
-                                           CardId (..), CardNumber, BankAccountId (..),
-                                           BankAccountStatus(..),
+                                           AccountNumber (..), AddressCity (..),
+                                           AddressCountry (..),
+                                           AddressLine1 (..), AddressLine2 (..),
+                                           AddressState (..), AddressZip (..),
+                                           BankAccount (..), BankAccountId (..),
+                                           BankAccountStatus (..), CVC (..),
+                                           CardId (..), CardNumber,
                                            CardNumber (..), Country (..),
-                                           DefaultCard(..), Description(..), Email(..),
-                                           ExpMonth (..), ExpYear(..), IsVerified(..),
-                                           RoutingNumber  (..), AccountNumber  (..),
-                                           Country        (..), AddressCity    (..),
-                                           AddressCountry (..), AddressLine1   (..),
-                                           AddressLine2   (..), AddressState   (..),
-                                           AddressZip     (..), Country(..), ExpYear (..),
-                                           Limit(..), Name(..), NewBankAccount(..), NewCard(..), Recipient (..),
-                                           RecipientId (..), ExpandParams(..),
-                                           RecipientType (..), StripeDeleteResult(..),
-                                           RoutingNumber (..), EndingBefore(..),
-                                           StartingAfter(..), StripeList (..),
-                                           TaxID(..), TokenId(..),
-                                           TokenId (..), MetaData(..))
+                                           Country (..), Country (..),
+                                           DefaultCard (..), Description (..),
+                                           Email (..), EndingBefore (..),
+                                           ExpMonth (..), ExpYear (..),
+                                           ExpYear (..), ExpandParams (..),
+                                           IsVerified (..), Limit (..),
+                                           MetaData (..), Name (..),
+                                           NewBankAccount (..), NewCard (..),
+                                           Recipient (..), RecipientId (..),
+                                           RecipientType (..),
+                                           RoutingNumber (..),
+                                           RoutingNumber (..),
+                                           StartingAfter (..),
+                                           StripeDeleteResult (..),
+                                           StripeList (..), TokenId (..),
+                                           TokenId (..))
+import           Web.Stripe.Types.TaxID   (TaxID (..))
 import           Web.Stripe.Types.Util    (getRecipientId)
+import           Web.Stripe.Util          ((</>))
 
 ------------------------------------------------------------------------------
 -- | Base Request for issues create `Recipient` requests

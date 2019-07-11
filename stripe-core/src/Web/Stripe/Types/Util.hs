@@ -18,8 +18,12 @@ module Web.Stripe.Types.Util
        , getInvoiceItemId
        ) where
 
-import           Data.Text        (Text)
+import           Data.Text                    (Text)
 import           Web.Stripe.Types
+import           Web.Stripe.Types.Card        (CardId (..))
+import           Web.Stripe.Types.Invoice     (InvoiceId (..))
+import           Web.Stripe.Types.InvoiceItem (InvoiceItemId (..))
+import           Web.Stripe.Types.Transaction (TransactionId (..))
 
 ------------------------------------------------------------------------------
 -- | Helper for retrieving `TransactionId`
@@ -65,4 +69,3 @@ getInvoiceId (InvoiceId x) = x
 -- | Helper for retrieving `InvoiceItemId`
 getInvoiceItemId :: InvoiceItemId -> Text
 getInvoiceItemId (InvoiceItemId x) = x
-

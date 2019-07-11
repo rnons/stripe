@@ -62,18 +62,26 @@ module Web.Stripe.InvoiceItem
     , Description        (..)
     , Amount             (..)
     ) where
-import           Web.Stripe.StripeRequest (Method (GET, POST, DELETE),
-                                           StripeHasParam, StripeRequest (..),
-                                           StripeReturn, ToStripeParam(..),
-                                           mkStripeRequest)
-import           Web.Stripe.Util          ((</>))
-import           Web.Stripe.Types         (Amount(..), Created(..), Currency (..),
-                                           CustomerId (..), Description(..),
-                                           InvoiceId (..), InvoiceItem (..), Invoice(..),
-                                           InvoiceItemId (..), Limit(..), StartingAfter(..), EndingBefore(..),
-                                           StripeDeleteResult (..), ExpandParams(..),
-                                           SubscriptionId (..), StripeList(..), MetaData(..))
-import           Web.Stripe.Types.Util    (getInvoiceItemId)
+import           Web.Stripe.StripeRequest     (Method (DELETE, GET, POST),
+                                               StripeHasParam,
+                                               StripeRequest (..), StripeReturn,
+                                               ToStripeParam (..),
+                                               mkStripeRequest)
+import           Web.Stripe.Types             (Amount (..), Created (..),
+                                               Currency (..), CustomerId (..),
+                                               Description (..),
+                                               EndingBefore (..),
+                                               ExpandParams (..), Invoice (..),
+                                               InvoiceItem (..), Limit (..),
+                                               MetaData (..),
+                                               StartingAfter (..),
+                                               StripeDeleteResult (..),
+                                               StripeList (..),
+                                               SubscriptionId (..))
+import           Web.Stripe.Types.Invoice     (InvoiceId (..))
+import           Web.Stripe.Types.InvoiceItem (InvoiceItemId (..))
+import           Web.Stripe.Types.Util        (getInvoiceItemId)
+import           Web.Stripe.Util              ((</>))
 
 ------------------------------------------------------------------------------
 -- | Create an invoice for a Customer

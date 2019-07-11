@@ -51,20 +51,25 @@ module Web.Stripe.Balance
     , TransactionType        (..)
     ) where
 
-import           Web.Stripe.StripeRequest (Method (GET), StripeHasParam,
-                                           StripeRequest (..),
-                                           StripeReturn, ToStripeParam(..),
-                                           mkStripeRequest)
-import           Web.Stripe.Util          ((</>))
-import           Web.Stripe.Types         (AvailableOn(..), Balance (..),
-                                           BalanceAmount(..), BalanceTransaction(..),
-                                           Created(..), Currency(..),
-                                           EndingBefore(..), ExpandParams(..),
-                                           Limit(..), Source(..), StartingAfter(..),
-                                           StripeList (..), TimeRange(..),
-                                           TransferId(..), TransactionId (..),
-                                           TransactionType(..))
-import           Web.Stripe.Types.Util    (getTransactionId)
+import           Web.Stripe.StripeRequest     (Method (GET), StripeHasParam,
+                                               StripeRequest (..), StripeReturn,
+                                               ToStripeParam (..),
+                                               mkStripeRequest)
+import           Web.Stripe.Types             (Balance (..), BalanceAmount (..),
+                                               BalanceTransaction (..),
+                                               Created (..), Currency (..),
+                                               EndingBefore (..),
+                                               ExpandParams (..), Limit (..),
+                                               StartingAfter (..),
+                                               StripeList (..))
+import           Web.Stripe.Types.Balance     (AvailableOn (..))
+import           Web.Stripe.Types.Source      (Source (..))
+import           Web.Stripe.Types.TimeRange   (TimeRange (..))
+import           Web.Stripe.Types.Transaction (TransactionId (..),
+                                               TransactionType (..))
+import           Web.Stripe.Types.Transfer    (TransferId (..))
+import           Web.Stripe.Types.Util        (getTransactionId)
+import           Web.Stripe.Util              ((</>))
 
 ------------------------------------------------------------------------------
 -- | Retrieve the current `Balance` for your Stripe account

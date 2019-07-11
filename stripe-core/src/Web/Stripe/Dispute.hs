@@ -44,16 +44,15 @@ module Web.Stripe.Dispute
     , MetaData      (..)
     ) where
 
-import           Web.Stripe.StripeRequest (Method (POST),
-                                           StripeHasParam, StripeRequest (..),
-                                           StripeReturn,
+import           Web.Stripe.StripeRequest (Method (POST), StripeHasParam,
+                                           StripeRequest (..), StripeReturn,
                                            mkStripeRequest)
-import           Web.Stripe.Util          ((</>))
 import           Web.Stripe.Types         (ChargeId (..), Dispute (..),
                                            DisputeReason (..),
-                                           DisputeStatus (..),
-                                           Evidence (..), MetaData(..))
+                                           DisputeStatus (..), MetaData (..))
+import           Web.Stripe.Types.Dispute (Evidence (..))
 import           Web.Stripe.Types.Util    (getChargeId)
+import           Web.Stripe.Util          ((</>))
 
 ------------------------------------------------------------------------------
 -- | `Dispute` to be updated

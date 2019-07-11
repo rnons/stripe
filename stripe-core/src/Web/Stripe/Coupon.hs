@@ -59,20 +59,21 @@ module Web.Stripe.Coupon
     ) where
 
 import           Data.Text                (Text)
-import           Web.Stripe.StripeRequest (Method (GET, POST, DELETE), Param(..),
-                                           StripeHasParam, StripeRequest (..),
-                                           StripeReturn, ToStripeParam(..),
-                                           mkStripeRequest)
-import           Web.Stripe.Util          ((</>))
-import           Web.Stripe.Types         (AmountOff (..), Coupon (..),
-                                           CouponId (..), Currency (..),
-                                           Duration(..), DurationInMonths (..),
-                                           EndingBefore(..), Limit(..),
-                                           MaxRedemptions (..), MetaData(..),
-                                           PercentOff (..), RedeemBy (..),
-                                           StartingAfter(..),
+import           Web.Stripe.StripeRequest (Method (DELETE, GET, POST),
+                                           Param (..), StripeHasParam,
+                                           StripeRequest (..), StripeReturn,
+                                           ToStripeParam (..), mkStripeRequest)
+import           Web.Stripe.Types         (Coupon (..), CouponId (..),
+                                           Currency (..), Duration (..),
+                                           EndingBefore (..), Limit (..),
+                                           MetaData (..), StartingAfter (..),
                                            StripeDeleteResult (..),
                                            StripeList (..))
+import           Web.Stripe.Types.Coupon  (AmountOff (..),
+                                           DurationInMonths (..),
+                                           MaxRedemptions (..), PercentOff (..),
+                                           RedeemBy (..))
+import           Web.Stripe.Util          ((</>))
 
 ------------------------------------------------------------------------------
 -- | Create `Coupon`

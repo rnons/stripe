@@ -63,18 +63,18 @@ module Web.Stripe.Refund
     , StripeList   (..)
     ) where
 
-import           Web.Stripe.StripeRequest   (Method (GET, POST),
-                                             StripeHasParam, StripeReturn,
-                                             StripeRequest (..), mkStripeRequest)
-import           Web.Stripe.Util            ((</>))
-import           Web.Stripe.Types           (Amount(..), Charge (..), ChargeId (..),
-                                             EndingBefore(..), Limit(..),
-                                             MetaData(..), Refund (..),
-                                             RefundApplicationFee(..),
-                                             RefundId (..), RefundReason(..),
-                                             StartingAfter(..), ExpandParams(..),
-                                             StripeList (..))
-import           Web.Stripe.Types.Util      (getChargeId)
+import           Web.Stripe.StripeRequest (Method (GET, POST), StripeHasParam,
+                                           StripeRequest (..), StripeReturn,
+                                           mkStripeRequest)
+import           Web.Stripe.Types         (Amount (..), Charge (..),
+                                           ChargeId (..), EndingBefore (..),
+                                           ExpandParams (..), Limit (..),
+                                           MetaData (..), Refund (..),
+                                           StartingAfter (..), StripeList (..))
+import           Web.Stripe.Types.Refund  (RefundApplicationFee (..),
+                                           RefundId (..), RefundReason (..))
+import           Web.Stripe.Types.Util    (getChargeId)
+import           Web.Stripe.Util          ((</>))
 
 ------------------------------------------------------------------------------
 -- | create a `Refund`

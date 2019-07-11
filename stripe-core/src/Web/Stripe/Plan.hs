@@ -66,15 +66,15 @@ import           Web.Stripe.StripeRequest (Method (DELETE, GET, POST),
                                            StripeRequest (..), StripeReturn,
                                            ToStripeParam (..), mkStripeRequest)
 import           Web.Stripe.Types         (Amount (..), Currency (..),
-                                           EndingBefore (..), Interval (..),
+                                           EndingBefore (..),
                                            IntervalCount (..), Limit (..),
                                            MetaData (..), Plan (..),
-                                           PlanId (..), PlanName (..),
-                                           StartingAfter (..),
+                                           PlanId (..), StartingAfter (..),
                                            StatementDescription (..),
                                            StripeDeleteResult (..),
                                            StripeList (..),
                                            TrialPeriodDays (..))
+import           Web.Stripe.Types.Plan    (Interval (..), PlanName (..))
 import           Web.Stripe.Util          ((</>))
 
 ------------------------------------------------------------------------------

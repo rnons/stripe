@@ -52,13 +52,14 @@ module Web.Stripe.ApplicationFeeRefund
 import           Web.Stripe.StripeRequest (Method (GET, POST), StripeHasParam,
                                            StripeRequest (..), StripeReturn,
                                            mkStripeRequest)
-import           Web.Stripe.Util          ((</>))
-import           Web.Stripe.Types         (Amount(..), ApplicationFee (..),
+import           Web.Stripe.Types         (Amount (..), ApplicationFee (..),
                                            ApplicationFeeRefund (..),
-                                           EndingBefore(..), ExpandParams(..),
-                                           FeeId (..), Limit(..), MetaData(..),
-                                           RefundId (..), StartingAfter(..),
+                                           EndingBefore (..), ExpandParams (..),
+                                           FeeId (..), Limit (..),
+                                           MetaData (..), StartingAfter (..),
                                            StripeList (..))
+import           Web.Stripe.Types.Refund  (RefundId (..))
+import           Web.Stripe.Util          ((</>))
 
 ------------------------------------------------------------------------------
 -- | Create a new `ApplicationFeeRefund`

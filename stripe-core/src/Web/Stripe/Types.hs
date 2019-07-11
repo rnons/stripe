@@ -14,21 +14,106 @@
 -- Portability : POSIX
 --
 ------------------------------------------------------------------------------
-module Web.Stripe.Types where
+module Web.Stripe.Types
+  ( module Web.Stripe.Types
+  , module Web.Stripe.Types.BankAccount
+  , module Web.Stripe.Types.Card
+  , module Web.Stripe.Types.Charge
+  , module Web.Stripe.Types.Country
+  , module Web.Stripe.Types.Currency
+  , module Web.Stripe.Types.Customer
+  , module Web.Stripe.Types.Coupon
+  , module Web.Stripe.Types.Date
+  , module Web.Stripe.Types.Description
+  , module Web.Stripe.Types.Email
+  , module Web.Stripe.Types.MetaData
+  , module Web.Stripe.Types.Plan
+  , module Web.Stripe.Types.Quantity
+  , module Web.Stripe.Types.Recipient
+  , module Web.Stripe.Types.StatementDescriptor
+  , module Web.Stripe.Types.StripeList
+  , module Web.Stripe.Types.Subscription
+  , module Web.Stripe.Types.Token
+  ) where
 ------------------------------------------------------------------------------
-import           Control.Applicative (pure, (<$>), (<*>), (<|>))
-import           Control.Monad       (mzero)
-import           Data.Aeson          (FromJSON (parseJSON), ToJSON (..),
-                                      Value (Bool, Object, String), (.:), (.:?))
-import           Data.Data           (Data, Typeable)
-import qualified Data.HashMap.Strict as H
-import           Data.Ratio          ((%))
-import           Data.Text           (Text)
-import           Data.Time           (UTCTime)
-import           Numeric             (fromRat, showFFloat)
-import           Text.Read           (lexP, pfail)
-import qualified Text.Read           as R
-import           Web.Stripe.Util     (fromSeconds)
+import           Control.Applicative                  (pure, (<$>), (<*>),
+                                                       (<|>))
+import           Control.Monad                        (mzero)
+import           Data.Aeson                           (FromJSON (parseJSON), Value (Bool, Object, String),
+                                                       (.:), (.:?))
+import           Data.Data                            (Data, Typeable)
+import qualified Data.HashMap.Strict                  as H
+import           Data.Text                            (Text)
+import           Data.Time                            (UTCTime)
+import           Web.Stripe.StripeRequest.Class       (ToStripeParam (..))
+import           Web.Stripe.Types.BankAccount         (AccountNumber (..),
+                                                       BankAccountId (..),
+                                                       BankAccountStatus (..),
+                                                       NewBankAccount (..),
+                                                       RoutingNumber (..))
+import           Web.Stripe.Types.Card                (AddressCity (..),
+                                                       AddressCountry (..),
+                                                       AddressLine1 (..),
+                                                       AddressLine2 (..),
+                                                       AddressState (..),
+                                                       AddressZip (..),
+                                                       Brand (..), CVC (..),
+                                                       CardId (..),
+                                                       CardNumber (..),
+                                                       DefaultCard (..),
+                                                       ExpMonth (..),
+                                                       ExpYear (..),
+                                                       IsVerified (..),
+                                                       Name (..), NewCard (..),
+                                                       mkNewCard)
+import           Web.Stripe.Types.Charge              (Amount (..),
+                                                       ApplicationFeeAmount (..),
+                                                       ApplicationFeeId (..),
+                                                       ApplicationFeePercent (..),
+                                                       ApplicationId (..),
+                                                       ChargeId (..))
+import           Web.Stripe.Types.Country             (Country (..))
+import           Web.Stripe.Types.Coupon              (CouponId (..),
+                                                       Duration (..),
+                                                       IntervalCount (..),
+                                                       TrialPeriodDays (..))
+import           Web.Stripe.Types.Currency            (Currency (..))
+import           Web.Stripe.Types.Customer            (CustomerId (..))
+import           Web.Stripe.Types.Date                (Created (..), Date (..))
+import           Web.Stripe.Types.Description         (Description (..))
+import           Web.Stripe.Types.Dispute             (Evidence (..))
+import           Web.Stripe.Types.Email               (Email (..))
+import           Web.Stripe.Types.Event               (EventId (..), EventType)
+import           Web.Stripe.Types.Invoice             (InvoiceId (..),
+                                                       InvoiceLineItemId (..),
+                                                       InvoiceLineItemType)
+import           Web.Stripe.Types.InvoiceItem         (InvoiceItemId (..))
+import           Web.Stripe.Types.MetaData            (MetaData (..))
+import           Web.Stripe.Types.Plan                (Interval (..),
+                                                       PlanId (..))
+import           Web.Stripe.Types.Quantity            (Quantity (..))
+import           Web.Stripe.Types.Recipient           (RecipientId (..),
+                                                       RecipientType (..))
+import           Web.Stripe.Types.Refund              (RefundId (..))
+import           Web.Stripe.Types.StatementDescriptor (StatementDescription (..))
+import           Web.Stripe.Types.StripeList          (EndingBefore (..),
+                                                       Limit (..),
+                                                       StartingAfter (..),
+                                                       StripeList (..))
+import           Web.Stripe.Types.Subscription        (BillingCycleAnchor (..),
+                                                       DefaultTaxRates,
+                                                       SubscriptionCollectionMethod,
+                                                       SubscriptionId (..),
+                                                       SubscriptionStatus)
+import           Web.Stripe.Types.Token               (TokenId (..),
+                                                       TokenType (..))
+import           Web.Stripe.Types.Transaction         (TransactionId (..),
+                                                       TransactionType (..))
+import           Web.Stripe.Types.Transfer            (TransferId (..),
+                                                       TransferStatus (..),
+                                                       TransferType (..))
+import           Web.Stripe.Util                      (fromSeconds,
+                                                       toExpandable)
 ------------------------------------------------------------------------------
 
 ------------------------------------------------------------------------------
@@ -63,61 +148,6 @@ type instance ExpandsTo TransactionId   = BalanceTransaction
 instance (FromJSON id,  FromJSON (ExpandsTo id)) =>
          FromJSON (Expandable id) where
   parseJSON v = (Id <$> parseJSON v) <|> (Expanded <$> parseJSON v)
-
-------------------------------------------------------------------------------
--- | specify a `TimeRange`
--- FIXME: this is a little awkward to use. How can we make it moar better?
-data TimeRange a = TimeRange
-    { gt  :: Maybe a
-    , gte :: Maybe a
-    , lt  :: Maybe a
-    , lte :: Maybe a
-    } deriving (Read, Show, Eq, Ord, Data, Typeable)
-
-------------------------------------------------------------------------------
--- | Time range with all values set to `Nothing`
-emptyTimeRange :: TimeRange a
-emptyTimeRange = TimeRange
-    { gt  = Nothing
-    , gte = Nothing
-    , lt  = Nothing
-    , lte = Nothing
-    }
-
-------------------------------------------------------------------------------
--- | `AvailableOn`
-newtype AvailableOn = AvailableOn UTCTime
-    deriving (Read, Show, Eq, Ord, Data, Typeable)
-
-------------------------------------------------------------------------------
--- | `Created`
-newtype Created = Created UTCTime
-    deriving (Read, Show, Eq, Ord, Data, Typeable)
-
-------------------------------------------------------------------------------
--- | `Date`
-newtype Date = Date UTCTime
-    deriving (Read, Show, Eq, Ord, Data, Typeable)
-
-------------------------------------------------------------------------------
--- | `ChargeId` associated with a `Charge`
-newtype ChargeId
-  = ChargeId Text
-  deriving (Read, Show, Eq, Ord, Data, Typeable)
-
-------------------------------------------------------------------------------
--- | JSON Instance for `ChargeId`
-instance FromJSON ChargeId where
-   parseJSON (String x) = pure $ ChargeId x
-   parseJSON _          = mzero
-
-------------------------------------------------------------------------------
--- | `StatementDescription` to be added to a `Charge`
-newtype StatementDescription =
-  StatementDescription Text deriving (Read, Show, Eq, Ord, Data, Typeable)
-
-instance FromJSON StatementDescription where
-  parseJSON v = StatementDescription <$> parseJSON v
 
 ------------------------------------------------------------------------------
 -- | `Charge` object in `Stripe` API
@@ -177,16 +207,6 @@ instance FromJSON Charge where
     parseJSON _ = mzero
 
 ------------------------------------------------------------------------------
--- | Capture for `Charge`
-newtype Capture = Capture { getCapture :: Bool }
-  deriving (Read, Show, Eq, Ord, Data, Typeable)
-
-------------------------------------------------------------------------------
--- | `RefundId` for `Refund`
-newtype RefundId =
-  RefundId Text deriving (Read, Show, Eq, Ord, Data, Typeable)
-
-------------------------------------------------------------------------------
 -- | `Refund` Object
 data Refund = Refund {
       refundId                 :: RefundId
@@ -212,32 +232,6 @@ instance FromJSON Refund where
                <*> o .:? "balance_transaction"
                <*> o .: "metadata"
    parseJSON _ = mzero
-
-------------------------------------------------------------------------------
--- | `RefundApplicationFee`
-newtype RefundApplicationFee =
-  RefundApplicationFee { getRefundApplicationFee :: Bool }
-  deriving (Read, Show, Eq, Ord, Data, Typeable)
-
-------------------------------------------------------------------------------
--- | `RefundReason`
-data RefundReason
-  = RefundDuplicate
-  | RefundFraudulent
-  | RefundRequestedByCustomer
-  deriving (Read, Show, Eq, Ord, Data, Typeable)
-
-------------------------------------------------------------------------------
--- | `CustomerId` for a `Customer`
-newtype CustomerId
-  = CustomerId Text
-  deriving (Read, Show, Eq, Ord, Data, Typeable)
-
-------------------------------------------------------------------------------
--- | JSON Instance for `CustomerId`
-instance FromJSON CustomerId where
-    parseJSON (String x) = pure (CustomerId x)
-    parseJSON _          = mzero
 
 ------------------------------------------------------------------------------
 -- | `Customer` object
@@ -290,98 +284,15 @@ instance FromJSON Customer where
     parseJSON _ = mzero
 
 ------------------------------------------------------------------------------
--- | AccountBalance for a `Customer`
-newtype AccountBalance = AccountBalance Int
-  deriving (Eq, Ord, Read, Show, Data, Typeable)
-
-------------------------------------------------------------------------------
--- | CardId for a `Customer`
-newtype CardId = CardId Text
-  deriving (Eq, Ord, Read, Show, Data, Typeable)
-
-------------------------------------------------------------------------------
 -- | CardId for a `Recipient`
 newtype RecipientCardId = RecipientCardId Text
   deriving (Eq, Ord, Read, Show, Data, Typeable)
-
-------------------------------------------------------------------------------
--- | JSON Instance for `CardId`
-instance FromJSON CardId where
-   parseJSON (String x) = pure $ CardId x
-   parseJSON _          = mzero
 
 ------------------------------------------------------------------------------
 -- | JSON Instance for `RecipientCardId`
 instance FromJSON RecipientCardId where
    parseJSON (String x) = pure $ RecipientCardId x
    parseJSON _          = mzero
-
-------------------------------------------------------------------------------
--- | Number associated with a `Card`
-newtype CardNumber     = CardNumber Text deriving (Read, Show, Eq, Ord, Data, Typeable)
-
-------------------------------------------------------------------------------
--- | Expiration Month for a `Card`
-newtype ExpMonth       = ExpMonth Int deriving (Read, Show, Eq, Ord, Data, Typeable)
-
-------------------------------------------------------------------------------
--- | Expiration Year for a `Card`
-newtype ExpYear        = ExpYear Int deriving (Read, Show, Eq, Ord, Data, Typeable)
-
-------------------------------------------------------------------------------
--- | CVC for a `Card`
-newtype CVC            = CVC Text deriving (Read, Show, Eq, Ord, Data, Typeable)
-
-------------------------------------------------------------------------------
--- | City address for a `Card`
-newtype AddressCity    = AddressCity Text deriving (Read, Show, Eq, Ord, Data, Typeable)
-
-------------------------------------------------------------------------------
--- | Country address for a `Card`
-newtype AddressCountry = AddressCountry Text deriving (Read, Show, Eq, Ord, Data, Typeable)
-
-------------------------------------------------------------------------------
--- | Address Line One for a `Card`
-newtype AddressLine1   = AddressLine1 Text deriving (Read, Show, Eq, Ord, Data, Typeable)
-
-------------------------------------------------------------------------------
--- | Address Line Two for a `Card`
-newtype AddressLine2   = AddressLine2 Text deriving (Read, Show, Eq, Ord, Data, Typeable)
-
-------------------------------------------------------------------------------
--- | Address State for a `Card`
-newtype AddressState   = AddressState Text deriving (Read, Show, Eq, Ord, Data, Typeable)
-
-------------------------------------------------------------------------------
--- | Address Zip Code for a `Card`
-newtype AddressZip     = AddressZip Text deriving (Read, Show, Eq, Ord, Data, Typeable)
-
-------------------------------------------------------------------------------
--- | `IsVerified` `Recipients`
-newtype IsVerified = IsVerified { getVerified :: Bool }
-  deriving (Read, Show, Eq, Ord, Data, Typeable)
-
-------------------------------------------------------------------------------
--- | Credit / Debit Card Brand
-data Brand = Visa
-           | AMEX
-           | MasterCard
-           | Discover
-           | JCB
-           | DinersClub
-           | Unknown
-             deriving (Read, Show, Eq, Ord, Data, Typeable)
-
-------------------------------------------------------------------------------
--- | JSON Instance for `Brand`
-instance FromJSON Brand where
-   parseJSON (String "American Express") = pure AMEX
-   parseJSON (String "MasterCard")       = pure MasterCard
-   parseJSON (String "Discover")         = pure Discover
-   parseJSON (String "JCB")              = pure JCB
-   parseJSON (String "Visa")             = pure Visa
-   parseJSON (String "DinersClub")       = pure DinersClub
-   parseJSON _                           = mzero
 
 ------------------------------------------------------------------------------
 -- | `Card` Object
@@ -486,65 +397,6 @@ instance FromJSON RecipientCard where
              <*> o .:? "recipient"
     parseJSON _ = mzero
 
-
-------------------------------------------------------------------------------
--- | `NewCard` contains the data needed to create a new `Card`
-data NewCard = NewCard
-    { newCardCardNumber     :: CardNumber
-    , newCardExpMonth       :: ExpMonth
-    , newCardExpYear        :: ExpYear
-    , newCardCVC            :: Maybe CVC
-    , newCardName           :: Maybe Name
-    , newCardAddressLine1   :: Maybe AddressLine1
-    , newCardAddressLine2   :: Maybe AddressLine2
-    , newCardAddressCity    :: Maybe AddressCity
-    , newCardAddressZip     :: Maybe AddressZip
-    , newCardAddressState   :: Maybe AddressState
-    , newCardAddressCountry :: Maybe AddressCountry
-    }
-    deriving (Read, Show, Eq, Ord, Data, Typeable)
-
-------------------------------------------------------------------------------
--- | create a `NewCard` with only the required fields
-mkNewCard
-    :: CardNumber
-    -> ExpMonth
-    -> ExpYear
-    -> NewCard
-mkNewCard
-    cardNumber
-    expMonth
-    expYear
-    = NewCard
-    { newCardCardNumber     = cardNumber
-    , newCardExpMonth       = expMonth
-    , newCardExpYear        = expYear
-    , newCardCVC            = Nothing
-    , newCardName           = Nothing
-    , newCardAddressLine1   = Nothing
-    , newCardAddressLine2   = Nothing
-    , newCardAddressCity    = Nothing
-    , newCardAddressZip     = Nothing
-    , newCardAddressState   = Nothing
-    , newCardAddressCountry = Nothing
-    }
-
-------------------------------------------------------------------------------
--- | set the `DefaultCard`
-data DefaultCard = DefaultCard { getDefaultCard :: CardId }
-    deriving (Read, Show, Eq, Ord, Data, Typeable)
-
-------------------------------------------------------------------------------
--- | `SubscriptionId` for a `Subscription`
-newtype SubscriptionId = SubscriptionId { getSubscriptionId :: Text }
-    deriving (Read, Show, Eq, Ord, Data, Typeable)
-
-------------------------------------------------------------------------------
--- | JSON Instance for `SubscriptionId`
-instance FromJSON SubscriptionId where
-    parseJSON (String x) = pure (SubscriptionId x)
-    parseJSON _          = mzero
-
 ------------------------------------------------------------------------------
 -- | Subscription Object
 data Subscription = Subscription {
@@ -564,7 +416,7 @@ data Subscription = Subscription {
     , subscriptionDaysUntilDue          :: Maybe Int
     -- , subscriptionDefaultPaymentMethod
     -- , subscriptionDefaultSource
-    -- , subscriptionDefaultTaxRates
+    -- , subscriptionDefaultTaxRates       :: DefaultTaxRates
     , subscriptionDiscount              :: Maybe Discount
     , subscriptionEndedAt               :: Maybe UTCTime
     -- , subscriptionItems
@@ -596,6 +448,7 @@ instance FromJSON Subscription where
         <*> (fromSeconds <$> o .: "current_period_start")
         <*> o .: "customer"
         <*> o .:? "days_until_due"
+        -- <*> o .: "default_tax_rates"
         <*> o .:? "discount"
         <*> (fmap fromSeconds <$> o .:? "ended_at")
         <*> o .: "livemode"
@@ -608,61 +461,6 @@ instance FromJSON Subscription where
         <*> (fmap fromSeconds <$> o .:? "trial_end")
         <*> (fmap fromSeconds <$> o .:? "trial_start")
     parseJSON _ = mzero
-
-newtype BillingCycleAnchor = BillingCycleAnchor UTCTime
-    deriving (Read, Show, Eq, Ord, Data, Typeable)
-
-------------------------------------------------------------------------------
--- | Collection method of a `Subscription`
-data SubscriptionCollectionMethod
-    = ChargeAutomatically
-    | SendInvoice
-    deriving (Read, Show, Eq, Ord, Data, Typeable)
-
-------------------------------------------------------------------------------
--- | JSON Instance for `SubscriptionCollectionMethod`
-instance FromJSON SubscriptionCollectionMethod where
-   parseJSON (String "charge_automatically") = pure ChargeAutomatically
-   parseJSON (String "send_invoice")         = pure SendInvoice
-   parseJSON _                               = mzero
-
-------------------------------------------------------------------------------
--- | Status of a `Subscription`
-data SubscriptionStatus
-    = Incomplete
-    | IncompleteExpired
-    | Trialing
-    | Active
-    | PastDue
-    | Canceled
-    | UnPaid
-    deriving (Read, Show, Eq, Ord, Data, Typeable)
-
-------------------------------------------------------------------------------
--- | JSON Instance for `SubscriptionStatus`
-instance FromJSON SubscriptionStatus where
-   parseJSON (String "incomplete")         = pure Incomplete
-   parseJSON (String "incomplete_expired") = pure IncompleteExpired
-   parseJSON (String "trialing")           = pure Trialing
-   parseJSON (String "active")             = pure Active
-   parseJSON (String "past_due")           = pure PastDue
-   parseJSON (String "canceled")           = pure Canceled
-   parseJSON (String "unpaid")             = pure UnPaid
-   parseJSON _                             = mzero
-
-------------------------------------------------------------------------------
--- | `TaxPercent` for a `Subscription`
-newtype TaxPercent = TaxPercent Double deriving (Read, Show, Eq, Ord, Data, Typeable)
-
--- | `TaxRateId` for a `TaxRate`
-newtype TaxRateId = TaxRateId Text deriving (Read, Show, Eq, Ord, Data, Typeable)
-
--- | `DefaultTaxRates` for a `Subscription`
-newtype DefaultTaxRates = DefaultTaxRates [TaxRateId]
-
-------------------------------------------------------------------------------
--- | `PlanId` for a `Plan`
-newtype PlanId = PlanId Text deriving (Read, Show, Eq, Ord, Data, Typeable)
 
 ------------------------------------------------------------------------------
 -- | Plan object
@@ -704,75 +502,6 @@ instance FromJSON Plan where
 newtype TrialPeriod = TrialPeriod UTCTime deriving (Show, Eq)
 
 ------------------------------------------------------------------------------
--- | `TrialEnd` for a Plan
-newtype TrialEnd = TrialEnd UTCTime
-    deriving (Read, Show, Eq, Ord, Data, Typeable)
-
-------------------------------------------------------------------------------
--- | Interval for `Plan`s
-data Interval = Day | Week | Month | Year deriving (Eq, Ord, Data, Typeable)
-
-------------------------------------------------------------------------------
--- | JSON Instance for `Interval`
-instance FromJSON Interval where
-   parseJSON (String "day")   = pure Day
-   parseJSON (String "week")  = pure Week
-   parseJSON (String "month") = pure Month
-   parseJSON (String "year")  = pure Year
-   parseJSON _                = mzero
-
-------------------------------------------------------------------------------
--- | `Show` instance for `Interval`
-instance Show Interval where
-    show Day   = "day"
-    show Week  = "week"
-    show Month = "month"
-    show Year  = "year"
-
-------------------------------------------------------------------------------
--- | `Read` instance for `Interval`
-instance Read Interval where
-  readPrec =
-    do (R.String s) <- lexP
-       case s of
-         "day"   -> return Day
-         "week"  -> return Week
-         "month" -> return Month
-         "year"  -> return Year
-         _       -> pfail
-
-------------------------------------------------------------------------------
--- | `Coupon` Duration
-data Duration = Forever | Once | Repeating deriving (Eq, Ord, Data, Typeable)
-
-------------------------------------------------------------------------------
--- | `Show` instance for `Duration`
-instance Show Duration where
-    show Forever   = "forever"
-    show Once      = "once"
-    show Repeating = "repeating"
-
-------------------------------------------------------------------------------
--- | `Read` instance for `Duration`
-instance Read Duration where
-  readPrec =
-    do (R.String s) <- lexP
-       case s of
-         "forever"   -> return Forever
-         "once"      -> return Once
-         "repeating" -> return Repeating
-         _           -> pfail
-
-------------------------------------------------------------------------------
--- | JSON Instance for `Duration`
-instance FromJSON Duration where
-   parseJSON (String x)
-       | x == "forever"   = pure Forever
-       | x == "once"      = pure Once
-       | x == "repeating" = pure Repeating
-   parseJSON _ = mzero
-
-------------------------------------------------------------------------------
 -- | `Coupon` Object
 data Coupon = Coupon {
       couponId               :: CouponId
@@ -810,45 +539,6 @@ instance FromJSON Coupon where
    parseJSON _ = mzero
 
 ------------------------------------------------------------------------------
--- | `CouponId` for a `Coupon`
-newtype CouponId = CouponId Text deriving (Read, Show, Eq, Ord, Data, Typeable)
-
-------------------------------------------------------------------------------
--- | `AmountOff` for a `Coupon`
-newtype AmountOff = AmountOff Int deriving (Read, Show, Eq, Ord, Data, Typeable)
-
-------------------------------------------------------------------------------
--- | `MaxRedemptions` for a `Coupon`
-newtype MaxRedemptions = MaxRedemptions Int deriving (Read, Show, Eq, Ord, Data, Typeable)
-
-------------------------------------------------------------------------------
--- | `PercentOff` for a `Coupon`
-newtype PercentOff = PercentOff Int deriving (Read, Show, Eq, Ord, Data, Typeable)
-
-------------------------------------------------------------------------------
--- | `RedeemBy` date for a `Coupon`
-newtype RedeemBy = RedeemBy UTCTime deriving (Read, Show, Eq, Ord, Data, Typeable)
-
-------------------------------------------------------------------------------
--- | `DurationInMonths` for a `Coupon`
-newtype DurationInMonths = DurationInMonths Int deriving (Read, Show, Eq, Ord, Data, Typeable)
-
-------------------------------------------------------------------------------
--- | `IntervalCount` for a `Coupon`
-newtype IntervalCount   = IntervalCount Int deriving (Read, Show, Eq, Ord, Data, Typeable)
-
-------------------------------------------------------------------------------
--- | `TrialPeriodDays` for a `Coupon`
-newtype TrialPeriodDays = TrialPeriodDays Int deriving (Read, Show, Eq, Ord, Data, Typeable)
-
-------------------------------------------------------------------------------
--- | Amount representing a monetary value.
--- Stripe represents pennies as whole numbers
--- i.e. 100 = $1
-newtype Amount = Amount { getAmount :: Int }
-  deriving (Read, Show, Eq, Ord, Data, Typeable)
-
-------------------------------------------------------------------------------
 -- | `Discount` for `Coupon`
 data Discount = Discount {
       discountCoupon       :: Coupon
@@ -870,18 +560,6 @@ instance FromJSON Discount where
                  <*> o .: "object"
                  <*> (fmap SubscriptionId <$> o .:? "subscription")
     parseJSON _ = mzero
-
-------------------------------------------------------------------------------
--- | `Invoice` for a `Coupon`
-newtype InvoiceId =
-    InvoiceId Text
-  deriving (Read, Show, Eq, Ord, Data, Typeable)
-
-------------------------------------------------------------------------------
--- | JSON Instance for `InvoiceId`
-instance FromJSON InvoiceId where
-   parseJSON (String x) = pure $ InvoiceId x
-   parseJSON _          = mzero
 
 ------------------------------------------------------------------------------
 -- | `Invoice` Object
@@ -951,12 +629,6 @@ instance FromJSON Invoice where
    parseJSON _ = mzero
 
 ------------------------------------------------------------------------------
--- | `InvoiceItemId` for `InvoiceItem`
-newtype InvoiceItemId
-    = InvoiceItemId Text
-      deriving (Read, Show, Eq, Ord, Data, Typeable)
-
-------------------------------------------------------------------------------
 -- | `InvoiceItem` object
 data InvoiceItem = InvoiceItem {
       invoiceItemObject       :: Text
@@ -992,25 +664,6 @@ instance FromJSON InvoiceItem where
                    <*> o .:? "subscription"
                    <*> o .: "metadata"
    parseJSON _ = mzero
-
-------------------------------------------------------------------------------
--- | `InvoiceLineItemId` for an `InvoiceLineItem`
-newtype InvoiceLineItemId =
-    InvoiceLineItemId Text deriving (Read, Show, Eq, Ord, Data, Typeable)
-
-------------------------------------------------------------------------------
--- | Type of `InvoiceItem`
-data InvoiceLineItemType
-    = InvoiceItemType |
-     SubscriptionItemType
-      deriving (Read, Show, Eq, Ord, Data, Typeable)
-
-------------------------------------------------------------------------------
--- | JSON Instance for `InvoiceLineItemType`
-instance FromJSON InvoiceLineItemType where
-   parseJSON (String "invoiceitem")  = pure InvoiceItemType
-   parseJSON (String "subscription") = pure SubscriptionItemType
-   parseJSON _                       = mzero
 
 ------------------------------------------------------------------------------
 -- | `InvoiceLineItem` Object
@@ -1061,19 +714,6 @@ instance FromJSON InvoiceLineItem where
                        <*> o .:? "description"
                        <*> o .: "metadata"
    parseJSON _ = mzero
-
-
-------------------------------------------------------------------------------
--- | `Closed` - invoice closed or not
-newtype Closed =
-  Closed { getClosed :: Bool }
-  deriving (Read, Show, Eq, Ord, Data, Typeable)
-
-------------------------------------------------------------------------------
--- | `Forgiven` - invoice forgiven or not
-newtype Forgiven =
-  Forgiven { getForgiven :: Bool }
-  deriving (Read, Show, Eq, Ord, Data, Typeable)
 
 ------------------------------------------------------------------------------
 -- | Status of a `Dispute`
@@ -1143,10 +783,6 @@ data Dispute = Dispute {
     } deriving (Read, Show, Eq, Ord, Data, Typeable)
 
 ------------------------------------------------------------------------------
--- | `Evidence` associated with a `Dispute`
-newtype Evidence = Evidence Text deriving (Read, Show, Eq, Ord, Data, Typeable)
-
-------------------------------------------------------------------------------
 -- | JSON Instance for `Dispute`
 instance FromJSON Dispute where
     parseJSON (Object o) =
@@ -1164,42 +800,6 @@ instance FromJSON Dispute where
                 <*> (fmap Evidence <$> o .:? "evidence")
                 <*> o .: "metadata"
     parseJSON _ = mzero
-
-------------------------------------------------------------------------------
--- | `TransferId`
-newtype TransferId =
-  TransferId Text deriving (Read, Show, Eq, Ord, Data, Typeable)
-
-------------------------------------------------------------------------------
--- | Status of a `Transfer`
-data TransferStatus =
-    TransferPaid
-  | TransferPending
-  | TransferCanceled
-  | TransferFailed
-  deriving (Read, Show, Eq, Ord, Data, Typeable)
-
-------------------------------------------------------------------------------
--- | Type of a `Transfer`
-data TransferType =
-    CardTransfer
-  | BankAccountTransfer
-    deriving (Read, Show, Eq, Ord, Data, Typeable)
-
-------------------------------------------------------------------------------
--- | JSON Instance for `TransferType`
-instance FromJSON TransferType where
-    parseJSON (String "card")         = pure CardTransfer
-    parseJSON (String "bank_account") = pure BankAccountTransfer
-    parseJSON _                       = mzero
-
-------------------------------------------------------------------------------
--- | JSON Instance for `TransferStatus`
-instance FromJSON TransferStatus where
-    parseJSON (String "paid")     = pure TransferPaid
-    parseJSON (String "pending")  = pure TransferPending
-    parseJSON (String "canceled") = pure TransferCanceled
-    parseJSON _                   = mzero
 
 ------------------------------------------------------------------------------
 -- | `Transfer` Object
@@ -1274,50 +874,6 @@ instance FromJSON BankAccount where
    parseJSON _ = mzero
 
 ------------------------------------------------------------------------------
--- | `BankAccountId` for `BankAccount`
-newtype BankAccountId = BankAccountId Text
-                        deriving (Read, Show, Eq, Ord, Data, Typeable)
-
-------------------------------------------------------------------------------
--- | `BankAccountStatus` Object
-data BankAccountStatus =
-  New | Validated | Verified | Errored
-  deriving (Read, Show, Eq, Ord, Data, Typeable)
-
-------------------------------------------------------------------------------
--- | `BankAccountStatus` JSON instance
-instance FromJSON BankAccountStatus where
-   parseJSON (String "new")       = pure $ New
-   parseJSON (String "validated") = pure Validated
-   parseJSON (String "verified")  = pure Verified
-   parseJSON (String "errored")   = pure Errored
-   parseJSON _                    = mzero
-
-------------------------------------------------------------------------------
--- | Routing Number for Bank Account
-newtype RoutingNumber =
-  RoutingNumber Text deriving (Read, Show, Eq, Ord, Data, Typeable)
-
-------------------------------------------------------------------------------
--- | Country
-newtype Country       =
-  Country Text deriving (Read, Show, Eq, Ord, Data, Typeable)
-
-------------------------------------------------------------------------------
--- | Account Number of a Bank Account
-newtype AccountNumber =
-  AccountNumber Text deriving (Read, Show, Eq, Ord, Data, Typeable)
-
-------------------------------------------------------------------------------
--- | create a new `BankAccount`
-data NewBankAccount = NewBankAccount
-    { newBankAccountCountry       :: Country
-    , newBankAccountRoutingNumber :: RoutingNumber
-    , newBankAccountAccountNumber :: AccountNumber
-    }
-    deriving (Read, Show, Eq, Ord, Data, Typeable)
-
-------------------------------------------------------------------------------
 -- | Recipients
 
 ------------------------------------------------------------------------------
@@ -1331,52 +887,6 @@ newtype LastName = LastName Text deriving (Read, Show, Eq, Ord, Data, Typeable)
 ------------------------------------------------------------------------------
 -- | Middle Initial of a `Recipient`
 type MiddleInitial = Char
-
-------------------------------------------------------------------------------
--- | `RecipientId` for a `Recipient`
-newtype RecipientId =
-      RecipientId Text
-  deriving (Read, Show, Eq, Ord, Data, Typeable)
-
-------------------------------------------------------------------------------
--- | JSON Instance for `RecipientId`
-instance FromJSON RecipientId where
-   parseJSON (String x) = pure $ RecipientId x
-   parseJSON _          = mzero
-
-------------------------------------------------------------------------------
--- | `TaxID`
-newtype TaxID  = TaxID { getTaxID :: Text }
-  deriving (Read, Show, Eq, Ord, Data, Typeable)
-
-------------------------------------------------------------------------------
--- | Type of `Recipient`
-data RecipientType =
-    Individual
-  | Corporation deriving (Eq, Ord, Data, Typeable)
-
-------------------------------------------------------------------------------
--- | `Show` instance for `RecipientType`
-instance Show RecipientType where
-    show Individual  = "individual"
-    show Corporation = "corporation"
-
-------------------------------------------------------------------------------
--- | `Read` instance for `RecipientType`
-instance Read RecipientType where
-  readPrec =
-    do (R.String s) <- lexP
-       case s of
-         "individual"  -> return Individual
-         "corporation" -> return Corporation
-         _             -> pfail
-
-------------------------------------------------------------------------------
--- | JSON Instance for `RecipientType`
-instance FromJSON RecipientType where
-   parseJSON (String "individual")  = pure Individual
-   parseJSON (String "corporation") = pure Corporation
-   parseJSON _                      = mzero
 
 ------------------------------------------------------------------------------
 -- | Recipient Object
@@ -1422,10 +932,6 @@ instance FromJSON Recipient where
    parseJSON _ = mzero
 
 ------------------------------------------------------------------------------
--- | `PlanId` for a `Plan`
-newtype ApplicationFeeId = ApplicationFeeId Text deriving (Read, Show, Eq, Ord, Data, Typeable)
-
-------------------------------------------------------------------------------
 -- | ApplicationFee Object
 data ApplicationFee = ApplicationFee {
       applicationFeeId                 :: ApplicationFeeId
@@ -1443,22 +949,6 @@ data ApplicationFee = ApplicationFee {
     , applicationFeeChargeId           :: Expandable ChargeId
     , applicationFeeMetaData           :: MetaData
 } deriving (Read, Show, Eq, Ord, Data, Typeable)
-
-------------------------------------------------------------------------------
--- | ApplicationFeePercent
-newtype ApplicationFeePercent = ApplicationFeePercent Double
-  deriving (Read, Show, Eq, Ord, Data, Typeable)
-
-
-------------------------------------------------------------------------------
--- | ApplicationFeeAmount
-newtype ApplicationFeeAmount = ApplicationFeeAmount Integer
-  deriving (Read, Show, Eq, Ord, Data, Typeable)
-
-------------------------------------------------------------------------------
--- | `ApplicationId` object
-newtype ApplicationId =
-  ApplicationId Text deriving (Read, Show, Eq, Ord, Data, Typeable)
 
 ------------------------------------------------------------------------------
 -- | JSON Instance for `ApplicationFee`
@@ -1640,17 +1130,6 @@ instance FromJSON BalanceTransaction where
    parseJSON _ = mzero
 
 ------------------------------------------------------------------------------
--- | `TransactionId` of a `Transaction`
-newtype TransactionId = TransactionId Text
-                   deriving (Read, Show, Eq, Ord, Data, Typeable)
-
-------------------------------------------------------------------------------
--- | JSON Instance for `TransactionId`
-instance FromJSON TransactionId where
-    parseJSON (String x) = pure (TransactionId x)
-    parseJSON _          = mzero
-
-------------------------------------------------------------------------------
 -- | `FeeDetails` Object
 data FeeDetails = FeeDetails {
       feeDetailsAmount   :: Int
@@ -1670,160 +1149,6 @@ instance FromJSON FeeDetails where
                   <*> o .: "description"
                   <*> o .:? "application"
    parseJSON _ = mzero
-
-------------------------------------------------------------------------------
--- | `Source` used for filtering `Balance` transactions. It should contain
--- an object Id such as a `ChargeId`
-newtype Source a = Source { getSource :: a }
-    deriving (Read, Show, Eq, Ord, Data, Typeable)
-
-------------------------------------------------------------------------------
--- | transaction type for `BalanceTransaction`
-data TransactionType
-  = ChargeTxn
-  | RefundTxn
-  | AdjustmentTxn
-  | ApplicationFeeTxn
-  | ApplicationFeeRefundTxn
-  | TransferTxn
-  | TransferCancelTxn
-  | TransferFailureTxn
-    deriving (Read, Show, Eq, Ord, Data, Typeable)
-
-instance FromJSON TransactionType where
-  parseJSON (String "charge")                 = pure ChargeTxn
-  parseJSON (String "refund")                 = pure RefundTxn
-  parseJSON (String "adjustment")             = pure AdjustmentTxn
-  parseJSON (String "application_fee")        = pure ApplicationFeeTxn
-  parseJSON (String "application_fee_refund") = pure ApplicationFeeRefundTxn
-  parseJSON (String "transfer")               = pure TransferTxn
-  parseJSON (String "transfer_cancel")        = pure TransferCancelTxn
-  parseJSON (String "transfer_failure")       = pure TransferFailureTxn
-  parseJSON _                                 = mzero
-
-instance ToJSON TransactionType where
-  toJSON ChargeTxn               = String "charge"
-  toJSON RefundTxn               = String "refund"
-  toJSON AdjustmentTxn           = String "adjustment"
-  toJSON ApplicationFeeTxn       = String "application_fee"
-  toJSON ApplicationFeeRefundTxn = String "application_fee_refund"
-  toJSON TransferTxn             = String "transfer"
-  toJSON TransferCancelTxn       = String "transfer_cancel"
-  toJSON TransferFailureTxn      = String "transfer_failure"
-
-------------------------------------------------------------------------------
--- | `Event` Types
-data EventType =
-    AccountUpdatedEvent
-  | AccountApplicationDeauthorizedEvent
-  | ApplicationFeeCreatedEvent
-  | ApplicationFeeRefundedEvent
-  | BalanceAvailableEvent
-  | ChargeSucceededEvent
-  | ChargeFailedEvent
-  | ChargeRefundedEvent
-  | ChargeCapturedEvent
-  | ChargeUpdatedEvent
-  | ChargeDisputeCreatedEvent
-  | ChargeDisputeUpdatedEvent
-  | ChargeDisputeClosedEvent
-  | ChargeDisputeFundsWithdrawnEvent
-  | ChargeDisputeFundsReinstatedEvent
-  | CustomerCreatedEvent
-  | CustomerUpdatedEvent
-  | CustomerDeletedEvent
-  | CustomerCardCreatedEvent
-  | CustomerCardUpdatedEvent
-  | CustomerCardDeletedEvent
-  | CustomerSubscriptionCreatedEvent
-  | CustomerSubscriptionUpdatedEvent
-  | CustomerSubscriptionDeletedEvent
-  | CustomerSubscriptionTrialWillEndEvent
-  | CustomerDiscountCreatedEvent
-  | CustomerDiscountUpdatedEvent
-  | CustomerDiscountDeletedEvent
-  | InvoiceCreatedEvent
-  | InvoiceUpdatedEvent
-  | InvoicePaymentSucceededEvent
-  | InvoicePaymentFailedEvent
-  | InvoiceItemCreatedEvent
-  | InvoiceItemUpdatedEvent
-  | InvoiceItemDeletedEvent
-  | PlanCreatedEvent
-  | PlanUpdatedEvent
-  | PlanDeletedEvent
-  | CouponCreatedEvent
-  | CouponUpdatedEvent
-  | CouponDeletedEvent
-  | RecipientCreatedEvent
-  | RecipientUpdatedEvent
-  | RecipientDeletedEvent
-  | TransferCreatedEvent
-  | TransferUpdatedEvent
-  | TransferCanceledEvent
-  | TransferPaidEvent
-  | TransferFailedEvent
-  | PingEvent
-  | UnknownEvent
-  deriving (Read, Show, Eq, Ord, Data, Typeable)
-
-------------------------------------------------------------------------------
--- | Event Types JSON Instance
-instance FromJSON EventType where
-   parseJSON (String "account.updated") = pure AccountUpdatedEvent
-   parseJSON (String "account.application.deauthorized") = pure AccountApplicationDeauthorizedEvent
-   parseJSON (String "application_fee.created") = pure ApplicationFeeCreatedEvent
-   parseJSON (String "application_fee.refunded") = pure ApplicationFeeRefundedEvent
-   parseJSON (String "balance.available") = pure BalanceAvailableEvent
-   parseJSON (String "charge.succeeded") = pure ChargeSucceededEvent
-   parseJSON (String "charge.failed") = pure ChargeFailedEvent
-   parseJSON (String "charge.refunded") = pure ChargeRefundedEvent
-   parseJSON (String "charge.captured") = pure ChargeCapturedEvent
-   parseJSON (String "charge.updated") = pure ChargeUpdatedEvent
-   parseJSON (String "charge.dispute.created") = pure ChargeDisputeCreatedEvent
-   parseJSON (String "charge.dispute.updated") = pure ChargeDisputeUpdatedEvent
-   parseJSON (String "charge.dispute.closed") = pure ChargeDisputeClosedEvent
-   parseJSON (String "charge.dispute.funds_withdrawn") = pure ChargeDisputeFundsWithdrawnEvent
-   parseJSON (String "charge.dispute.funds_reinstated") = pure ChargeDisputeFundsReinstatedEvent
-   parseJSON (String "customer.created") = pure CustomerCreatedEvent
-   parseJSON (String "customer.updated") = pure CustomerUpdatedEvent
-   parseJSON (String "customer.deleted") = pure CustomerDeletedEvent
-   parseJSON (String "customer.card.created") = pure CustomerCardCreatedEvent
-   parseJSON (String "customer.card.updated") = pure CustomerCardUpdatedEvent
-   parseJSON (String "customer.card.deleted") = pure CustomerCardDeletedEvent
-   parseJSON (String "customer.subscription.created") = pure CustomerSubscriptionCreatedEvent
-   parseJSON (String "customer.subscription.updated") = pure CustomerSubscriptionUpdatedEvent
-   parseJSON (String "customer.subscription.deleted") = pure CustomerSubscriptionDeletedEvent
-   parseJSON (String "customer.subscription.trial_will_end") = pure CustomerSubscriptionTrialWillEndEvent
-   parseJSON (String "customer.discount.created") = pure CustomerDiscountCreatedEvent
-   parseJSON (String "customer.discount.updated") = pure CustomerDiscountUpdatedEvent
-   parseJSON (String "invoice.created") = pure InvoiceCreatedEvent
-   parseJSON (String "invoice.updated") = pure InvoiceUpdatedEvent
-   parseJSON (String "invoice.payment_succeeded") = pure InvoicePaymentSucceededEvent
-   parseJSON (String "invoice.payment_failed") = pure InvoicePaymentFailedEvent
-   parseJSON (String "invoiceitem.created") = pure InvoiceItemCreatedEvent
-   parseJSON (String "invoiceitem.updated") = pure InvoiceItemUpdatedEvent
-   parseJSON (String "invoiceitem.deleted") = pure InvoiceItemDeletedEvent
-   parseJSON (String "plan.created") = pure PlanCreatedEvent
-   parseJSON (String "plan.updated") = pure PlanUpdatedEvent
-   parseJSON (String "plan.deleted") = pure PlanDeletedEvent
-   parseJSON (String "coupon.created") = pure CouponCreatedEvent
-   parseJSON (String "coupon.updated") = pure CouponUpdatedEvent
-   parseJSON (String "coupon.deleted") = pure CouponDeletedEvent
-   parseJSON (String "recipient.created") = pure RecipientCreatedEvent
-   parseJSON (String "recipient.updated") = pure RecipientUpdatedEvent
-   parseJSON (String "recipient.deleted") = pure RecipientDeletedEvent
-   parseJSON (String "transfer.created") = pure TransferCreatedEvent
-   parseJSON (String "transfer.updated") = pure TransferUpdatedEvent
-   parseJSON (String "transfer.canceled") = pure TransferCanceledEvent
-   parseJSON (String "transfer.paid") = pure TransferPaidEvent
-   parseJSON (String "transfer.failed") = pure TransferFailedEvent
-   parseJSON (String "ping") = pure PingEvent
-   parseJSON _ = pure UnknownEvent
-
-------------------------------------------------------------------------------
--- | `EventId` of an `Event`
-newtype EventId = EventId Text deriving (Read, Show, Eq, Ord, Data, Typeable)
 
 ------------------------------------------------------------------------------
 -- | EventData
@@ -1948,25 +1273,6 @@ instance FromJSON ConnectApp where
    parseJSON _  = mzero
 
 ------------------------------------------------------------------------------
--- | `TokenId` of a `Token`
-newtype TokenId =
-    TokenId Text
-    deriving (Read, Show, Eq, Ord, Data, Typeable)
-
-------------------------------------------------------------------------------
--- | Type of `Token`
-data TokenType = TokenCard
-               | TokenBankAccount
-                 deriving (Read, Show, Eq, Ord, Data, Typeable)
-
-------------------------------------------------------------------------------
--- | JSON Instance for `TokenType`
-instance FromJSON TokenType where
-   parseJSON (String "bank_account") = pure TokenBankAccount
-   parseJSON (String "card")         = pure TokenCard
-   parseJSON _                       = mzero
-
-------------------------------------------------------------------------------
 -- | `Token` Object
 data Token a = Token {
       tokenId       :: TokenId
@@ -2001,42 +1307,6 @@ instance FromJSON a => FromJSON (Token a) where
    parseJSON _ = mzero
 
 ------------------------------------------------------------------------------
--- | Generic handling of Stripe JSON arrays
-data StripeList a = StripeList {
-      list       :: [a]
-    , stripeUrl  :: Text
-    , object     :: Text
-    , totalCount :: Maybe Int
-    , hasMore    :: Bool
-    } deriving (Read, Show, Eq, Ord, Data, Typeable)
-
-------------------------------------------------------------------------------
--- | JSON Instance for `StripeList`
-instance FromJSON a => FromJSON (StripeList a) where
-    parseJSON (Object o) =
-        StripeList <$> o .:  "data"
-                   <*> o .:  "url"
-                   <*> o .:  "object"
-                   <*> o .:? "total_count"
-                   <*> o .:  "has_more"
-    parseJSON _ = mzero
-
-------------------------------------------------------------------------------
--- | Pagination Option for `StripeList`
-newtype Limit = Limit Int
-  deriving (Read, Show, Eq, Ord, Data, Typeable)
-
-------------------------------------------------------------------------------
--- | Pagination Option for `StripeList`
-newtype StartingAfter a = StartingAfter a
- deriving (Read, Show, Eq, Ord, Data, Typeable)
-
-------------------------------------------------------------------------------
--- | Pagination Option for `StripeList`
-newtype EndingBefore a = EndingBefore a
- deriving (Read, Show, Eq, Ord, Data, Typeable)
-
-------------------------------------------------------------------------------
 -- | JSON returned from a `Stripe` deletion request
 data StripeDeleteResult = StripeDeleteResult {
       deleted   :: Bool
@@ -2052,17 +1322,13 @@ instance FromJSON StripeDeleteResult where
    parseJSON _ = mzero
 
 ------------------------------------------------------------------------------
--- | Type of MetaData for use on `Stripe` objects
-newtype MetaData = MetaData [ (Text,Text) ]
-  deriving (Read, Show, Eq, Ord, Data, Typeable)
-
-instance FromJSON MetaData where
-  parseJSON j = (MetaData . H.toList) <$> (parseJSON j)
-
-------------------------------------------------------------------------------
 -- | Type of Expansion Parameters for use on `Stripe` objects
 newtype ExpandParams = ExpandParams { getExpandParams :: [Text] }
   deriving (Read, Show, Eq, Ord, Data, Typeable)
+
+instance ToStripeParam ExpandParams where
+  toStripeParam (ExpandParams params) =
+    (toExpandable params ++)
 
 ------------------------------------------------------------------------------
 -- | Generic ID for use in constructing API Calls
@@ -2071,339 +1337,6 @@ type ID    = Text
 ------------------------------------------------------------------------------
 -- | Generic URL for use in constructing API Calls
 type URL   = Text
-
-------------------------------------------------------------------------------
--- | a cardholder's full name
-newtype Name  = Name { getName :: Text }
-   deriving (Read, Show, Eq, Ord, Data, Typeable)
-
-instance FromJSON Name where
-  parseJSON v = Name <$> parseJSON v
-
-------------------------------------------------------------------------------
--- | a plan name
-newtype PlanName  = PlanName { getPlanName :: Text }
-   deriving (Read, Show, Eq, Ord, Data, Typeable)
-
-instance FromJSON PlanName where
-  parseJSON v = PlanName <$> parseJSON v
-
-------------------------------------------------------------------------------
--- | Generic Description for use in constructing API Calls
-newtype Description = Description Text
-   deriving (Read, Show, Eq, Ord, Data, Typeable)
-
-instance FromJSON Description where
-  parseJSON v = Description <$> parseJSON v
-
-------------------------------------------------------------------------------
--- | Generic `Quantity` type to be used with `Customer`,
--- `Subscription` and `InvoiceLineItem` API requests
-newtype Quantity = Quantity Int deriving (Read, Show, Eq, Ord, Data, Typeable)
-
-------------------------------------------------------------------------------
--- | Prorate
-newtype Prorate = Prorate Bool deriving (Read, Show, Eq, Ord, Data, Typeable)
-
-------------------------------------------------------------------------------
--- | A flag that if set to true will delay the cancellation of the
--- subscription until the end of the current period.
-newtype AtPeriodEnd = AtPeriodEnd Bool deriving (Read, Show, Eq, Ord, Data, Typeable)
-
-------------------------------------------------------------------------------
--- | `Email` associated with a `Customer`, `Recipient` or `Charge`
-newtype Email = Email Text deriving (Read, Show, Eq, Ord, Data, Typeable)
-
-------------------------------------------------------------------------------
--- | `Email` to send receipt to
-newtype ReceiptEmail = ReceiptEmail Text deriving (Read, Show, Eq, Ord, Data, Typeable)
-
-------------------------------------------------------------------------------
--- | Stripe supports 138 currencies
-data Currency =
-    AED -- ^  United Arab Emirates Dirham
-  | AFN -- ^  Afghan Afghani
-  | ALL -- ^  Albanian Lek
-  | AMD -- ^  Armenian Dram
-  | ANG -- ^  Netherlands Antillean Gulden
-  | AOA -- ^  Angolan Kwanza
-  | ARS -- ^  Argentine Peso
-  | AUD -- ^  Australian Dollar
-  | AWG -- ^  Aruban Florin
-  | AZN -- ^  Azerbaijani Manat
-  | BAM -- ^  Bosnia & Herzegovina Convertible Mark
-  | BBD -- ^  Barbadian Dollar
-  | BDT -- ^  Bangladeshi Taka
-  | BGN -- ^  Bulgarian Lev
-  | BIF -- ^  Burundian Franc
-  | BMD -- ^  Bermudian Dollar
-  | BND -- ^  Brunei Dollar
-  | BOB -- ^  Bolivian Boliviano
-  | BRL -- ^  Brazilian Real
-  | BSD -- ^  Bahamian Dollar
-  | BWP -- ^  Botswana Pula
-  | BZD -- ^  Belize Dollar
-  | CAD -- ^  Canadian Dollar
-  | CDF -- ^  Congolese Franc
-  | CHF -- ^  Swiss Franc
-  | CLP -- ^  Chilean Peso
-  | CNY -- ^  Chinese Renminbi Yuan
-  | COP -- ^  Colombian Peso
-  | CRC -- ^  Costa Rican Colón
-  | CVE -- ^  Cape Verdean Escudo
-  | CZK -- ^  Czech Koruna
-  | DJF -- ^  Djiboutian Franc
-  | DKK -- ^  Danish Krone
-  | DOP -- ^  Dominican Peso
-  | DZD -- ^  Algerian Dinar
-  | EEK -- ^  Estonian Kroon
-  | EGP -- ^  Egyptian Pound
-  | ETB -- ^  Ethiopian Birr
-  | EUR -- ^  Euro
-  | FJD -- ^  Fijian Dollar
-  | FKP -- ^  Falkland Islands Pound
-  | GBP -- ^  British Pound
-  | GEL -- ^  Georgian Lari
-  | GIP -- ^  Gibraltar Pound
-  | GMD -- ^  Gambian Dalasi
-  | GNF -- ^  Guinean Franc
-  | GTQ -- ^  Guatemalan Quetzal
-  | GYD -- ^  Guyanese Dollar
-  | HKD -- ^  Hong Kong Dollar
-  | HNL -- ^  Honduran Lempira
-  | HRK -- ^  Croatian Kuna
-  | HTG -- ^  Haitian Gourde
-  | HUF -- ^  Hungarian Forint
-  | IDR -- ^  Indonesian Rupiah
-  | ILS -- ^  Israeli New Sheqel
-  | INR -- ^  Indian Rupee
-  | ISK -- ^  Icelandic Króna
-  | JMD -- ^  Jamaican Dollar
-  | JPY -- ^  Japanese Yen
-  | KES -- ^  Kenyan Shilling
-  | KGS -- ^  Kyrgyzstani Som
-  | KHR -- ^  Cambodian Riel
-  | KMF -- ^  Comorian Franc
-  | KRW -- ^  South Korean Won
-  | KYD -- ^  Cayman Islands Dollar
-  | KZT -- ^  Kazakhstani Tenge
-  | LAK -- ^  Lao Kip
-  | LBP -- ^  Lebanese Pound
-  | LKR -- ^  Sri Lankan Rupee
-  | LRD -- ^  Liberian Dollar
-  | LSL -- ^  Lesotho Loti
-  | LTL -- ^  Lithuanian Litas
-  | LVL -- ^  Latvian Lats
-  | MAD -- ^  Moroccan Dirham
-  | MDL -- ^  Moldovan Leu
-  | MGA -- ^  Malagasy Ariary
-  | MKD -- ^  Macedonian Denar
-  | MNT -- ^  Mongolian Tögrög
-  | MOP -- ^  Macanese Pataca
-  | MRO -- ^  Mauritanian Ouguiya
-  | MUR -- ^  Mauritian Rupee
-  | MVR -- ^  Maldivian Rufiyaa
-  | MWK -- ^  Malawian Kwacha
-  | MXN -- ^  Mexican Peso
-  | MYR -- ^  Malaysian Ringgit
-  | MZN -- ^  Mozambican Metical
-  | NAD -- ^  Namibian Dollar
-  | NGN -- ^  Nigerian Naira
-  | NIO -- ^  Nicaraguan Córdoba
-  | NOK -- ^  Norwegian Krone
-  | NPR -- ^  Nepalese Rupee
-  | NZD -- ^  New Zealand Dollar
-  | PAB -- ^  Panamanian Balboa
-  | PEN -- ^  Peruvian Nuevo Sol
-  | PGK -- ^  Papua New Guinean Kina
-  | PHP -- ^  Philippine Peso
-  | PKR -- ^  Pakistani Rupee
-  | PLN -- ^  Polish Złoty
-  | PYG -- ^  Paraguayan Guaraní
-  | QAR -- ^  Qatari Riyal
-  | RON -- ^  Romanian Leu
-  | RSD -- ^  Serbian Dinar
-  | RUB -- ^  Russian Ruble
-  | RWF -- ^  Rwandan Franc
-  | SAR -- ^  Saudi Riyal
-  | SBD -- ^  Solomon Islands Dollar
-  | SCR -- ^  Seychellois Rupee
-  | SEK -- ^  Swedish Krona
-  | SGD -- ^  Singapore Dollar
-  | SHP -- ^  Saint Helenian Pound
-  | SLL -- ^  Sierra Leonean Leone
-  | SOS -- ^  Somali Shilling
-  | SRD -- ^  Surinamese Dollar
-  | STD -- ^  São Tomé and Príncipe Dobra
-  | SVC -- ^  Salvadoran Colón
-  | SZL -- ^  Swazi Lilangeni
-  | THB -- ^  Thai Baht
-  | TJS -- ^  Tajikistani Somoni
-  | TOP -- ^  Tongan Paʻanga
-  | TRY -- ^  Turkish Lira
-  | TTD -- ^  Trinidad and Tobago Dollar
-  | TWD -- ^  New Taiwan Dollar
-  | TZS -- ^  Tanzanian Shilling
-  | UAH -- ^  Ukrainian Hryvnia
-  | UGX -- ^  Ugandan Shilling
-  | USD -- ^  United States Dollar
-  | UYU -- ^  Uruguayan Peso
-  | UZS -- ^  Uzbekistani Som
-  | VND -- ^  Vietnamese Đồng
-  | VUV -- ^  Vanuatu Vatu
-  | WST -- ^  Samoan Tala
-  | XAF -- ^  Central African Cfa Franc
-  | XCD -- ^  East Caribbean Dollar
-  | XOF -- ^  West African Cfa Franc
-  | XPF -- ^  Cfp Franc
-  | YER -- ^  Yemeni Rial
-  | ZAR -- ^  South African Rand
-  | ZMW -- ^  Zambian Kwacha
-  | UnknownCurrency -- ^  Unknown Currency
-    deriving (Read, Show, Eq, Ord, Data, Typeable)
-
-------------------------------------------------------------------------------
--- | `Currency` JSON instances
-instance FromJSON Currency where
-   parseJSON (String "aed") = pure AED
-   parseJSON (String "afn") = pure AFN
-   parseJSON (String "all") = pure ALL
-   parseJSON (String "amd") = pure AMD
-   parseJSON (String "ang") = pure ANG
-   parseJSON (String "aoa") = pure AOA
-   parseJSON (String "ars") = pure ARS
-   parseJSON (String "aud") = pure AUD
-   parseJSON (String "awg") = pure AWG
-   parseJSON (String "azn") = pure AZN
-   parseJSON (String "bam") = pure BAM
-   parseJSON (String "bbd") = pure BBD
-   parseJSON (String "bdt") = pure BDT
-   parseJSON (String "bgn") = pure BGN
-   parseJSON (String "bif") = pure BIF
-   parseJSON (String "bmd") = pure BMD
-   parseJSON (String "bnd") = pure BND
-   parseJSON (String "bob") = pure BOB
-   parseJSON (String "brl") = pure BRL
-   parseJSON (String "bsd") = pure BSD
-   parseJSON (String "bwp") = pure BWP
-   parseJSON (String "bzd") = pure BZD
-   parseJSON (String "cad") = pure CAD
-   parseJSON (String "cdf") = pure CDF
-   parseJSON (String "chf") = pure CHF
-   parseJSON (String "clp") = pure CLP
-   parseJSON (String "cny") = pure CNY
-   parseJSON (String "cop") = pure COP
-   parseJSON (String "crc") = pure CRC
-   parseJSON (String "cve") = pure CVE
-   parseJSON (String "czk") = pure CZK
-   parseJSON (String "djf") = pure DJF
-   parseJSON (String "dkk") = pure DKK
-   parseJSON (String "dop") = pure DOP
-   parseJSON (String "dzd") = pure DZD
-   parseJSON (String "eek") = pure EEK
-   parseJSON (String "egp") = pure EGP
-   parseJSON (String "etb") = pure ETB
-   parseJSON (String "eur") = pure EUR
-   parseJSON (String "fjd") = pure FJD
-   parseJSON (String "fkp") = pure FKP
-   parseJSON (String "gbp") = pure GBP
-   parseJSON (String "gel") = pure GEL
-   parseJSON (String "gip") = pure GIP
-   parseJSON (String "gmd") = pure GMD
-   parseJSON (String "gnf") = pure GNF
-   parseJSON (String "gtq") = pure GTQ
-   parseJSON (String "gyd") = pure GYD
-   parseJSON (String "hkd") = pure HKD
-   parseJSON (String "hnl") = pure HNL
-   parseJSON (String "hrk") = pure HRK
-   parseJSON (String "htg") = pure HTG
-   parseJSON (String "huf") = pure HUF
-   parseJSON (String "idr") = pure IDR
-   parseJSON (String "ils") = pure ILS
-   parseJSON (String "inr") = pure INR
-   parseJSON (String "isk") = pure ISK
-   parseJSON (String "jmd") = pure JMD
-   parseJSON (String "jpy") = pure JPY
-   parseJSON (String "kes") = pure KES
-   parseJSON (String "kgs") = pure KGS
-   parseJSON (String "khr") = pure KHR
-   parseJSON (String "kmf") = pure KMF
-   parseJSON (String "krw") = pure KRW
-   parseJSON (String "kyd") = pure KYD
-   parseJSON (String "kzt") = pure KZT
-   parseJSON (String "lak") = pure LAK
-   parseJSON (String "lbp") = pure LBP
-   parseJSON (String "lkr") = pure LKR
-   parseJSON (String "lrd") = pure LRD
-   parseJSON (String "lsl") = pure LSL
-   parseJSON (String "ltl") = pure LTL
-   parseJSON (String "lvl") = pure LVL
-   parseJSON (String "mad") = pure MAD
-   parseJSON (String "mdl") = pure MDL
-   parseJSON (String "mga") = pure MGA
-   parseJSON (String "mkd") = pure MKD
-   parseJSON (String "mnt") = pure MNT
-   parseJSON (String "mop") = pure MOP
-   parseJSON (String "mro") = pure MRO
-   parseJSON (String "mur") = pure MUR
-   parseJSON (String "mvr") = pure MVR
-   parseJSON (String "mwk") = pure MWK
-   parseJSON (String "mxn") = pure MXN
-   parseJSON (String "myr") = pure MYR
-   parseJSON (String "mzn") = pure MZN
-   parseJSON (String "nad") = pure NAD
-   parseJSON (String "ngn") = pure NGN
-   parseJSON (String "nio") = pure NIO
-   parseJSON (String "nok") = pure NOK
-   parseJSON (String "npr") = pure NPR
-   parseJSON (String "nzd") = pure NZD
-   parseJSON (String "pab") = pure PAB
-   parseJSON (String "pen") = pure PEN
-   parseJSON (String "pgk") = pure PGK
-   parseJSON (String "php") = pure PHP
-   parseJSON (String "pkr") = pure PKR
-   parseJSON (String "pln") = pure PLN
-   parseJSON (String "pyg") = pure PYG
-   parseJSON (String "qar") = pure QAR
-   parseJSON (String "ron") = pure RON
-   parseJSON (String "rsd") = pure RSD
-   parseJSON (String "rub") = pure RUB
-   parseJSON (String "rwf") = pure RWF
-   parseJSON (String "sar") = pure SAR
-   parseJSON (String "sbd") = pure SBD
-   parseJSON (String "scr") = pure SCR
-   parseJSON (String "sek") = pure SEK
-   parseJSON (String "sgd") = pure SGD
-   parseJSON (String "shp") = pure SHP
-   parseJSON (String "sll") = pure SLL
-   parseJSON (String "sos") = pure SOS
-   parseJSON (String "srd") = pure SRD
-   parseJSON (String "std") = pure STD
-   parseJSON (String "svc") = pure SVC
-   parseJSON (String "szl") = pure SZL
-   parseJSON (String "thb") = pure THB
-   parseJSON (String "tjs") = pure TJS
-   parseJSON (String "top") = pure TOP
-   parseJSON (String "try") = pure TRY
-   parseJSON (String "ttd") = pure TTD
-   parseJSON (String "twd") = pure TWD
-   parseJSON (String "tzs") = pure TZS
-   parseJSON (String "uah") = pure UAH
-   parseJSON (String "ugx") = pure UGX
-   parseJSON (String "usd") = pure USD
-   parseJSON (String "uyu") = pure UYU
-   parseJSON (String "uzs") = pure UZS
-   parseJSON (String "vnd") = pure VND
-   parseJSON (String "vuv") = pure VUV
-   parseJSON (String "wst") = pure WST
-   parseJSON (String "xaf") = pure XAF
-   parseJSON (String "xcd") = pure XCD
-   parseJSON (String "xof") = pure XOF
-   parseJSON (String "xpf") = pure XPF
-   parseJSON (String "yer") = pure YER
-   parseJSON (String "zar") = pure ZAR
-   parseJSON (String "zmw") = pure ZMW
-   parseJSON _              = pure UnknownCurrency
 
 ------------------------------------------------------------------------------
 -- | BTC ReceiverObject
@@ -2537,49 +1470,3 @@ newtype PaymentId = PaymentId Text
 instance FromJSON PaymentId where
    parseJSON (String x) = pure $ PaymentId x
    parseJSON _          = mzero
-
-------------------------------------------------------------------------------
--- | Show an amount accounting for zero currencies
---
--- https:\/\/support.stripe.com\/questions\/which-zero-decimal-currencies-does-stripe-support
-showAmount
-  :: Currency -- ^ `Currency`
-  -> Int      -- ^ `Amount`
-  -> String
-showAmount cur amt =
-  case cur of
-   USD -> "$" ++ show2places (currencyDivisor cur amt)
-   _   -> show2places (currencyDivisor cur amt) ++ " " ++ show cur
-  where
-    show2places v = showFFloat (Just 2) v ""
-
-------------------------------------------------------------------------------
--- currency division funtion accounting for zero currencies
---
--- https:\/\/support.stripe.com\/questions\/which-zero-decimal-currencies-does-stripe-support
-currencyDivisor
-    :: Currency -- ^ `Currency`
-    -> (Int -> Float) -- ^ function to convert amount to a float
-currencyDivisor cur =
-  case cur of
-    BIF -> zeroCurrency
-    CLP -> zeroCurrency
-    DJF -> zeroCurrency
-    GNF -> zeroCurrency
-    JPY -> zeroCurrency
-    KMF -> zeroCurrency
-    KRW -> zeroCurrency
-    MGA -> zeroCurrency
-    PYG -> zeroCurrency
-    RWF -> zeroCurrency
-    VND -> zeroCurrency
-    VUV -> zeroCurrency
-    XAF -> zeroCurrency
-    XOF -> zeroCurrency
-    XPF -> zeroCurrency
-    EUR -> hundred
-    USD -> hundred
-    _   -> error $ "please submit a patch to currencyDivisor for this currency: " ++ show cur
-  where
-    zeroCurrency = fromIntegral
-    hundred v    = fromRat $ (fromIntegral v) % (100 :: Integer)

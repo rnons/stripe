@@ -81,23 +81,24 @@ module Web.Stripe.Invoice
     , SubscriptionId      (..)
     ) where
 
-import           Web.Stripe.StripeRequest (Method(GET, POST), StripeRequest(..),
-                                           StripeReturn, StripeHasParam,
-                                           toStripeParam, mkStripeRequest)
-import           Web.Stripe.Util          ((</>))
-import           Web.Stripe.Types         (ApplicationFeeId(..), Closed(..),
-                                           CustomerId(..), Description(..),
-                                           Discount(..), EndingBefore(..),
-                                           ExpandParams(..), Forgiven(..),
-                                           Invoice(..),InvoiceId(..),
-                                           InvoiceLineItem(..),
-                                           InvoiceLineItemId(..),
-                                           InvoiceLineItemType(..),
-                                           Limit(..), MetaData(..), Period(..),
-                                           SubscriptionId(..), StartingAfter(..),
-                                           StatementDescription(..),
-                                           StripeList(..))
+import           Web.Stripe.StripeRequest (Method (GET, POST), StripeHasParam,
+                                           StripeRequest (..), StripeReturn,
+                                           mkStripeRequest, toStripeParam)
+import           Web.Stripe.Types         (ApplicationFeeId (..),
+                                           CustomerId (..), Description (..),
+                                           Discount (..), EndingBefore (..),
+                                           ExpandParams (..), Invoice (..),
+                                           InvoiceLineItem (..), Limit (..),
+                                           MetaData (..), Period (..),
+                                           StartingAfter (..),
+                                           StatementDescription (..),
+                                           StripeList (..), SubscriptionId (..))
+import           Web.Stripe.Types.Invoice (Closed (..), Forgiven (..),
+                                           InvoiceId (..),
+                                           InvoiceLineItemId (..),
+                                           InvoiceLineItemType (..))
 import           Web.Stripe.Types.Util    (getInvoiceId)
+import           Web.Stripe.Util          ((</>))
 
 ------------------------------------------------------------------------------
 -- | The `Invoice` to be created for a `Customer`

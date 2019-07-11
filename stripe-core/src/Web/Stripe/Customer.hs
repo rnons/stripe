@@ -70,23 +70,26 @@ module Web.Stripe.Customer
     , TrialEnd           (..)
     ) where
 
-import           Web.Stripe.StripeRequest   (Method (GET, POST, DELETE),
-                                             StripeHasParam, StripeRequest (..),
-                                             StripeReturn, mkStripeRequest)
-import           Web.Stripe.Util            ((</>))
-import           Web.Stripe.Types           (AccountBalance(..), CVC (..),
-                                             CardId (..), CardNumber (..),
-                                             CouponId (..), Created(..), Customer (..),
-                                             CustomerId (..), DefaultCard(..),
-                                             Description(..), Email (..),
-                                             EndingBefore(..), ExpMonth (..),
-                                             ExpYear (..), Limit(..), PlanId (..),
-                                             Quantity (..), MetaData(..),
-                                             mkNewCard, NewCard(..), StartingAfter(..),
-                                             StripeDeleteResult (..),
-                                             StripeList (..), TokenId (..),
-                                             TrialEnd(..), ExpandParams(..))
+import           Web.Stripe.StripeRequest  (Method (DELETE, GET, POST),
+                                            StripeHasParam, StripeRequest (..),
+                                            StripeReturn, mkStripeRequest)
+import           Web.Stripe.Types          (CVC (..), CardId (..),
+                                            CardNumber (..), CouponId (..),
+                                            Created (..), Customer (..),
+                                            CustomerId (..), DefaultCard (..),
+                                            Description (..), Email (..),
+                                            EndingBefore (..), ExpMonth (..),
+                                            ExpYear (..), ExpandParams (..),
+                                            Limit (..), MetaData (..),
+                                            NewCard (..), PlanId (..),
+                                            Quantity (..), StartingAfter (..),
+                                            StripeDeleteResult (..),
+                                            StripeList (..), TokenId (..),
+                                            mkNewCard)
+import           Web.Stripe.Types.Customer (AccountBalance (..))
+import           Web.Stripe.Types.Plan     (TrialEnd (..))
 import           Web.Stripe.Types.Util
+import           Web.Stripe.Util           ((</>))
 
 ------------------------------------------------------------------------------
 -- | Create a customer
@@ -175,4 +178,3 @@ instance StripeHasParam GetCustomers Created
 instance StripeHasParam GetCustomers (EndingBefore CustomerId)
 instance StripeHasParam GetCustomers Limit
 instance StripeHasParam GetCustomers (StartingAfter CustomerId)
-

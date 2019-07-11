@@ -64,21 +64,24 @@ module Web.Stripe.Transfer
     , TransferType    (..)
     , Limit           (..)
     ) where
-import           Web.Stripe.StripeRequest (Method (GET, POST),
-                                           StripeHasParam, StripeRequest (..),
-                                           StripeReturn, ToStripeParam(..),
-                                           mkStripeRequest)
-import           Web.Stripe.Util          ((</>))
-import           Web.Stripe.Types         (Amount(..), BankAccountId(..), Card(..),
-                                           CardId(..), Created(..),Currency (..),
-                                           Date(..), EndingBefore(..),
-                                           ExpandParams(..),
-                                           Limit(..), MetaData(..), Recipient (..),
-                                           RecipientId(..), StartingAfter(..),
-                                           StatementDescription(..),
-                                           StripeList (..), Transfer (..),
-                                           TransferId (..), TransferStatus (..),
-                                           Description(..), TransferType (..))
+import           Web.Stripe.StripeRequest  (Method (GET, POST), StripeHasParam,
+                                            StripeRequest (..), StripeReturn,
+                                            ToStripeParam (..), mkStripeRequest)
+import           Web.Stripe.Types          (Amount (..), BankAccountId (..),
+                                            Card (..), CardId (..),
+                                            Created (..), Currency (..),
+                                            Date (..), Description (..),
+                                            EndingBefore (..),
+                                            ExpandParams (..), Limit (..),
+                                            MetaData (..), Recipient (..),
+                                            RecipientId (..),
+                                            StartingAfter (..),
+                                            StatementDescription (..),
+                                            StripeList (..), Transfer (..))
+import           Web.Stripe.Types.Transfer (TransferId (..),
+                                            TransferStatus (..),
+                                            TransferType (..))
+import           Web.Stripe.Util           ((</>))
 
 ------------------------------------------------------------------------------
 -- | Create a `Transfer`

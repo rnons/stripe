@@ -43,17 +43,15 @@ module Web.Stripe.Event
     , StartingAfter (..)
     ) where
 
-import           Web.Stripe.StripeRequest (Method (GET),
-                                           StripeHasParam, StripeRequest (..),
-                                           StripeReturn,
+import           Web.Stripe.StripeRequest (Method (GET), StripeHasParam,
+                                           StripeRequest (..), StripeReturn,
                                            mkStripeRequest)
+import           Web.Stripe.Types         (Created (..), EndingBefore (..),
+                                           Event (..), EventData (..),
+                                           Limit (..), StartingAfter (..),
+                                           StripeList (..))
+import           Web.Stripe.Types.Event   (EventId (..), EventType (..))
 import           Web.Stripe.Util          ((</>))
-import           Web.Stripe.Types         (Created(..), Event (..),
-                                           EventId (..), Limit,
-                                           EventData(..),
-                                           EventType(..), StripeList (..),
-                                           Limit(..), StartingAfter(..),
-                                           EndingBefore(..))
 
 ------------------------------------------------------------------------------
 -- | `Event` to retrieve by `EventId`

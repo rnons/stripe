@@ -1,3 +1,4 @@
 packages: stripe-core
           stripe-tests
           stripe-http-client
+jobs: $ncpus
