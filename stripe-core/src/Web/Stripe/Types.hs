@@ -416,7 +416,7 @@ data Subscription = Subscription {
     , subscriptionDaysUntilDue          :: Maybe Int
     -- , subscriptionDefaultPaymentMethod
     -- , subscriptionDefaultSource
-    -- , subscriptionDefaultTaxRates       :: DefaultTaxRates
+    , subscriptionDefaultTaxRates       :: DefaultTaxRates
     , subscriptionDiscount              :: Maybe Discount
     , subscriptionEndedAt               :: Maybe UTCTime
     -- , subscriptionItems
@@ -448,7 +448,7 @@ instance FromJSON Subscription where
         <*> (fromSeconds <$> o .: "current_period_start")
         <*> o .: "customer"
         <*> o .:? "days_until_due"
-        -- <*> o .: "default_tax_rates"
+        <*> o .: "default_tax_rates"
         <*> o .:? "discount"
         <*> (fmap fromSeconds <$> o .:? "ended_at")
         <*> o .: "livemode"

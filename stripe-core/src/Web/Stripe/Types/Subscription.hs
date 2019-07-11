@@ -60,6 +60,9 @@ instance ToStripeParam AtPeriodEnd where
 newtype DefaultTaxRates = DefaultTaxRates [TaxRateId]
     deriving (Read, Show, Eq, Ord, Data, Typeable)
 
+instance FromJSON DefaultTaxRates where
+    parseJSON xs = DefaultTaxRates <$> parseJSON xs
+
 instance ToStripeParam DefaultTaxRates where
   toStripeParam (DefaultTaxRates rates) xs =
     xs <> mapWithIndex (\n rate ->
