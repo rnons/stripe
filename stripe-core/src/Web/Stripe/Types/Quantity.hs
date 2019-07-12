@@ -16,7 +16,7 @@ import           Web.Stripe.Util                (toBytestring)
 ------------------------------------------------------------------------------
 -- | Generic `Quantity` type to be used with `Customer`,
 -- `Subscription` and `InvoiceLineItem` API requests
-newtype Quantity = Quantity Int
+newtype Quantity = Quantity { getQuantity :: Int }
     deriving (Read, Show, Eq, Ord, Data, Typeable, Generic)
 
 instance FromJSON Quantity where

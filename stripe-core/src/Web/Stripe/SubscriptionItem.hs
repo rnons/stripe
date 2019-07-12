@@ -32,7 +32,7 @@ module Web.Stripe.SubscriptionItem
     , TaxRates(..)
     ) where
 
-import           Web.Stripe.StripeRequest          (Method (DELETE, POST),
+import           Web.Stripe.StripeRequest          (Method (DELETE, GET, POST),
                                                     StripeHasParam,
                                                     StripeRequest (..),
                                                     StripeReturn,
@@ -132,7 +132,7 @@ getSubscriptionItems
   :: SubscriptionId
   -> StripeRequest GetSubscriptionItems
 getSubscriptionItems subscriptionId =
-    mkStripeRequest POST url params
+    mkStripeRequest GET url params
   where
     url = "subscription_items"
     params = toStripeParam subscriptionId []
