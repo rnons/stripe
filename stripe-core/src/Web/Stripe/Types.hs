@@ -1,10 +1,12 @@
-{-# LANGUAGE DeriveDataTypeable   #-}
-{-# LANGUAGE FlexibleContexts     #-}
-{-# LANGUAGE OverloadedStrings    #-}
-{-# LANGUAGE RecordWildCards      #-}
-{-# LANGUAGE StandaloneDeriving   #-}
-{-# LANGUAGE TypeFamilies         #-}
-{-# LANGUAGE UndecidableInstances #-}
+{-# LANGUAGE DeriveDataTypeable    #-}
+{-# LANGUAGE DeriveGeneric         #-}
+{-# LANGUAGE DuplicateRecordFields #-}
+{-# LANGUAGE FlexibleContexts      #-}
+{-# LANGUAGE OverloadedStrings     #-}
+{-# LANGUAGE RecordWildCards       #-}
+{-# LANGUAGE StandaloneDeriving    #-}
+{-# LANGUAGE TypeFamilies          #-}
+{-# LANGUAGE UndecidableInstances  #-}
 ------------------------------------------------------------------------------
 -- |
 -- Module      : Web.Stripe.Types
@@ -39,12 +41,17 @@ module Web.Stripe.Types
 import           Control.Applicative                  (pure, (<$>), (<*>),
                                                        (<|>))
 import           Control.Monad                        (mzero)
-import           Data.Aeson                           (FromJSON (parseJSON), Value (Bool, Object, String),
-                                                       (.:), (.:?))
+import           Data.Aeson                           (FromJSON (parseJSON),
+                                                       Options (..),
+                                                       Value (Bool, Object, String),
+                                                       camelTo2, defaultOptions,
+                                                       genericParseJSON, (.:),
+                                                       (.:?))
 import           Data.Data                            (Data, Typeable)
 import qualified Data.HashMap.Strict                  as H
 import           Data.Text                            (Text)
 import           Data.Time                            (UTCTime)
+import           GHC.Generics                         (Generic)
 import           Web.Stripe.StripeRequest.Class       (ToStripeParam (..))
 import           Web.Stripe.Types.BankAccount         (AccountNumber (..),
                                                        BankAccountId (..),
@@ -105,6 +112,8 @@ import           Web.Stripe.Types.Subscription        (BillingCycleAnchor (..),
                                                        SubscriptionCollectionMethod,
                                                        SubscriptionId (..),
                                                        SubscriptionStatus)
+import           Web.Stripe.Types.SubscriptionItem    (SubscriptionItemId)
+import           Web.Stripe.Types.TaxRate             (TaxRates)
 import           Web.Stripe.Types.Token               (TokenId (..),
                                                        TokenType (..))
 import           Web.Stripe.Types.Transaction         (TransactionId (..),
@@ -419,7 +428,7 @@ data Subscription = Subscription {
     , subscriptionDefaultTaxRates       :: DefaultTaxRates
     , subscriptionDiscount              :: Maybe Discount
     , subscriptionEndedAt               :: Maybe UTCTime
-    -- , subscriptionItems
+    , subscriptionItems                 :: StripeList SubscriptionItem
     -- , subscriptionLatestInvoice
     , subscriptionLiveMode              :: Bool
     , subscriptionMetadata              :: Metadata
@@ -451,6 +460,7 @@ instance FromJSON Subscription where
         <*> o .: "default_tax_rates"
         <*> o .:? "discount"
         <*> (fmap fromSeconds <$> o .:? "ended_at")
+        <*> o .: "items"
         <*> o .: "livemode"
         <*> o .: "metadata"
         <*> o .: "plan"
@@ -461,6 +471,24 @@ instance FromJSON Subscription where
         <*> (fmap fromSeconds <$> o .:? "trial_end")
         <*> (fmap fromSeconds <$> o .:? "trial_start")
     parseJSON _ = mzero
+
+------------------------------------------------------------------------------
+-- | SubscriptionItem object
+data SubscriptionItem = SubscriptionItem
+    { id           :: SubscriptionItemId
+    , object       :: Text
+    -- , billing_thresholds
+    -- , created      :: UTCTime
+    , metadata     :: Metadata
+    , plan         :: Plan
+    , quantity     :: Quantity
+    , subscription :: SubscriptionId
+    , taxRates     :: Maybe TaxRates
+    } deriving (Read, Show, Eq, Ord, Data, Typeable, Generic)
+
+instance FromJSON SubscriptionItem where
+    parseJSON = genericParseJSON defaultOptions
+        { fieldLabelModifier = camelTo2 '_' }
 
 ------------------------------------------------------------------------------
 -- | Plan object

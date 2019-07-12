@@ -80,6 +80,7 @@ library
                        Web.Stripe.Types.StatementDescriptor
                        Web.Stripe.Types.StripeList
                        Web.Stripe.Types.Subscription
+                       Web.Stripe.Types.SubscriptionItem
                        Web.Stripe.Types.TaxID
                        Web.Stripe.Types.TaxRate
                        Web.Stripe.Types.TimeRange
