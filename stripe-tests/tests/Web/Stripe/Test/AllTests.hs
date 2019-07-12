@@ -25,6 +25,7 @@ import           Web.Stripe.Test.Prelude              (Stripe)
 import           Web.Stripe.Test.Recipient            (recipientTests)
 import           Web.Stripe.Test.Refund               (refundTests)
 import           Web.Stripe.Test.Subscription         (subscriptionTests)
+import           Web.Stripe.Test.SubscriptionItem     (subscriptionItemTests)
 import           Web.Stripe.Test.Token                (tokenTests)
 import           Web.Stripe.Test.Transfer             (transferTests)
 ------------------------------------------------------------------------------
@@ -40,6 +41,7 @@ allTests stripe' = do
     customerTests stripe
     -- cardTests stripe
     subscriptionTests stripe
+    subscriptionItemTests stripe
     -- planTests stripe
     -- couponTests stripe
     -- discountTests stripe

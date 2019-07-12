@@ -57,6 +57,7 @@ library
                        Web.Stripe.Test.Recipient
                        Web.Stripe.Test.Refund
                        Web.Stripe.Test.Subscription
+                       Web.Stripe.Test.SubscriptionItem
                        Web.Stripe.Test.Token
                        Web.Stripe.Test.Transfer
                        Web.Stripe.Test.Util
