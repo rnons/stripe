@@ -107,6 +107,7 @@ import           Web.Stripe.Types.StripeList          (EndingBefore (..),
                                                        Limit (..),
                                                        StartingAfter (..),
                                                        StripeList (..))
+import           Web.Stripe.Types.StripeTime          (StripeTime)
 import           Web.Stripe.Types.Subscription        (BillingCycleAnchor (..),
                                                        DefaultTaxRates,
                                                        SubscriptionCollectionMethod,
@@ -478,7 +479,7 @@ data SubscriptionItem = SubscriptionItem
     { id           :: SubscriptionItemId
     , object       :: Text
     -- , billing_thresholds
-    -- , created      :: UTCTime
+    , created      :: StripeTime
     , metadata     :: Metadata
     , plan         :: Plan
     , quantity     :: Quantity

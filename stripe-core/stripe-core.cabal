@@ -79,6 +79,7 @@ library
                        Web.Stripe.Types.Source
                        Web.Stripe.Types.StatementDescriptor
                        Web.Stripe.Types.StripeList
+                       Web.Stripe.Types.StripeTime
                        Web.Stripe.Types.Subscription
                        Web.Stripe.Types.SubscriptionItem
                        Web.Stripe.Types.TaxID
