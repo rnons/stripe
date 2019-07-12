@@ -53,6 +53,7 @@ library
                        Web.Stripe.StripeRequest
                        Web.Stripe.StripeRequest.Class
                        Web.Stripe.Subscription
+                       Web.Stripe.SubscriptionItem
                        Web.Stripe.Token
                        Web.Stripe.Transfer
                        Web.Stripe.Types
