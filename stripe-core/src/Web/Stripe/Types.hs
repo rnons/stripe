@@ -409,38 +409,38 @@ instance FromJSON RecipientCard where
 
 ------------------------------------------------------------------------------
 -- | Subscription Object
-data Subscription = Subscription {
-      subscriptionId                    :: SubscriptionId
-    , subscriptionObject                :: Text
-    , subscriptionApplicationFeePercent :: Maybe Double
-    -- , subscriptionBilling
-    , subscriptionBillingCycleAnchor    :: BillingCycleAnchor
-    -- , subscriptionBillingThresholds
-    , subscriptionCancelAtPeriodEnd     :: Bool
-    , subscriptionCanceledAt            :: Maybe UTCTime
-    , subscriptionCollectionMethod      :: SubscriptionCollectionMethod
-    , subscriptionCreated               :: UTCTime
-    , subscriptionCurrentPeriodEnd      :: UTCTime
-    , subscriptionCurrentPeriodStart    :: UTCTime
-    , subscriptionCustomerId            :: Expandable CustomerId
-    , subscriptionDaysUntilDue          :: Maybe Int
-    -- , subscriptionDefaultPaymentMethod
-    -- , subscriptionDefaultSource
-    , subscriptionDefaultTaxRates       :: DefaultTaxRates
-    , subscriptionDiscount              :: Maybe Discount
-    , subscriptionEndedAt               :: Maybe UTCTime
-    , subscriptionItems                 :: StripeList SubscriptionItem
-    -- , subscriptionLatestInvoice
-    , subscriptionLiveMode              :: Bool
-    , subscriptionMetadata              :: Metadata
-    , subscriptionPlan                  :: Maybe Plan
-    , subscriptionQuantity              :: Quantity
-    , subscriptionStart                 :: UTCTime
-    , subscriptionStartDate             :: UTCTime
-    , subscriptionStatus                :: SubscriptionStatus
-    , subscriptionTrialEnd              :: Maybe UTCTime
-    , subscriptionTrialStart            :: Maybe UTCTime
-} deriving (Read, Show, Eq, Ord, Data, Typeable)
+data Subscription = Subscription
+    { id                    :: SubscriptionId
+    , object                :: Text
+    , applicationFeePercent :: Maybe Double
+    -- , billing
+    , billingCycleAnchor    :: BillingCycleAnchor
+    -- , billingThresholds
+    , cancelAtPeriodEnd     :: Bool
+    , canceledAt            :: Maybe UTCTime
+    , collectionMethod      :: SubscriptionCollectionMethod
+    , created               :: UTCTime
+    , currentPeriodEnd      :: UTCTime
+    , currentPeriodStart    :: UTCTime
+    , customerId            :: Expandable CustomerId
+    , daysUntilDue          :: Maybe Int
+    -- , defaultPaymentMethod
+    -- , defaultSource
+    , defaultTaxRates       :: DefaultTaxRates
+    , discount              :: Maybe Discount
+    , endedAt               :: Maybe UTCTime
+    , items                 :: StripeList SubscriptionItem
+    -- , latestInvoice
+    , liveMode              :: Bool
+    , metadata              :: Metadata
+    , plan                  :: Maybe Plan
+    , quantity              :: Quantity
+    , start                 :: UTCTime
+    , startDate             :: UTCTime
+    , status                :: SubscriptionStatus
+    , trialEnd              :: Maybe UTCTime
+    , trialStart            :: Maybe UTCTime
+    } deriving (Read, Show, Eq, Ord, Data, Typeable)
 
 ------------------------------------------------------------------------------
 -- | JSON Instance for `Subscription`

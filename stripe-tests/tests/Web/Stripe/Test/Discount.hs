@@ -55,7 +55,7 @@ discountTests stripe = do
         Customer { customerId = customerid } <-
           createCustomer
             -&- coupon
-        Subscription { subscriptionId = sid } <-
+        Subscription { id = sid } <-
           -- createSubscription customerid plan
           createSubscription customerid []
         void $ updateSubscription customerid sid -&- coupon
