@@ -58,6 +58,7 @@ module Web.Stripe.Subscription
       -- * Types
     , ApplicationFeePercent (..)
     , AtPeriodEnd        (..)
+    , BillingCycleAnchor (..)
     , CustomerId         (..)
     , CouponId           (..)
     , Coupon             (..)
@@ -72,8 +73,10 @@ module Web.Stripe.Subscription
     , StartingAfter      (..)
     , StripeList         (..)
     , Subscription       (..)
+    , SubscriptionCollectionMethod(..)
     , SubscriptionId     (..)
     , SubscriptionStatus (..)
+    , TaxRateId(..)
     , TrialEnd           (..)
     ) where
 
@@ -97,13 +100,13 @@ import           Web.Stripe.Types              (ApplicationFeePercent (..),
                                                 StartingAfter (..),
                                                 StripeList (..),
                                                 Subscription (..),
-                                                SubscriptionCollectionMethod,
                                                 SubscriptionId (..))
 import           Web.Stripe.Types.Plan         (TrialEnd (..))
 import           Web.Stripe.Types.Subscription (AtPeriodEnd (..),
-                                                BillingCycleAnchor,
+                                                BillingCycleAnchor (..),
                                                 DefaultTaxRates (..),
                                                 Prorate (..),
+                                                SubscriptionCollectionMethod (..),
                                                 SubscriptionStatus (..))
 import           Web.Stripe.Types.TaxRate      (TaxRateId (..))
 import           Web.Stripe.Types.Util         (getCustomerId)

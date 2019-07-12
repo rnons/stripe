@@ -3,6 +3,8 @@
 {-# LANGUAGE OverloadedStrings     #-}
 {-# LANGUAGE TypeFamilies          #-}
 
+-- |
+-- https://stripe.com/docs/api/subscription_items
 module Web.Stripe.SubscriptionItem
     ( -- * API
       CreateSubscriptionItem
@@ -23,6 +25,7 @@ module Web.Stripe.SubscriptionItem
     , Prorate(..)
     , Quantity(..)
     , StartingAfter(..)
+    , StripeList(..)
     , SubscriptionId(..)
     , SubscriptionItem(..)
     , SubscriptionItemId(..)
