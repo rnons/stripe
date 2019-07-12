@@ -77,14 +77,14 @@ invoiceTests stripe = do
         Plan { planId = pid } <- createPlan planid (Amount 20) USD Day
         InvoiceItem { invoiceItemId = iiid } <- createInvoiceItem cid (Amount 100) USD
         Invoice { invoiceId = Just iid } <- createInvoice cid -&- meta
-        i <- updateInvoice iid -&- (MetaData [("some", "thing")])
+        i <- updateInvoice iid -&- (Metadata [("some", "thing")])
         void $ deleteInvoiceItem iiid
         void $ deletePlan pid
         void $ deleteCustomer cid
         return i
       result `shouldSatisfy` isRight
       let Right Invoice {..} = result
-      invoiceMetaData `shouldBe` (MetaData [("some", "thing")])
+      invoiceMetadata `shouldBe` (Metadata [("some", "thing")])
     it "Retrieve an Upcoming Invoice" $ do
       planid <- makePlanId
       result <- stripe $ do
@@ -113,7 +113,7 @@ invoiceTests stripe = do
       invoicePaid `shouldBe` True
   where
     cardinfo = (mkNewCard credit em ey) { newCardCVC = Just cvc }
-    meta = MetaData [ ("some","metadata") ]
+    meta = Metadata [ ("some","metadata") ]
     credit = CardNumber "4242424242424242"
     em  = ExpMonth 12
     ey  = ExpYear 2020

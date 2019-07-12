@@ -69,7 +69,7 @@ import           Web.Stripe.StripeRequest (Method (GET, POST), StripeHasParam,
 import           Web.Stripe.Types         (Amount (..), Charge (..),
                                            ChargeId (..), EndingBefore (..),
                                            ExpandParams (..), Limit (..),
-                                           MetaData (..), Refund (..),
+                                           Metadata (..), Refund (..),
                                            StartingAfter (..), StripeList (..))
 import           Web.Stripe.Types.Refund  (RefundApplicationFee (..),
                                            RefundId (..), RefundReason (..))
@@ -92,7 +92,7 @@ type instance StripeReturn CreateRefund = Refund
 instance StripeHasParam CreateRefund Amount
 instance StripeHasParam CreateRefund RefundApplicationFee
 instance StripeHasParam CreateRefund RefundReason
-instance StripeHasParam CreateRefund MetaData
+instance StripeHasParam CreateRefund Metadata
 
 ------------------------------------------------------------------------------
 -- | Retrieve a `Refund` by `ChargeId` and `RefundId`
@@ -127,7 +127,7 @@ updateRefund
 
 data UpdateRefund
 type instance StripeReturn UpdateRefund = Refund
-instance StripeHasParam UpdateRefund MetaData
+instance StripeHasParam UpdateRefund Metadata
 
 ------------------------------------------------------------------------------
 -- | Retrieve a lot of Refunds by `ChargeId`

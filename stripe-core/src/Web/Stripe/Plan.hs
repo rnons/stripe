@@ -49,7 +49,7 @@ module Web.Stripe.Plan
     , Interval            (..)
     , IntervalCount       (..)
     , Limit               (..)
-    , MetaData            (..)
+    , Metadata            (..)
     , Plan                (..)
     , PlanId              (..)
     , PlanName            (..)
@@ -68,7 +68,7 @@ import           Web.Stripe.StripeRequest (Method (DELETE, GET, POST),
 import           Web.Stripe.Types         (Amount (..), Currency (..),
                                            EndingBefore (..),
                                            IntervalCount (..), Limit (..),
-                                           MetaData (..), Plan (..),
+                                           Metadata (..), Plan (..),
                                            PlanId (..), StartingAfter (..),
                                            StatementDescription (..),
                                            StripeDeleteResult (..),
@@ -106,7 +106,7 @@ data CreatePlan
 type instance StripeReturn CreatePlan = Plan
 instance StripeHasParam CreatePlan IntervalCount
 instance StripeHasParam CreatePlan TrialPeriodDays
-instance StripeHasParam CreatePlan MetaData
+instance StripeHasParam CreatePlan Metadata
 instance StripeHasParam CreatePlan StatementDescription
 
 ------------------------------------------------------------------------------
@@ -138,7 +138,7 @@ updatePlan
 data UpdatePlan
 type instance StripeReturn UpdatePlan = Plan
 instance StripeHasParam UpdatePlan PlanName
-instance StripeHasParam UpdatePlan MetaData
+instance StripeHasParam UpdatePlan Metadata
 instance StripeHasParam UpdatePlan StatementDescription
 
 ------------------------------------------------------------------------------

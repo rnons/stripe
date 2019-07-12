@@ -48,13 +48,13 @@ chargeTests stripe =
           Charge { chargeId = chid } <- createCharge (Amount 100) USD -&- cid
           _ <- updateCharge chid
                  -&- Description "Cool"
-                 -&- MetaData [("hi", "there")]
+                 -&- Metadata [("hi", "there")]
           result <- getCharge chid
           void $ deleteCustomer cid
           return result
         result `shouldSatisfy` isRight
-        let Right Charge { chargeMetaData = cmd, chargeDescription = desc } = result
-        cmd `shouldBe` (MetaData [("hi", "there")])
+        let Right Charge { chargeMetadata = cmd, chargeDescription = desc } = result
+        cmd `shouldBe` (Metadata [("hi", "there")])
         desc `shouldSatisfy` (==(Just $ Description "Cool"))
     retrieveExpandedChargeTest =
       it "Retrieves an expanded charge succesfully" $ do

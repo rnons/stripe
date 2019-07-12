@@ -41,7 +41,7 @@ module Web.Stripe.Dispute
     , DisputeReason (..)
     , DisputeStatus (..)
     , Evidence      (..)
-    , MetaData      (..)
+    , Metadata      (..)
     ) where
 
 import           Web.Stripe.StripeRequest (Method (POST), StripeHasParam,
@@ -49,7 +49,7 @@ import           Web.Stripe.StripeRequest (Method (POST), StripeHasParam,
                                            mkStripeRequest)
 import           Web.Stripe.Types         (ChargeId (..), Dispute (..),
                                            DisputeReason (..),
-                                           DisputeStatus (..), MetaData (..))
+                                           DisputeStatus (..), Metadata (..))
 import           Web.Stripe.Types.Dispute (Evidence (..))
 import           Web.Stripe.Types.Util    (getChargeId)
 import           Web.Stripe.Util          ((</>))
@@ -68,7 +68,7 @@ updateDispute
 data UpdateDispute
 type instance StripeReturn UpdateDispute = Dispute
 instance StripeHasParam UpdateDispute Evidence
-instance StripeHasParam UpdateDispute MetaData
+instance StripeHasParam UpdateDispute Metadata
 
 ------------------------------------------------------------------------------
 -- | `Dispute` to be closed

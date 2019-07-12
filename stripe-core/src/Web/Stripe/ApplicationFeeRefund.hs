@@ -45,7 +45,7 @@ module Web.Stripe.ApplicationFeeRefund
     , StartingAfter          (..)
     , Limit                  (..)
     , ExpandParams           (..)
-    , MetaData               (..)
+    , Metadata               (..)
     , Amount                 (..)
     ) where
 
@@ -56,7 +56,7 @@ import           Web.Stripe.Types         (Amount (..), ApplicationFee (..),
                                            ApplicationFeeRefund (..),
                                            EndingBefore (..), ExpandParams (..),
                                            FeeId (..), Limit (..),
-                                           MetaData (..), StartingAfter (..),
+                                           Metadata (..), StartingAfter (..),
                                            StripeList (..))
 import           Web.Stripe.Types.Refund  (RefundId (..))
 import           Web.Stripe.Util          ((</>))
@@ -76,7 +76,7 @@ createApplicationFeeRefund
 data CreateApplicationFeeRefund
 type instance StripeReturn CreateApplicationFeeRefund = ApplicationFeeRefund
 instance StripeHasParam CreateApplicationFeeRefund Amount
-instance StripeHasParam CreateApplicationFeeRefund MetaData
+instance StripeHasParam CreateApplicationFeeRefund Metadata
 
 ------------------------------------------------------------------------------
 -- | Retrieve an existing 'ApplicationFeeRefund'
@@ -113,7 +113,7 @@ updateApplicationFeeRefund
 
 data UpdateApplicationFeeRefund
 type instance StripeReturn UpdateApplicationFeeRefund = ApplicationFeeRefund
-instance StripeHasParam UpdateApplicationFeeRefund MetaData
+instance StripeHasParam UpdateApplicationFeeRefund Metadata
 
 ------------------------------------------------------------------------------
 -- | Retrieve a list of all 'ApplicationFeeRefund's for a given Application 'FeeId'

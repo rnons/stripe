@@ -61,7 +61,7 @@ module Web.Stripe.Recipient
     , Email          (..)
     , IsVerified     (..)
     , Limit          (..)
-    , MetaData       (..)
+    , Metadata       (..)
     , Name           (..)
     , NewBankAccount (..)
     , NewCard        (..)
@@ -93,7 +93,7 @@ import           Web.Stripe.Types         (AccountNumber (..),
                                            ExpMonth (..), ExpYear (..),
                                            ExpYear (..), ExpandParams (..),
                                            IsVerified (..), Limit (..),
-                                           MetaData (..), Name (..),
+                                           Metadata (..), Name (..),
                                            NewBankAccount (..), NewCard (..),
                                            Recipient (..), RecipientId (..),
                                            RecipientType (..),
@@ -132,7 +132,7 @@ instance StripeHasParam CreateRecipient NewCard
 instance StripeHasParam CreateRecipient CardId
 instance StripeHasParam CreateRecipient Email
 instance StripeHasParam CreateRecipient Description
-instance StripeHasParam CreateRecipient MetaData
+instance StripeHasParam CreateRecipient Metadata
 
 ------------------------------------------------------------------------------
 -- | Retrieve a 'Recipient'
@@ -171,7 +171,7 @@ instance StripeHasParam UpdateRecipient DefaultCard
 instance StripeHasParam UpdateRecipient CardId
 instance StripeHasParam UpdateRecipient Email
 instance StripeHasParam UpdateRecipient Description
-instance StripeHasParam UpdateRecipient MetaData
+instance StripeHasParam UpdateRecipient Metadata
 
 ------------------------------------------------------------------------------
 -- | Delete a `Recipient`

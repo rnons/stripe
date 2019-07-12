@@ -67,12 +67,12 @@ invoiceItemTests stripe = do
         ii <- updateInvoiceItem iid
               -&- (Amount 200)
               -&- (Description "description")
-              -&- MetaData [("some","thing")]
+              -&- Metadata [("some","thing")]
         _  <- deleteCustomer cid
         return ii
       result `shouldSatisfy` isRight
       let Right InvoiceItem{..} = result
-      invoiceItemMetaData `shouldBe` (MetaData [("some","thing")])
+      invoiceItemMetadata `shouldBe` (Metadata [("some","thing")])
       invoiceItemDescription `shouldBe` (Just (Description "description"))
       invoiceItemAmount `shouldBe` 200
     it "Succesfully deletes an invoice item" $ do

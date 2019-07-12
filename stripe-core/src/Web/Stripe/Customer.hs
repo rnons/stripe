@@ -58,7 +58,7 @@ module Web.Stripe.Customer
     , ExpMonth           (..)
     , ExpYear            (..)
     , Limit              (..)
-    , MetaData           (..)
+    , Metadata           (..)
     , mkNewCard
     , NewCard            (..)
     , PlanId             (..)
@@ -80,7 +80,7 @@ import           Web.Stripe.Types          (CVC (..), CardId (..),
                                             Description (..), Email (..),
                                             EndingBefore (..), ExpMonth (..),
                                             ExpYear (..), ExpandParams (..),
-                                            Limit (..), MetaData (..),
+                                            Limit (..), Metadata (..),
                                             NewCard (..), PlanId (..),
                                             Quantity (..), StartingAfter (..),
                                             StripeDeleteResult (..),
@@ -107,7 +107,7 @@ instance StripeHasParam CreateCustomer TokenId
 instance StripeHasParam CreateCustomer CouponId
 instance StripeHasParam CreateCustomer Description
 instance StripeHasParam CreateCustomer Email
-instance StripeHasParam CreateCustomer MetaData
+instance StripeHasParam CreateCustomer Metadata
 instance StripeHasParam CreateCustomer PlanId
 instance StripeHasParam CreateCustomer Quantity
 instance StripeHasParam CreateCustomer TrialEnd
@@ -146,7 +146,7 @@ instance StripeHasParam UpdateCustomer CouponId
 instance StripeHasParam UpdateCustomer DefaultCard
 instance StripeHasParam UpdateCustomer Description
 instance StripeHasParam UpdateCustomer Email
-instance StripeHasParam UpdateCustomer MetaData
+instance StripeHasParam UpdateCustomer Metadata
 
 ------------------------------------------------------------------------------
 -- | Deletes the specified `Customer`

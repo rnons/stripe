@@ -53,12 +53,12 @@ couponTests stripe = do
                                   Once
                                   -&-(AmountOff 1)
                                   -&- USD
-                r <- updateCoupon cid -&- MetaData [("hi", "there")]
+                r <- updateCoupon cid -&- Metadata [("hi", "there")]
                 void $ deleteCoupon cid
                 return r
       result `shouldSatisfy` isRight
-      let Right (Coupon { couponMetaData = cmd }) = result
-      cmd `shouldBe` (MetaData [("hi", "there")])
+      let Right (Coupon { couponMetadata = cmd }) = result
+      cmd `shouldBe` (Metadata [("hi", "there")])
 
     it "Succesfully retrieves all coupons" $ do
       result <- stripe $ do void $ getCoupons

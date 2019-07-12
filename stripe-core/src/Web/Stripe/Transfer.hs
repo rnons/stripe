@@ -73,7 +73,7 @@ import           Web.Stripe.Types          (Amount (..), BankAccountId (..),
                                             Date (..), Description (..),
                                             EndingBefore (..),
                                             ExpandParams (..), Limit (..),
-                                            MetaData (..), Recipient (..),
+                                            Metadata (..), Recipient (..),
                                             RecipientId (..),
                                             StartingAfter (..),
                                             StatementDescription (..),
@@ -107,7 +107,7 @@ instance StripeHasParam CreateTransfer Description
 instance StripeHasParam CreateTransfer BankAccountId
 instance StripeHasParam CreateTransfer CardId
 instance StripeHasParam CreateTransfer StatementDescription
-instance StripeHasParam CreateTransfer MetaData
+instance StripeHasParam CreateTransfer Metadata
 
 ------------------------------------------------------------------------------
 -- | Retrieve a `Transfer`
@@ -140,7 +140,7 @@ updateTransfer
 data UpdateTransfer
 type instance StripeReturn UpdateTransfer = Transfer
 instance StripeHasParam UpdateTransfer Description
-instance StripeHasParam UpdateTransfer MetaData
+instance StripeHasParam UpdateTransfer Metadata
 
 ------------------------------------------------------------------------------
 -- | Cancel a `Transfer`

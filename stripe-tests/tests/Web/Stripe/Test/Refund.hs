@@ -62,12 +62,12 @@ refundTests stripe = do
           Customer { customerId = cid  } <- createCustomer -&- cardinfo
           Charge   { chargeId   = chid } <- createCharge (Amount 100) USD -&- cid
           Refund   { refundId   = rid  } <- createRefund chid
-          ref <- updateRefund chid rid -&- (MetaData [("hello","there")])
+          ref <- updateRefund chid rid -&- (Metadata [("hello","there")])
           void $ deleteCustomer cid
           return ref
         result `shouldSatisfy` isRight
         let Right Refund{..} = result
-        refundMetaData `shouldBe` (MetaData [("hello","there")])
+        refundMetadata `shouldBe` (Metadata [("hello","there")])
       it "Retrieves all refunds for a Charge" $ do
         result <- stripe $ do
           Customer { customerId = cid  } <- createCustomer -&- cardinfo

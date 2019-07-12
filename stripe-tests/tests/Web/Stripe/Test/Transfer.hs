@@ -64,12 +64,12 @@ transferTests stripe =
     --        <- createTransfer rid (Amount 100) USD
     --     t <- updateTransfer tid
     --           -&- (Description "hey there")
-    --           -&- (MetaData [("hey", "there")])
+    --           -&- (Metadata [("hey", "there")])
     --     void $ deleteRecipient rid
     --     return t
     --   result `shouldSatisfy` isRight
     --   let Right Transfer {..} = result
-    --   transferMetaData `shouldBe` (MetaData [("hey", "there")])
+    --   transferMetadata `shouldBe` (Metadata [("hey", "there")])
     --   transferDescription `shouldBe` (Just (Description "hey there"))
     it "Can't Cancel a committed transfer" $ do
       result <- stripe $ do

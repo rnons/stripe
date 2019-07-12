@@ -15,7 +15,7 @@ module Web.Stripe.Util
     , getParams
     , toBytestring
     , (</>)
-    , toMetaData
+    , toMetadata
     , toExpandable
     , mapWithIndex
     ) where
@@ -95,9 +95,9 @@ toBytestring :: Show a => a -> ByteString
 toBytestring = B8.pack . show
 
 ------------------------------------------------------------------------------
--- | To MetaData
-toMetaData :: [(Text, Text)] -> [(ByteString, ByteString)]
-toMetaData = map toKV
+-- | To Metadata
+toMetadata :: [(Text, Text)] -> [(ByteString, ByteString)]
+toMetadata = map toKV
   where
     toKV (k,v) = ("metadata[" <> T.encodeUtf8 k <> "]",  T.encodeUtf8 v)
 

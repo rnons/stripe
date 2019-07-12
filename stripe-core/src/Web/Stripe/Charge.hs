@@ -72,7 +72,7 @@ module Web.Stripe.Charge
     , ExpMonth      (..)
     , ExpYear       (..)
     , Limit         (..)
-    , MetaData      (..)
+    , Metadata      (..)
     , NewCard       (..)
     , ReceiptEmail  (..)
     , StartingAfter (..)
@@ -93,7 +93,7 @@ import           Web.Stripe.Types         (Amount (..),
                                            Email (..), EndingBefore (..),
                                            ExpMonth (..), ExpYear (..),
                                            ExpandParams (..), Limit (..),
-                                           MetaData (..), NewCard (..),
+                                           Metadata (..), NewCard (..),
                                            StartingAfter (..),
                                            StatementDescription (..),
                                            StripeList (..), TokenId (..))
@@ -124,7 +124,7 @@ instance StripeHasParam CreateCharge CustomerId
 instance StripeHasParam CreateCharge NewCard
 instance StripeHasParam CreateCharge TokenId
 instance StripeHasParam CreateCharge Description
-instance StripeHasParam CreateCharge MetaData
+instance StripeHasParam CreateCharge Metadata
 instance StripeHasParam CreateCharge Capture
 instance StripeHasParam CreateCharge StatementDescription
 instance StripeHasParam CreateCharge ReceiptEmail
@@ -159,7 +159,7 @@ updateCharge
 data UpdateCharge
 type instance StripeReturn UpdateCharge = Charge
 instance StripeHasParam UpdateCharge Description
-instance StripeHasParam UpdateCharge MetaData
+instance StripeHasParam UpdateCharge Metadata
 
 ------------------------------------------------------------------------------
 -- | a `Charge` to be captured

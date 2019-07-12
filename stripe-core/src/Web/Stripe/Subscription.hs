@@ -65,7 +65,7 @@ module Web.Stripe.Subscription
     , EndingBefore       (..)
     , ExpandParams       (..)
     , Limit              (..)
-    , MetaData           (..)
+    , Metadata           (..)
     , PlanId             (..)
     , Prorate            (..)
     , Quantity           (..)
@@ -92,7 +92,7 @@ import           Web.Stripe.Types              (ApplicationFeePercent (..),
                                                 CouponId (..), CustomerId (..),
                                                 EndingBefore (..),
                                                 ExpandParams (..), Limit (..),
-                                                MetaData (..), PlanId (..),
+                                                Metadata (..), PlanId (..),
                                                 Quantity (..),
                                                 StartingAfter (..),
                                                 StripeList (..),
@@ -136,7 +136,7 @@ instance StripeHasParam CreateSubscription CouponId
 -- instance StripeHasParam CreateSubscription DefaultPaymentMethod
 -- instance StripeHasParam CreateSubscription DefaultSource
 instance StripeHasParam CreateSubscription DefaultTaxRates
-instance StripeHasParam CreateSubscription MetaData
+instance StripeHasParam CreateSubscription Metadata
 instance StripeHasParam CreateSubscription Prorate
 instance StripeHasParam CreateSubscription TrialEnd
 -- instance StripeHasParam CreateSubscription TrialFromPlan
@@ -147,7 +147,7 @@ instance StripeHasParam CreateSubscription TrialEnd
 data CreateSubscriptionSubscriptionItem = CreateSubscriptionSubscriptionItem
     { plan     :: PlanId
     -- , billingThresholds
-    , metaData :: Maybe MetaData
+    , metaData :: Maybe Metadata
     , quantity :: Maybe Int
     , taxRates :: Maybe [TaxRateId]
     }
@@ -220,7 +220,7 @@ instance StripeHasParam UpdateSubscription TrialEnd
 instance StripeHasParam UpdateSubscription CardId
 instance StripeHasParam UpdateSubscription Quantity
 instance StripeHasParam UpdateSubscription ApplicationFeePercent
-instance StripeHasParam UpdateSubscription MetaData
+instance StripeHasParam UpdateSubscription Metadata
 
 ------------------------------------------------------------------------------
 -- | Delete a `Subscription` by `CustomerId` and `SubscriptionId`

@@ -86,7 +86,7 @@ recipientTests stripe = do
         void $ deleteRecipient rid
       result `shouldSatisfy` isRight
   where name      = Name "David M. Johnson"
-        meta      = MetaData [("this", "thing")]
+        meta      = Metadata [("this", "thing")]
         email     = Email "djohnson.m@gmail.com"
         country   = Country "US"
         description = Description "description"

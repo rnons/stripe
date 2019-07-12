@@ -71,7 +71,7 @@ library
                        Web.Stripe.Types.Event
                        Web.Stripe.Types.Invoice
                        Web.Stripe.Types.InvoiceItem
-                       Web.Stripe.Types.MetaData
+                       Web.Stripe.Types.Metadata
                        Web.Stripe.Types.Plan
                        Web.Stripe.Types.Quantity
                        Web.Stripe.Types.Recipient

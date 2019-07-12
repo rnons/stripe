@@ -59,9 +59,9 @@ customerTests stripe =
       (AccountBalance customerAccountBalance) `shouldBe` bal
       customerDescription `shouldBe` (Just desc)
       customerEmail `shouldBe` (Just email)
-      customerMetaData `shouldBe` meta
+      customerMetadata `shouldBe` meta
   where
     bal   = AccountBalance 100
     desc  = Description "hey"
     email = Email "djohnson.m@gmail.com"
-    meta  = MetaData [("hey","there")]
+    meta  = Metadata [("hey","there")]

@@ -26,7 +26,7 @@ module Web.Stripe.Types
   , module Web.Stripe.Types.Date
   , module Web.Stripe.Types.Description
   , module Web.Stripe.Types.Email
-  , module Web.Stripe.Types.MetaData
+  , module Web.Stripe.Types.Metadata
   , module Web.Stripe.Types.Plan
   , module Web.Stripe.Types.Quantity
   , module Web.Stripe.Types.Recipient
@@ -88,7 +88,7 @@ import           Web.Stripe.Types.Invoice             (InvoiceId (..),
                                                        InvoiceLineItemId (..),
                                                        InvoiceLineItemType)
 import           Web.Stripe.Types.InvoiceItem         (InvoiceItemId (..))
-import           Web.Stripe.Types.MetaData            (MetaData (..))
+import           Web.Stripe.Types.Metadata            (Metadata (..))
 import           Web.Stripe.Types.Plan                (Interval (..),
                                                        PlanId (..))
 import           Web.Stripe.Types.Quantity            (Quantity (..))
@@ -171,7 +171,7 @@ data Charge = Charge {
     , chargeInvoice              :: Maybe (Expandable InvoiceId)
     , chargeDescription          :: Maybe Description
     , chargeDispute              :: Maybe Dispute
-    , chargeMetaData             :: MetaData
+    , chargeMetadata             :: Metadata
     , chargeStatementDescription :: Maybe StatementDescription
     , chargeReceiptEmail         :: Maybe Text
     , chargeReceiptNumber        :: Maybe Text
@@ -216,7 +216,7 @@ data Refund = Refund {
     , refundObject             :: Text
     , refundCharge             :: ChargeId
     , refundBalanceTransaction :: Maybe (Expandable TransactionId)
-    , refundMetaData           :: MetaData
+    , refundMetadata           :: Metadata
     } deriving (Read, Show, Eq, Ord, Data, Typeable)
 
 ------------------------------------------------------------------------------
@@ -249,7 +249,7 @@ data Customer = Customer {
     -- , customerCards          :: StripeList Card
     , customerCurrency       :: Maybe Currency
     , customerDefaultCard    :: Maybe (Expandable CardId)
-    , customerMetaData       :: MetaData
+    , customerMetadata       :: Metadata
     } | DeletedCustomer {
       deletedCustomer   :: Maybe Bool
     , deletedCustomerId :: CustomerId
@@ -317,7 +317,7 @@ data Card = Card {
     , cardAddressLine1Check :: Maybe Text
     , cardAddressZipCheck   :: Maybe Text
     , cardCustomerId        :: Maybe (Expandable CustomerId)
-    , cardMetaData          :: MetaData
+    , cardMetadata          :: Metadata
     } deriving (Read, Show, Eq, Ord, Data, Typeable)
 
 ------------------------------------------------------------------------------
@@ -422,7 +422,7 @@ data Subscription = Subscription {
     -- , subscriptionItems
     -- , subscriptionLatestInvoice
     , subscriptionLiveMode              :: Bool
-    , subscriptionMetaData              :: MetaData
+    , subscriptionMetadata              :: Metadata
     , subscriptionPlan                  :: Maybe Plan
     , subscriptionQuantity              :: Quantity
     , subscriptionStart                 :: UTCTime
@@ -476,7 +476,7 @@ data Plan = Plan
     , planInterval        :: Interval
     , planIntervalCount   :: Maybe Int -- optional, max of 1 year intervals allowed, default 1
     , planLiveMode        :: Bool
-    , planMetaData        :: MetaData
+    , planMetadata        :: Metadata
     , planNickname        :: Maybe Text
     -- , planProduct
     -- , planTiers
@@ -523,7 +523,7 @@ data Coupon = Coupon {
     , couponTimesRedeemed    :: Maybe Int
     , couponDurationInMonths :: Maybe Int
     , couponValid            :: Bool
-    , couponMetaData         :: MetaData
+    , couponMetadata         :: Metadata
     } deriving (Read, Show, Eq, Ord, Data, Typeable)
 
 ------------------------------------------------------------------------------
@@ -598,7 +598,7 @@ data Invoice = Invoice {
     , invoiceSubscription         :: Maybe SubscriptionId
     , invoiceStatementDescription :: Maybe StatementDescription
     , invoiceDescription          :: Maybe Description
-    , invoiceMetaData             :: MetaData
+    , invoiceMetadata             :: Metadata
 } deriving (Read, Show, Eq, Ord, Data, Typeable)
 
 ------------------------------------------------------------------------------
@@ -650,7 +650,7 @@ data InvoiceItem = InvoiceItem {
     , invoiceItemInvoice      :: Maybe (Expandable InvoiceId)
     , invoiceItemQuantity     :: Maybe Quantity
     , invoiceItemSubscription :: Maybe SubscriptionId
-    , invoiceItemMetaData     :: MetaData
+    , invoiceItemMetadata     :: Metadata
     } deriving (Read, Show, Eq, Ord, Data, Typeable)
 
 ------------------------------------------------------------------------------
@@ -686,7 +686,7 @@ data InvoiceLineItem = InvoiceLineItem {
     , invoiceLineItemQuantity    :: Maybe Quantity
     , invoiceLineItemPlan        :: Maybe Plan
     , invoiceLineItemDescription :: Maybe Description
-    , invoiceLineItemMetaData    :: MetaData
+    , invoiceLineItemMetadata    :: Metadata
   } deriving (Read, Show, Eq, Ord, Data, Typeable)
 
 ------------------------------------------------------------------------------
@@ -786,7 +786,7 @@ data Dispute = Dispute {
     , disputeBalanceTransactions :: [BalanceTransaction]
     , disputeEvidenceDueBy       :: UTCTime
     , disputeEvidence            :: Maybe Evidence
-    , disputeMetaData            :: MetaData
+    , disputeMetadata            :: Metadata
     } deriving (Read, Show, Eq, Ord, Data, Typeable)
 
 ------------------------------------------------------------------------------
@@ -827,7 +827,7 @@ data Transfer = Transfer {
      , transferFailureCode          :: Maybe Text
      , transferStatementDescription :: Maybe StatementDescription
      , transferRecipient            :: Maybe (Expandable RecipientId)
-     , transferMetaData             :: MetaData
+     , transferMetadata             :: Metadata
 } deriving (Read, Show, Eq, Ord, Data, Typeable)
 
 ------------------------------------------------------------------------------
@@ -954,7 +954,7 @@ data ApplicationFee = ApplicationFee {
     , applicationFeeAccountId          :: Expandable AccountId
     , applicationFeeApplicationId      :: ApplicationId
     , applicationFeeChargeId           :: Expandable ChargeId
-    , applicationFeeMetaData           :: MetaData
+    , applicationFeeMetadata           :: Metadata
 } deriving (Read, Show, Eq, Ord, Data, Typeable)
 
 ------------------------------------------------------------------------------
@@ -993,7 +993,7 @@ data ApplicationFeeRefund = ApplicationFeeRefund {
      , applicationFeeRefundObject             :: Text
      , applicationFeeRefundBalanceTransaction :: Maybe (Expandable TransactionId)
      , applicationFeeRefundFee                :: FeeId
-     , applicationFeeRefundMetaData           :: MetaData
+     , applicationFeeRefundMetadata           :: Metadata
      } deriving (Read, Show, Eq, Ord, Data, Typeable)
 
 ------------------------------------------------------------------------------
@@ -1364,7 +1364,7 @@ data BitcoinReceiver = BitcoinReceiver {
     ,  btcUncapturedFunds       :: Bool
     ,  btcDescription           :: Maybe Text
     ,  btcEmail                 :: Text
-    ,  btcMetadata              :: MetaData
+    ,  btcMetadata              :: Metadata
     ,  btcRefundAddress         :: Maybe Text
     ,  btcTransactions          :: Maybe Transactions
     ,  btcPayment               :: Maybe PaymentId
@@ -1391,7 +1391,7 @@ instance FromJSON BitcoinReceiver where
                      <*> o .: "uncaptured_funds"
                      <*> o .:? "description"
                      <*> o .: "email"
-                     <*> (MetaData . H.toList <$> o .: "metadata")
+                     <*> (Metadata . H.toList <$> o .: "metadata")
                      <*> o .:? "refund_address"
                      <*> o .:? "transactions"
                      <*> (fmap PaymentId <$> o .:? "payment")

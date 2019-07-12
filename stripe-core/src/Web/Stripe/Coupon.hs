@@ -50,7 +50,7 @@ module Web.Stripe.Coupon
     , EndingBefore       (..)
     , Limit              (..)
     , MaxRedemptions     (..)
-    , MetaData           (..)
+    , Metadata           (..)
     , PercentOff         (..)
     , RedeemBy           (..)
     , StartingAfter      (..)
@@ -66,7 +66,7 @@ import           Web.Stripe.StripeRequest (Method (DELETE, GET, POST),
 import           Web.Stripe.Types         (Coupon (..), CouponId (..),
                                            Currency (..), Duration (..),
                                            EndingBefore (..), Limit (..),
-                                           MetaData (..), StartingAfter (..),
+                                           Metadata (..), StartingAfter (..),
                                            StripeDeleteResult (..),
                                            StripeList (..))
 import           Web.Stripe.Types.Coupon  (AmountOff (..),
@@ -99,7 +99,7 @@ instance StripeHasParam CreateCoupon AmountOff
 instance StripeHasParam CreateCoupon Currency
 instance StripeHasParam CreateCoupon DurationInMonths
 instance StripeHasParam CreateCoupon MaxRedemptions
-instance StripeHasParam CreateCoupon MetaData
+instance StripeHasParam CreateCoupon Metadata
 instance StripeHasParam CreateCoupon PercentOff
 instance StripeHasParam CreateCoupon RedeemBy
 
@@ -131,7 +131,7 @@ updateCoupon
 
 data UpdateCoupon
 type instance StripeReturn UpdateCoupon = Coupon
-instance StripeHasParam UpdateCoupon MetaData
+instance StripeHasParam UpdateCoupon Metadata
 
 ------------------------------------------------------------------------------
 -- | Delete `Coupon`

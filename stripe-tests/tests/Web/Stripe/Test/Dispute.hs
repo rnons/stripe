@@ -41,7 +41,7 @@ disputeTests stripe = do
         return dispute
       result `shouldSatisfy` isRight
       let Right Dispute {..} = result
-      disputeMetaData `shouldBe` meta
+      disputeMetadata `shouldBe` meta
       disputeEvidence `shouldBe` (Just evi)
       disputeStatus `shouldBe` UnderReview
     it "Wins a Dispute" $ do
@@ -56,7 +56,7 @@ disputeTests stripe = do
         return dispute
       result `shouldSatisfy` isRight
       let Right Dispute {..} = result
-      disputeMetaData `shouldBe` meta
+      disputeMetadata `shouldBe` meta
       disputeEvidence `shouldBe` (Just win)
       disputeStatus `shouldBe` Won
     it "Loses a Dispute" $ do
@@ -71,7 +71,7 @@ disputeTests stripe = do
         return dispute
       result `shouldSatisfy` isRight
       let Right Dispute {..} = result
-      disputeMetaData `shouldBe` meta
+      disputeMetadata `shouldBe` meta
       disputeEvidence `shouldBe` (Just lose)
       disputeStatus `shouldBe` Lost
     it "Closes a Dispute" $ do
@@ -93,6 +93,6 @@ disputeTests stripe = do
     win  = Evidence "winning_evidence"
     lose = Evidence "losing_evidence"
     evi = Evidence "some evidence"
-    meta = MetaData [ ("some", "metadata") ]
+    meta = Metadata [ ("some", "metadata") ]
     cardinfo =
       (mkNewCard cn em ey) { newCardCVC = Just cvc }

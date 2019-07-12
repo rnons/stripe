@@ -147,12 +147,12 @@ subscriptionTests stripe = do
         Subscription { subscriptionId = sid } <- createSubscription' cid planid
         sub <- updateSubscription cid sid
                 -&- couponid
-                -&- MetaData [("hi","there")]
+                -&- Metadata [("hi","there")]
         void $ deleteCustomer cid
         return sub
       result `shouldSatisfy` isRight
       let Right Subscription {..} = result
-      subscriptionMetaData `shouldBe` (MetaData [("hi", "there")])
+      subscriptionMetadata `shouldBe` (Metadata [("hi", "there")])
       subscriptionDiscount `shouldSatisfy` isJust
     xit "Succesfully cancels a Customer's Subscription" $ do
       planid <- makePlanId
