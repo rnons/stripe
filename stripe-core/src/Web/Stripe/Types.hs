@@ -464,37 +464,44 @@ instance FromJSON Subscription where
 
 ------------------------------------------------------------------------------
 -- | Plan object
-data Plan = Plan {
-      planInterval        :: Interval
-    -- , planName            :: Text
-    , planCreated         :: UTCTime
-    , planAmount          :: Int
-    , planCurrency        :: Currency
-    , planId              :: PlanId
+data Plan = Plan
+    { planId              :: PlanId
     , planObject          :: Text
-    , planLiveMode        :: Bool
+    , planActive          :: Bool
+    -- , planAggregateUsage
+    , planAmount          :: Int
+    -- , planBillingScheme
+    , planCreated         :: UTCTime
+    , planCurrency        :: Currency
+    , planInterval        :: Interval
     , planIntervalCount   :: Maybe Int -- optional, max of 1 year intervals allowed, default 1
-    , planTrialPeriodDays :: Maybe Int
+    , planLiveMode        :: Bool
     , planMetaData        :: MetaData
-    , planDescription     :: Maybe StatementDescription
+    , planNickname        :: Maybe Text
+    -- , planProduct
+    -- , planTiers
+    -- , planTiersMode
+    -- , planTransformUsage
+    , planTrialPeriodDays :: Maybe Int
+    -- , planUsageType
 } deriving (Read, Show, Eq, Ord, Data, Typeable)
 
 ------------------------------------------------------------------------------
 -- | JSON Instance for `Plan`
 instance FromJSON Plan where
    parseJSON (Object o) =
-        Plan <$> o .: "interval"
-             -- <*> o .: "name"
-             <*> (fromSeconds <$> o .: "created")
-             <*> o .: "amount"
-             <*> o .: "currency"
-             <*> (PlanId <$> o .: "id")
+        Plan <$> (PlanId <$> o .: "id")
              <*> o .: "object"
-             <*> o .: "livemode"
+             <*> o .: "active"
+             <*> o .: "amount"
+             <*> (fromSeconds <$> o .: "created")
+             <*> o .: "currency"
+             <*> o .: "interval"
              <*> o .:? "interval_count"
-             <*> o .:? "trial_period_days"
+             <*> o .: "livemode"
              <*> o .: "metadata"
-             <*> o .:? "statement_description"
+             <*> o .:? "nickname"
+             <*> o .:? "trial_period_days"
    parseJSON _ = mzero
 
 ------------------------------------------------------------------------------
