@@ -108,13 +108,11 @@ import           Web.Stripe.Types.StripeList          (EndingBefore (..),
                                                        StartingAfter (..),
                                                        StripeList (..))
 import           Web.Stripe.Types.StripeTime          (StripeTime)
-import           Web.Stripe.Types.Subscription        (BillingCycleAnchor (..),
-                                                       DefaultTaxRates,
-                                                       SubscriptionCollectionMethod,
+import           Web.Stripe.Types.Subscription        (BillingCycleAnchor (..), SubscriptionCollectionMethod,
                                                        SubscriptionId (..),
                                                        SubscriptionStatus)
 import           Web.Stripe.Types.SubscriptionItem    (SubscriptionItemId)
-import           Web.Stripe.Types.TaxRate             (TaxRates)
+import           Web.Stripe.Types.TaxRate             (TaxRate)
 import           Web.Stripe.Types.Token               (TokenId (..),
                                                        TokenType (..))
 import           Web.Stripe.Types.Transaction         (TransactionId (..),
@@ -426,12 +424,12 @@ data Subscription = Subscription
     , daysUntilDue          :: Maybe Int
     -- , defaultPaymentMethod
     -- , defaultSource
-    , defaultTaxRates       :: DefaultTaxRates
+    , defaultTaxRates       :: [TaxRate]
     , discount              :: Maybe Discount
     , endedAt               :: Maybe UTCTime
     , items                 :: StripeList SubscriptionItem
     -- , latestInvoice
-    , liveMode              :: Bool
+    , livemode              :: Bool
     , metadata              :: Metadata
     , plan                  :: Maybe Plan
     , quantity              :: Quantity
@@ -484,7 +482,7 @@ data SubscriptionItem = SubscriptionItem
     , plan         :: Plan
     , quantity     :: Quantity
     , subscription :: SubscriptionId
-    , taxRates     :: Maybe TaxRates
+    , taxRates     :: Maybe [TaxRate]
     } deriving (Read, Show, Eq, Ord, Data, Typeable, Generic)
 
 instance FromJSON SubscriptionItem where

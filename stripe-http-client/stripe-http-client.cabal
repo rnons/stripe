@@ -39,6 +39,8 @@ Test-Suite tests
     hs-source-dirs:   tests
     default-language: Haskell2010
     build-depends:    base                >= 4.7  && < 5
+                    , aeson >= 1.4
+                    , bytestring >= 0.10
                     , free                >= 4.10 && < 6
                     , hspec               >= 2.1.0 && < 2.7
                     , stripe-core

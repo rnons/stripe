@@ -62,7 +62,7 @@ module Web.Stripe.Subscription
     , CustomerId         (..)
     , CouponId           (..)
     , Coupon             (..)
-    , DefaultTaxRates    (..)
+    , CreateSubscriptionDefaultTaxRates(..)
     , EndingBefore       (..)
     , ExpandParams       (..)
     , Limit              (..)
@@ -104,7 +104,6 @@ import           Web.Stripe.Types              (ApplicationFeePercent (..),
 import           Web.Stripe.Types.Plan         (TrialEnd (..))
 import           Web.Stripe.Types.Subscription (AtPeriodEnd (..),
                                                 BillingCycleAnchor (..),
-                                                DefaultTaxRates (..),
                                                 Prorate (..),
                                                 SubscriptionCollectionMethod (..),
                                                 SubscriptionStatus (..))
@@ -138,7 +137,7 @@ instance StripeHasParam CreateSubscription CouponId
 -- instance StripeHasParam CreateSubscription DaysUntilDue
 -- instance StripeHasParam CreateSubscription DefaultPaymentMethod
 -- instance StripeHasParam CreateSubscription DefaultSource
-instance StripeHasParam CreateSubscription DefaultTaxRates
+instance StripeHasParam CreateSubscription CreateSubscriptionDefaultTaxRates
 instance StripeHasParam CreateSubscription Metadata
 instance StripeHasParam CreateSubscription Prorate
 instance StripeHasParam CreateSubscription TrialEnd
@@ -180,6 +179,18 @@ instance ToStripeParam [CreateSubscriptionSubscriptionItem] where
                 ] <> metaDataParam <> quantityParam <> rateParam
         ) items
         )
+
+------------------------------------------------------------------------------
+-- | `CreateSubscriptionDefaultTaxRates` for a `Subscription`
+newtype CreateSubscriptionDefaultTaxRates =
+    CreateSubscriptionDefaultTaxRates [TaxRateId]
+    deriving (Read, Show, Eq, Ord)
+instance ToStripeParam CreateSubscriptionDefaultTaxRates where
+  toStripeParam (CreateSubscriptionDefaultTaxRates rates) xs =
+    xs <> mapWithIndex (\n rate ->
+      ( "default_tax_rates[" <> toBytestring n <> "]"
+      , Text.encodeUtf8 $ (\(TaxRateId x) -> x) rate)
+      ) rates
 
 ------------------------------------------------------------------------------
 -- | Retrieve a `Subscription` by `CustomerId` and `SubscriptionId`

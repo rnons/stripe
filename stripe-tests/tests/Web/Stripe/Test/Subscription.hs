@@ -39,7 +39,7 @@ subscriptionTests stripe = do
             [ CreateSubscriptionSubscriptionItem planid Nothing Nothing $
                 Just [TaxRateId "txr_123"]
             ]
-            -&- DefaultTaxRates [TaxRateId "txr_def"]
+            -- -&- CreateSubscriptionDefaultTaxRates [TaxRateId "txr_def"]
         void $ deletePlan planid
         void $ deleteCustomer cid
         return sub

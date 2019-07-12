@@ -11,9 +11,7 @@ import           Data.Text                      (Text)
 import qualified Data.Text.Encoding             as Text
 import           Data.Time                      (UTCTime)
 import           Web.Stripe.StripeRequest.Class (ToStripeParam (..))
-import           Web.Stripe.Types.TaxRate       (TaxRateId (..))
-import           Web.Stripe.Util                (mapWithIndex, toBytestring,
-                                                 toSeconds)
+import           Web.Stripe.Util                (toBytestring, toSeconds)
 
 ------------------------------------------------------------------------------
 -- | `SubscriptionId` for a `Subscription`
@@ -54,21 +52,6 @@ newtype AtPeriodEnd = AtPeriodEnd Bool deriving (Read, Show, Eq, Ord, Data, Type
 instance ToStripeParam AtPeriodEnd where
   toStripeParam (AtPeriodEnd p) =
     (("at_period_end", if p then "true" else "false") :)
-
-------------------------------------------------------------------------------
--- | `DefaultTaxRates` for a `Subscription`
-newtype DefaultTaxRates = DefaultTaxRates [TaxRateId]
-    deriving (Read, Show, Eq, Ord, Data, Typeable)
-
-instance FromJSON DefaultTaxRates where
-    parseJSON xs = DefaultTaxRates <$> parseJSON xs
-
-instance ToStripeParam DefaultTaxRates where
-  toStripeParam (DefaultTaxRates rates) xs =
-    xs <> mapWithIndex (\n rate ->
-      ( "default_tax_rates[" <> toBytestring n <> "]"
-      , Text.encodeUtf8 $ (\(TaxRateId x) -> x) rate)
-      ) rates
 
 ------------------------------------------------------------------------------
 -- | Collection method of a `Subscription`
