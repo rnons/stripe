@@ -93,12 +93,12 @@ createInvoiceItem
 createInvoiceItem
     customerid
     amount
-    currency    = request
+    currency'   = request
   where request = mkStripeRequest POST url params
         url     = "invoiceitems"
         params  = toStripeParam customerid $
                   toStripeParam amount     $
-                  toStripeParam currency   $
+                  toStripeParam currency'  $
                   []
 
 data CreateInvoiceItem

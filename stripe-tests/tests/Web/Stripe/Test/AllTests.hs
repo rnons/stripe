@@ -45,7 +45,7 @@ allTests stripe' = do
     -- planTests stripe
     -- couponTests stripe
     -- discountTests stripe
-    -- invoiceTests stripe
+    invoiceTests stripe
     -- invoiceItemTests stripe
     -- disputeTests stripe
     -- transferTests stripe

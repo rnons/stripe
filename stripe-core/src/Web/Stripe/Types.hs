@@ -597,70 +597,112 @@ instance FromJSON Discount where
 
 ------------------------------------------------------------------------------
 -- | `Invoice` Object
-data Invoice = Invoice {
-      invoiceDate                 :: UTCTime
-    , invoiceId                   :: Maybe InvoiceId -- ^ If upcoming no ID will exist
-    , invoicePeriodStart          :: UTCTime
-    , invoicePeriodEnd            :: UTCTime
-    , invoiceLineItems            :: StripeList InvoiceLineItem
-    , invoiceSubTotal             :: Int
-    , invoiceTotal                :: Int
-    , invoiceCustomer             :: Expandable CustomerId
-    , invoiceObject               :: Text
-    , invoiceAttempted            :: Bool
-    , invoiceClosed               :: Bool
-    , invoiceForgiven             :: Bool
-    , invoicePaid                 :: Bool
-    , invoiceLiveMode             :: Bool
-    , invoiceAttemptCount         :: Int
-    , invoiceAmountDue            :: Int
-    , invoiceCurrency             :: Currency
-    , invoiceStartingBalance      :: Int
-    , invoiceEndingBalance        :: Maybe Int
-    , invoiceNextPaymentAttempt   :: Maybe UTCTime
-    , invoiceWebHooksDeliveredAt  :: Maybe UTCTime
-    , invoiceCharge               :: Maybe (Expandable ChargeId)
-    , invoiceDiscount             :: Maybe Discount
-    , invoiceApplicateFee         :: Maybe FeeId
-    , invoiceSubscription         :: Maybe SubscriptionId
-    , invoiceStatementDescription :: Maybe StatementDescription
-    , invoiceDescription          :: Maybe Description
-    , invoiceMetadata             :: Metadata
+data Invoice = Invoice
+    { id                   :: Maybe InvoiceId -- ^ If upcoming no ID will exist
+    , object               :: Text
+    , accountCountry       :: Country
+    , accountName          :: Maybe Text
+    , amountDue            :: Int
+    , amountPaid           :: Int
+    , amountRemaining      :: Int
+    , applicationFeeAmount :: Maybe Int
+    , attemptCount         :: Int
+    , attempted            :: Bool
+    , autoAdvance          :: Bool
+    , billingReason        :: Text
+    , charge               :: Maybe (Expandable ChargeId)
+    -- , collectionMethod
+    , created              :: UTCTime
+    , currency             :: Currency
+    -- , customFields
+    -- , customerAddress
+    , customerEmail        :: Maybe Text
+    , customerName         :: Maybe Text
+    , customerPhone        :: Maybe Text
+    -- , customerShipping :: Text
+    -- , customerTaxExempt
+    -- , customerTaxIds
+    -- , defaultPaymentMethod
+    -- , defaultSource
+    -- , defaultTaxRates
+    , description          :: Maybe Description
+    , discount             :: Maybe Discount
+    , dueDate              :: Maybe UTCTime
+    , endingBalance        :: Maybe Int
+    , footer               :: Maybe Text
+    , hostedInvoiceUrl     :: Maybe Text
+    , invoicePdf           :: Maybe Text
+    -- , lines            :: StripeList InvoiceLineItem
+    , livemode             :: Bool
+    , metadata             :: Metadata
+    , nextPaymentAttempt   :: Maybe UTCTime
+    , number               :: Text
+    , paid                 :: Bool
+    -- , paymentIntent
+    , periodEnd            :: UTCTime
+    , periodStart          :: UTCTime
+    -- , postPaymentCreditNotesAmount
+    -- , prePaymentCreditNotesAmount
+    , receiptNumber        :: Maybe Text
+    , startingBalance      :: Int
+    , statementDescription :: Maybe StatementDescription
+    -- , status
+    -- , statusTransitions
+    , subscription         :: Maybe SubscriptionId
+    -- , subscriptionProrationDate
+    , subtotal             :: Int
+    , tax                  :: Maybe Int
+    -- , thresholdReason
+    , total                :: Int
+    -- , totalTaxAmounts
+    , webHooksDeliveredAt  :: Maybe UTCTime
 } deriving (Read, Show, Eq, Ord, Data, Typeable)
 
 ------------------------------------------------------------------------------
 -- | JSON Instance for `Invoice`
 instance FromJSON Invoice where
-   parseJSON (Object o) =
-       Invoice <$> (fromSeconds <$> o .: "date")
-               <*> (fmap InvoiceId <$> o .:? "id")
-               <*> (fromSeconds <$> o .: "period_start")
-               <*> (fromSeconds <$> o .: "period_end")
-               <*> o .: "lines"
-               <*> o .: "subtotal"
-               <*> o .: "total"
-               <*> o .: "customer"
-               <*> o .: "object"
-               <*> o .: "attempted"
-               <*> o .: "closed"
-               <*> o .: "forgiven"
-               <*> o .: "paid"
-               <*> o .: "livemode"
-               <*> o .: "attempt_count"
-               <*> o .: "amount_due"
-               <*> o .: "currency"
-               <*> o .: "starting_balance"
-               <*> o .:? "ending_balance"
-               <*> (fmap fromSeconds <$> o .:? "next_payment_attempt")
-               <*> (fmap fromSeconds <$> o .: "webhooks_delivered_at")
-               <*> o .:? "charge"
-               <*> o .:? "discount"
-               <*> (fmap FeeId <$> o .:? "application_fee")
-               <*> (fmap SubscriptionId <$> o .: "subscription")
-               <*> o .:? "statement_description"
-               <*> o .:? "description"
-               <*> o .: "metadata"
-   parseJSON _ = mzero
+    parseJSON (Object o) = Invoice
+        <$> (fmap InvoiceId <$> o .:? "id")
+        <*> o .: "object"
+        <*> (Country <$> o .: "account_country")
+        <*> o .:? "account_name"
+        <*> o .: "amount_due"
+        <*> o .: "amount_paid"
+        <*> o .: "amount_remaining"
+        <*> o .:? "application_fee_amount"
+        <*> o .: "attempt_count"
+        <*> o .: "attempted"
+        <*> o .: "auto_advance"
+        <*> o .: "billing_reason"
+        <*> o .:? "charge"
+        <*> (fromSeconds <$> o .: "created")
+        <*> o .: "currency"
+        <*> o .:? "customer_email"
+        <*> o .:? "customer_name"
+        <*> o .:? "customer_phone"
+        <*> o .:? "description"
+        <*> o .:? "discount"
+        <*> (fmap fromSeconds <$> o .: "due_date")
+        <*> o .:? "ending_balance"
+        <*> o .:? "footer"
+        <*> o .:? "hosted_invoice_url"
+        <*> o .:? "invoice_pdf"
+        <*> o .: "livemode"
+        <*> o .: "metadata"
+        <*> (fmap fromSeconds <$> o .:? "next_payment_attempt")
+        <*> o .: "number"
+        <*> o .: "paid"
+        <*> (fromSeconds <$> o .: "period_end")
+        <*> (fromSeconds <$> o .: "period_start")
+        <*> o .:? "receipt_number"
+        <*> o .: "starting_balance"
+        <*> o .:? "statement_description"
+        <*> (fmap SubscriptionId <$> o .: "subscription")
+        <*> o .: "subtotal"
+        <*> o .:? "tax"
+        <*> o .: "total"
+        <*> (fmap fromSeconds <$> o .:? "webhooks_delivered_at")
+    parseJSON _ = mzero
 
 ------------------------------------------------------------------------------
 -- | `InvoiceItem` object
