@@ -92,7 +92,8 @@ import           Web.Stripe.Types.Description         (Description (..))
 import           Web.Stripe.Types.Dispute             (Evidence (..))
 import           Web.Stripe.Types.Email               (Email (..))
 import           Web.Stripe.Types.Event               (EventId (..), EventType)
-import           Web.Stripe.Types.Invoice             (InvoiceId (..),
+import           Web.Stripe.Types.Invoice             (AutoAdvance,
+                                                       InvoiceId (..),
                                                        InvoiceLineItemId (..),
                                                        InvoiceLineItemType)
 import           Web.Stripe.Types.InvoiceItem         (InvoiceItemId (..))
@@ -161,29 +162,29 @@ instance (FromJSON id,  FromJSON (ExpandsTo id)) =>
 ------------------------------------------------------------------------------
 -- | `Charge` object in `Stripe` API
 data Charge = Charge {
-      chargeId                   :: ChargeId
-    , chargeObject               :: Text
-    , chargeCreated              :: UTCTime
-    , chargeLiveMode             :: Bool
-    , chargePaid                 :: Bool
-    , chargeAmount               :: Amount
-    , chargeCurrency             :: Currency
-    , chargeRefunded             :: Bool
-    , chargeCreditCard           :: Maybe Card
-    , chargeCaptured             :: Bool
-    , chargeRefunds              :: StripeList Refund
-    , chargeBalanceTransaction   :: Maybe (Expandable TransactionId)
-    , chargeFailureMessage       :: Maybe Text
-    , chargeFailureCode          :: Maybe Text
-    , chargeAmountRefunded       :: Int
-    , chargeCustomerId           :: Maybe (Expandable CustomerId)
-    , chargeInvoice              :: Maybe (Expandable InvoiceId)
-    , chargeDescription          :: Maybe Description
-    , chargeDispute              :: Maybe Dispute
-    , chargeMetadata             :: Metadata
+      chargeId                  :: ChargeId
+    , chargeObject              :: Text
+    , chargeCreated             :: UTCTime
+    , chargeLiveMode            :: Bool
+    , chargePaid                :: Bool
+    , chargeAmount              :: Amount
+    , chargeCurrency            :: Currency
+    , chargeRefunded            :: Bool
+    , chargeCreditCard          :: Maybe Card
+    , chargeCaptured            :: Bool
+    , chargeRefunds             :: StripeList Refund
+    , chargeBalanceTransaction  :: Maybe (Expandable TransactionId)
+    , chargeFailureMessage      :: Maybe Text
+    , chargeFailureCode         :: Maybe Text
+    , chargeAmountRefunded      :: Int
+    , chargeCustomerId          :: Maybe (Expandable CustomerId)
+    , chargeInvoice             :: Maybe (Expandable InvoiceId)
+    , chargeDescription         :: Maybe Description
+    , chargeDispute             :: Maybe Dispute
+    , chargeMetadata            :: Metadata
     , chargeStatementDescriptor :: Maybe StatementDescriptor
-    , chargeReceiptEmail         :: Maybe Text
-    , chargeReceiptNumber        :: Maybe Text
+    , chargeReceiptEmail        :: Maybe Text
+    , chargeReceiptNumber       :: Maybe Text
     } deriving (Read, Show, Eq, Ord, Data, Typeable)
 
 ------------------------------------------------------------------------------
@@ -609,7 +610,7 @@ data Invoice = Invoice
     , applicationFeeAmount :: Maybe Int
     , attemptCount         :: Int
     , attempted            :: Bool
-    , autoAdvance          :: Bool
+    , autoAdvance          :: AutoAdvance
     , billingReason        :: Text
     , charge               :: Maybe (Expandable ChargeId)
     , collectionMethod     :: CollectionMethod
@@ -882,23 +883,23 @@ instance FromJSON Dispute where
 ------------------------------------------------------------------------------
 -- | `Transfer` Object
 data Transfer = Transfer {
-      transferId                    :: TransferId
-     , transferObject               :: Text
-     , transferCreated              :: UTCTime
-     , transferDate                 :: UTCTime
-     , transferLiveMode             :: Bool
-     , transferAmount               :: Int
-     , transferCurrency             :: Currency
-     , transferStatus               :: TransferStatus
-     , transferType                 :: TransferType
-     , transferBalanceTransaction   :: Expandable TransactionId
-     , transferDescription          :: Maybe Description
-     , transferBankAccount          :: Maybe BankAccount
-     , transferFailureMessage       :: Maybe Text
-     , transferFailureCode          :: Maybe Text
+      transferId                   :: TransferId
+     , transferObject              :: Text
+     , transferCreated             :: UTCTime
+     , transferDate                :: UTCTime
+     , transferLiveMode            :: Bool
+     , transferAmount              :: Int
+     , transferCurrency            :: Currency
+     , transferStatus              :: TransferStatus
+     , transferType                :: TransferType
+     , transferBalanceTransaction  :: Expandable TransactionId
+     , transferDescription         :: Maybe Description
+     , transferBankAccount         :: Maybe BankAccount
+     , transferFailureMessage      :: Maybe Text
+     , transferFailureCode         :: Maybe Text
      , transferStatementDescriptor :: Maybe StatementDescriptor
-     , transferRecipient            :: Maybe (Expandable RecipientId)
-     , transferMetadata             :: Metadata
+     , transferRecipient           :: Maybe (Expandable RecipientId)
+     , transferMetadata            :: Metadata
 } deriving (Read, Show, Eq, Ord, Data, Typeable)
 
 ------------------------------------------------------------------------------

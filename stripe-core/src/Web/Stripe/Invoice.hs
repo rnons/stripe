@@ -60,6 +60,7 @@ module Web.Stripe.Invoice
     , getInvoices
        -- * Types
     , ApplicationFeeId    (..)
+    , AutoAdvance(..)
     , Closed              (..)
     , CollectionMethod(..)
     , CustomerId          (..)
@@ -104,7 +105,8 @@ import           Web.Stripe.Types                  (ApplicationFeeId (..),
                                                     StripeList (..),
                                                     SubscriptionId (..))
 import           Web.Stripe.Types.CollectionMethod (CollectionMethod (..))
-import           Web.Stripe.Types.Invoice          (Closed (..), Forgiven (..),
+import           Web.Stripe.Types.Invoice          (AutoAdvance (..),
+                                                    Closed (..), Forgiven (..),
                                                     InvoiceId (..),
                                                     InvoiceLineItemId (..),
                                                     InvoiceLineItemType (..))
@@ -128,7 +130,7 @@ createInvoice
 data CreateInvoice
 type instance StripeReturn CreateInvoice = Invoice
 -- instance StripeHasParam CreateInvoice ApplicationFeeAmount
--- instance StripeHasParam CreateInvoice AutoAdvance
+instance StripeHasParam CreateInvoice AutoAdvance
 instance StripeHasParam CreateInvoice CollectionMethod
 -- instance StripeHasParam CreateInvoice CustomFields
 -- instance StripeHasParam CreateInvoice DaysUntilDue

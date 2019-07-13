@@ -5,7 +5,7 @@ module Web.Stripe.Types.Invoice where
 
 import           Control.Monad                  (mzero)
 import           Data.Aeson                     (FromJSON (parseJSON),
-                                                 Value (String))
+                                                 Value (Bool, String))
 import           Data.Data                      (Data, Typeable)
 import           Data.Text                      (Text)
 import qualified Data.Text.Encoding             as Text
@@ -22,6 +22,20 @@ newtype InvoiceId =
 instance FromJSON InvoiceId where
    parseJSON (String x) = pure $ InvoiceId x
    parseJSON _          = mzero
+
+
+------------------------------------------------------------------------------
+-- | `AutoAdvance` - perform automatic collection or not
+newtype AutoAdvance = AutoAdvance { getAutoAdvance :: Bool }
+  deriving (Read, Show, Eq, Ord, Data, Typeable)
+
+instance FromJSON AutoAdvance where
+  parseJSON (Bool v) = pure $ AutoAdvance v
+  parseJSON _        = mzero
+
+instance ToStripeParam AutoAdvance where
+  toStripeParam (AutoAdvance b) =
+    (("auto_advance", if b then "true" else "false") :)
 
 ------------------------------------------------------------------------------
 -- | `Closed` - invoice closed or not
