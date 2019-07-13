@@ -62,7 +62,7 @@ module Web.Stripe.Subscription
     , CustomerId         (..)
     , CouponId           (..)
     , Coupon             (..)
-    , CreateSubscriptionDefaultTaxRates(..)
+    , DefaultTaxRates(..)
     , EndingBefore       (..)
     , ExpandParams       (..)
     , Limit              (..)
@@ -73,44 +73,46 @@ module Web.Stripe.Subscription
     , StartingAfter      (..)
     , StripeList         (..)
     , Subscription       (..)
-    , SubscriptionCollectionMethod(..)
+    , CollectionMethod(..)
     , SubscriptionId     (..)
     , SubscriptionStatus (..)
     , TaxRateId(..)
     , TrialEnd           (..)
     ) where
 
-import           Control.Monad                 (join)
-import qualified Data.ByteString.Char8         as B8
-import qualified Data.Text                     as T
-import qualified Data.Text.Encoding            as Text
-import           Web.Stripe.StripeRequest      (Method (DELETE, GET, POST),
-                                                StripeHasParam,
-                                                StripeRequest (..),
-                                                StripeReturn,
-                                                ToStripeParam (..),
-                                                mkStripeRequest)
-import           Web.Stripe.Types              (ApplicationFeePercent (..),
-                                                CardId (..), Coupon (..),
-                                                CouponId (..), CustomerId (..),
-                                                EndingBefore (..),
-                                                ExpandParams (..), Limit (..),
-                                                Metadata (..), PlanId (..),
-                                                Quantity (..),
-                                                StartingAfter (..),
-                                                StripeList (..),
-                                                Subscription (..),
-                                                SubscriptionId (..))
-import           Web.Stripe.Types.Plan         (TrialEnd (..))
-import           Web.Stripe.Types.Subscription (AtPeriodEnd (..),
-                                                BillingCycleAnchor (..),
-                                                Prorate (..),
-                                                SubscriptionCollectionMethod (..),
-                                                SubscriptionStatus (..))
-import           Web.Stripe.Types.TaxRate      (TaxRateId (..))
-import           Web.Stripe.Types.Util         (getCustomerId)
-import           Web.Stripe.Util               (mapWithIndex, toBytestring,
-                                                (</>))
+import           Control.Monad                     (join)
+import qualified Data.ByteString.Char8             as B8
+import qualified Data.Text                         as T
+import qualified Data.Text.Encoding                as Text
+import           Web.Stripe.StripeRequest          (Method (DELETE, GET, POST),
+                                                    StripeHasParam,
+                                                    StripeRequest (..),
+                                                    StripeReturn,
+                                                    ToStripeParam (..),
+                                                    mkStripeRequest)
+import           Web.Stripe.Types                  (ApplicationFeePercent (..),
+                                                    CardId (..), Coupon (..),
+                                                    CouponId (..),
+                                                    CustomerId (..),
+                                                    EndingBefore (..),
+                                                    ExpandParams (..),
+                                                    Limit (..), Metadata (..),
+                                                    PlanId (..), Quantity (..),
+                                                    StartingAfter (..),
+                                                    StripeList (..),
+                                                    Subscription (..),
+                                                    SubscriptionId (..))
+import           Web.Stripe.Types.CollectionMethod (CollectionMethod (..))
+import           Web.Stripe.Types.Plan             (TrialEnd (..))
+import           Web.Stripe.Types.Subscription     (AtPeriodEnd (..),
+                                                    BillingCycleAnchor (..),
+                                                    Prorate (..),
+                                                    SubscriptionStatus (..))
+import           Web.Stripe.Types.TaxRate          (DefaultTaxRates (..),
+                                                    TaxRateId (..))
+import           Web.Stripe.Types.Util             (getCustomerId)
+import           Web.Stripe.Util                   (mapWithIndex, toBytestring,
+                                                    (</>))
 
 ------------------------------------------------------------------------------
 -- | Create a `Subscription` by `CustomerId` and `PlanId`
@@ -132,12 +134,12 @@ type instance StripeReturn CreateSubscription = Subscription
 instance StripeHasParam CreateSubscription ApplicationFeePercent
 instance StripeHasParam CreateSubscription BillingCycleAnchor
 -- instance StripeHasParam CreateSubscription BillingThresholds
-instance StripeHasParam CreateSubscription SubscriptionCollectionMethod
+instance StripeHasParam CreateSubscription CollectionMethod
 instance StripeHasParam CreateSubscription CouponId
 -- instance StripeHasParam CreateSubscription DaysUntilDue
 -- instance StripeHasParam CreateSubscription DefaultPaymentMethod
 -- instance StripeHasParam CreateSubscription DefaultSource
-instance StripeHasParam CreateSubscription CreateSubscriptionDefaultTaxRates
+instance StripeHasParam CreateSubscription DefaultTaxRates
 instance StripeHasParam CreateSubscription Metadata
 instance StripeHasParam CreateSubscription Prorate
 instance StripeHasParam CreateSubscription TrialEnd
@@ -179,18 +181,6 @@ instance ToStripeParam [CreateSubscriptionSubscriptionItem] where
                 ] <> metaDataParam <> quantityParam <> rateParam
         ) items
         )
-
-------------------------------------------------------------------------------
--- | `CreateSubscriptionDefaultTaxRates` for a `Subscription`
-newtype CreateSubscriptionDefaultTaxRates =
-    CreateSubscriptionDefaultTaxRates [TaxRateId]
-    deriving (Read, Show, Eq, Ord)
-instance ToStripeParam CreateSubscriptionDefaultTaxRates where
-  toStripeParam (CreateSubscriptionDefaultTaxRates rates) xs =
-    xs <> mapWithIndex (\n rate ->
-      ( "default_tax_rates[" <> toBytestring n <> "]"
-      , Text.encodeUtf8 $ (\(TaxRateId x) -> x) rate)
-      ) rates
 
 ------------------------------------------------------------------------------
 -- | Retrieve a `Subscription` by `CustomerId` and `SubscriptionId`

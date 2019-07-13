@@ -79,6 +79,7 @@ import           Web.Stripe.Types.Charge              (Amount (..),
                                                        ApplicationFeePercent (..),
                                                        ApplicationId (..),
                                                        ChargeId (..))
+import           Web.Stripe.Types.CollectionMethod    (CollectionMethod)
 import           Web.Stripe.Types.Country             (Country (..))
 import           Web.Stripe.Types.Coupon              (CouponId (..),
                                                        Duration (..),
@@ -108,7 +109,7 @@ import           Web.Stripe.Types.StripeList          (EndingBefore (..),
                                                        StartingAfter (..),
                                                        StripeList (..))
 import           Web.Stripe.Types.StripeTime          (StripeTime)
-import           Web.Stripe.Types.Subscription        (BillingCycleAnchor (..), SubscriptionCollectionMethod,
+import           Web.Stripe.Types.Subscription        (BillingCycleAnchor (..),
                                                        SubscriptionId (..),
                                                        SubscriptionStatus)
 import           Web.Stripe.Types.SubscriptionItem    (SubscriptionItemId)
@@ -416,7 +417,7 @@ data Subscription = Subscription
     -- , billingThresholds
     , cancelAtPeriodEnd     :: Bool
     , canceledAt            :: Maybe UTCTime
-    , collectionMethod      :: SubscriptionCollectionMethod
+    , collectionMethod      :: CollectionMethod
     , created               :: UTCTime
     , currentPeriodEnd      :: UTCTime
     , currentPeriodStart    :: UTCTime
@@ -611,7 +612,7 @@ data Invoice = Invoice
     , autoAdvance          :: Bool
     , billingReason        :: Text
     , charge               :: Maybe (Expandable ChargeId)
-    -- , collectionMethod
+    , collectionMethod     :: CollectionMethod
     , created              :: UTCTime
     , currency             :: Currency
     -- , customFields
@@ -675,6 +676,7 @@ instance FromJSON Invoice where
         <*> o .: "auto_advance"
         <*> o .: "billing_reason"
         <*> o .:? "charge"
+        <*> o .: "collection_method"
         <*> (fromSeconds <$> o .: "created")
         <*> o .: "currency"
         <*> o .:? "customer_email"

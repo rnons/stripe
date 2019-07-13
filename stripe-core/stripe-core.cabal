@@ -61,6 +61,7 @@ library
                        Web.Stripe.Types.BankAccount
                        Web.Stripe.Types.Card
                        Web.Stripe.Types.Charge
+                       Web.Stripe.Types.CollectionMethod
                        Web.Stripe.Types.Country
                        Web.Stripe.Types.Coupon
                        Web.Stripe.Types.Currency

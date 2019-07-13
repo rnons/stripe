@@ -54,28 +54,6 @@ instance ToStripeParam AtPeriodEnd where
     (("at_period_end", if p then "true" else "false") :)
 
 ------------------------------------------------------------------------------
--- | Collection method of a `Subscription`
-data SubscriptionCollectionMethod
-    = ChargeAutomatically
-    | SendInvoice
-    deriving (Read, Show, Eq, Ord, Data, Typeable)
-
-------------------------------------------------------------------------------
--- | JSON Instance for `SubscriptionCollectionMethod`
-instance FromJSON SubscriptionCollectionMethod where
-   parseJSON (String "charge_automatically") = pure ChargeAutomatically
-   parseJSON (String "send_invoice")         = pure SendInvoice
-   parseJSON _                               = mzero
-
-instance ToStripeParam SubscriptionCollectionMethod where
-  toStripeParam method =
-    (( "collection_method"
-     , case method of
-          ChargeAutomatically -> "charge_automatically"
-          SendInvoice         -> "send_invoice"
-     ) :)
-
-------------------------------------------------------------------------------
 -- | Status of a `Subscription`
 data SubscriptionStatus
     = Incomplete

@@ -47,6 +47,17 @@ instance FromJSON TaxRateId where
     parseJSON _          = mzero
 
 ------------------------------------------------------------------------------
+-- | `DefaultTaxRates` for a `Subscription`, `Invoice`
+newtype DefaultTaxRates = DefaultTaxRates [TaxRateId]
+    deriving (Read, Show, Eq, Ord)
+instance ToStripeParam DefaultTaxRates where
+  toStripeParam (DefaultTaxRates rates) xs =
+    xs <> mapWithIndex (\n rate ->
+      ( "default_tax_rates[" <> toBytestring n <> "]"
+      , Text.encodeUtf8 $ (\(TaxRateId x) -> x) rate)
+      ) rates
+
+------------------------------------------------------------------------------
 -- | `TaxRates` for a `SubscriptionItem`, `InvoiceItem`
 newtype TaxRates = TaxRates [TaxRateId]
     deriving (Read, Show, Eq, Ord, Data, Typeable)

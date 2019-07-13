@@ -61,7 +61,9 @@ module Web.Stripe.Invoice
        -- * Types
     , ApplicationFeeId    (..)
     , Closed              (..)
+    , CollectionMethod(..)
     , CustomerId          (..)
+    , DefaultTaxRates(..)
     , Description         (..)
     , Discount            (..)
     , EndingBefore        (..)
@@ -81,24 +83,34 @@ module Web.Stripe.Invoice
     , SubscriptionId      (..)
     ) where
 
-import           Web.Stripe.StripeRequest (Method (GET, POST), StripeHasParam,
-                                           StripeRequest (..), StripeReturn,
-                                           mkStripeRequest, toStripeParam)
-import           Web.Stripe.Types         (ApplicationFeeId (..),
-                                           CustomerId (..), Description (..),
-                                           Discount (..), EndingBefore (..),
-                                           ExpandParams (..), Invoice (..),
-                                           InvoiceLineItem (..), Limit (..),
-                                           Metadata (..), Period (..),
-                                           StartingAfter (..),
-                                           StatementDescription (..),
-                                           StripeList (..), SubscriptionId (..))
-import           Web.Stripe.Types.Invoice (Closed (..), Forgiven (..),
-                                           InvoiceId (..),
-                                           InvoiceLineItemId (..),
-                                           InvoiceLineItemType (..))
-import           Web.Stripe.Types.Util    (getInvoiceId)
-import           Web.Stripe.Util          ((</>))
+import           Web.Stripe.StripeRequest          (Method (GET, POST),
+                                                    StripeHasParam,
+                                                    StripeRequest (..),
+                                                    StripeReturn,
+                                                    mkStripeRequest,
+                                                    toStripeParam)
+import           Web.Stripe.Types                  (ApplicationFeeId (..),
+                                                    CustomerId (..),
+                                                    Description (..),
+                                                    Discount (..),
+                                                    EndingBefore (..),
+                                                    ExpandParams (..),
+                                                    Invoice (..),
+                                                    InvoiceLineItem (..),
+                                                    Limit (..), Metadata (..),
+                                                    Period (..),
+                                                    StartingAfter (..),
+                                                    StatementDescription (..),
+                                                    StripeList (..),
+                                                    SubscriptionId (..))
+import           Web.Stripe.Types.CollectionMethod (CollectionMethod (..))
+import           Web.Stripe.Types.Invoice          (Closed (..), Forgiven (..),
+                                                    InvoiceId (..),
+                                                    InvoiceLineItemId (..),
+                                                    InvoiceLineItemType (..))
+import           Web.Stripe.Types.TaxRate          (DefaultTaxRates (..))
+import           Web.Stripe.Types.Util             (getInvoiceId)
+import           Web.Stripe.Util                   ((</>))
 
 ------------------------------------------------------------------------------
 -- | The `Invoice` to be created for a `Customer`
@@ -115,8 +127,17 @@ createInvoice
 
 data CreateInvoice
 type instance StripeReturn CreateInvoice = Invoice
-instance StripeHasParam CreateInvoice ApplicationFeeId
+-- instance StripeHasParam CreateInvoice ApplicationFeeAmount
+-- instance StripeHasParam CreateInvoice AutoAdvance
+instance StripeHasParam CreateInvoice CollectionMethod
+-- instance StripeHasParam CreateInvoice CustomFields
+-- instance StripeHasParam CreateInvoice DaysUntilDue
+-- instance StripeHasParam CreateInvoice DefaultPaymentMethod
+-- instance StripeHasParam CreateInvoice DefaultSource
+instance StripeHasParam CreateInvoice DefaultTaxRates
 instance StripeHasParam CreateInvoice Description
+-- instance StripeHasParam CreateInvoice DueDate
+-- instance StripeHasParam CreateInvoice Footer
 instance StripeHasParam CreateInvoice Metadata
 instance StripeHasParam CreateInvoice StatementDescription
 instance StripeHasParam CreateInvoice SubscriptionId
