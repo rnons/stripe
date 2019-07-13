@@ -9,13 +9,13 @@ import qualified Data.Text.Encoding             as Text
 import           Web.Stripe.StripeRequest.Class (ToStripeParam (..))
 
 ------------------------------------------------------------------------------
--- | `StatementDescription` to be added to a `Charge`
-newtype StatementDescription =
-  StatementDescription Text deriving (Read, Show, Eq, Ord, Data, Typeable)
+-- | `StatementDescriptor` to be added to a `Charge`
+newtype StatementDescriptor =
+  StatementDescriptor Text deriving (Read, Show, Eq, Ord, Data, Typeable)
 
-instance FromJSON StatementDescription where
-  parseJSON v = StatementDescription <$> parseJSON v
+instance FromJSON StatementDescriptor where
+  parseJSON v = StatementDescriptor <$> parseJSON v
 
-instance ToStripeParam StatementDescription where
-  toStripeParam (StatementDescription txt) =
-    (("statement_description", Text.encodeUtf8 txt) :)
+instance ToStripeParam StatementDescriptor where
+  toStripeParam (StatementDescriptor txt) =
+    (("statement_descriptor", Text.encodeUtf8 txt) :)

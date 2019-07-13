@@ -103,7 +103,7 @@ import           Web.Stripe.Types.Quantity            (Quantity (..))
 import           Web.Stripe.Types.Recipient           (RecipientId (..),
                                                        RecipientType (..))
 import           Web.Stripe.Types.Refund              (RefundId (..))
-import           Web.Stripe.Types.StatementDescriptor (StatementDescription (..))
+import           Web.Stripe.Types.StatementDescriptor (StatementDescriptor (..))
 import           Web.Stripe.Types.StripeList          (EndingBefore (..),
                                                        Limit (..),
                                                        StartingAfter (..),
@@ -181,7 +181,7 @@ data Charge = Charge {
     , chargeDescription          :: Maybe Description
     , chargeDispute              :: Maybe Dispute
     , chargeMetadata             :: Metadata
-    , chargeStatementDescription :: Maybe StatementDescription
+    , chargeStatementDescriptor :: Maybe StatementDescriptor
     , chargeReceiptEmail         :: Maybe Text
     , chargeReceiptNumber        :: Maybe Text
     } deriving (Read, Show, Eq, Ord, Data, Typeable)
@@ -210,7 +210,7 @@ instance FromJSON Charge where
                <*> o .:? "description"
                <*> o .:? "dispute"
                <*> o .: "metadata"
-               <*> o .:? "statement_description"
+               <*> o .:? "statement_descriptor"
                <*> o .:? "receipt_email"
                <*> o .:? "receipt_number"
     parseJSON _ = mzero
@@ -646,7 +646,7 @@ data Invoice = Invoice
     -- , prePaymentCreditNotesAmount
     , receiptNumber        :: Maybe Text
     , startingBalance      :: Int
-    , statementDescription :: Maybe StatementDescription
+    , statementDescription :: Maybe StatementDescriptor
     -- , status
     -- , statusTransitions
     , subscription         :: Maybe SubscriptionId
@@ -698,7 +698,7 @@ instance FromJSON Invoice where
         <*> (fromSeconds <$> o .: "period_start")
         <*> o .:? "receipt_number"
         <*> o .: "starting_balance"
-        <*> o .:? "statement_description"
+        <*> o .:? "statement_descriptor"
         <*> (fmap SubscriptionId <$> o .: "subscription")
         <*> o .: "subtotal"
         <*> o .:? "tax"
@@ -896,7 +896,7 @@ data Transfer = Transfer {
      , transferBankAccount          :: Maybe BankAccount
      , transferFailureMessage       :: Maybe Text
      , transferFailureCode          :: Maybe Text
-     , transferStatementDescription :: Maybe StatementDescription
+     , transferStatementDescriptor :: Maybe StatementDescriptor
      , transferRecipient            :: Maybe (Expandable RecipientId)
      , transferMetadata             :: Metadata
 } deriving (Read, Show, Eq, Ord, Data, Typeable)
@@ -919,7 +919,7 @@ instance FromJSON Transfer where
                     <*> o .:? "bank_account"
                     <*> o .:? "failure_message"
                     <*> o .:? "failure_code"
-                    <*> o .:? "statement_description"
+                    <*> o .:? "statement_descriptor"
                     <*> o .:? "recipient"
                     <*> o .: "metadata"
     parseJSON _ = mzero

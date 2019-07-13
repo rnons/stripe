@@ -76,7 +76,7 @@ module Web.Stripe.Charge
     , NewCard       (..)
     , ReceiptEmail  (..)
     , StartingAfter (..)
-    , StatementDescription (..)
+    , StatementDescriptor (..)
     , StripeList    (..)
     , TokenId       (..)
     ) where
@@ -95,7 +95,7 @@ import           Web.Stripe.Types         (Amount (..),
                                            ExpandParams (..), Limit (..),
                                            Metadata (..), NewCard (..),
                                            StartingAfter (..),
-                                           StatementDescription (..),
+                                           StatementDescriptor (..),
                                            StripeList (..), TokenId (..))
 import           Web.Stripe.Types.Charge  (Capture (..))
 import           Web.Stripe.Types.Email   (ReceiptEmail (..))
@@ -126,7 +126,7 @@ instance StripeHasParam CreateCharge TokenId
 instance StripeHasParam CreateCharge Description
 instance StripeHasParam CreateCharge Metadata
 instance StripeHasParam CreateCharge Capture
-instance StripeHasParam CreateCharge StatementDescription
+instance StripeHasParam CreateCharge StatementDescriptor
 instance StripeHasParam CreateCharge ReceiptEmail
 instance StripeHasParam CreateCharge ApplicationFeeAmount
 

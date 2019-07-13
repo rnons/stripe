@@ -46,7 +46,7 @@ planTests stripe = do
     --       (PlanName "sample plan")
     --     r <- updatePlan pid
     --            -&- (PlanName "cookie")
-    --            -&- (StatementDescription "test")
+    --            -&- (StatementDescriptor "test")
     --            -&- Metadata [("key","value")]
     --     void $ deletePlan pid
     --     return r
@@ -57,7 +57,7 @@ planTests stripe = do
     --                  } = result
     --   pm `shouldBe` (Metadata [("key", "value")])
     --   pname `shouldBe` "cookie"
-    --   pdesc `shouldBe` (Just $ StatementDescription "test")
+    --   pdesc `shouldBe` (Just $ StatementDescriptor "test")
     -- it "Succesfully retrieves a Plan" $ do
     --   planid <- makePlanId
     --   result <- stripe $ do
