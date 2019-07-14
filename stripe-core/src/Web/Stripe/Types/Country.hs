@@ -6,5 +6,5 @@ import           Data.Text (Text)
 
 ------------------------------------------------------------------------------
 -- | Country
-newtype Country       =
-  Country Text deriving (Read, Show, Eq, Ord, Data, Typeable)
+newtype Country = Country { getCountry :: Text }
+    deriving (Read, Show, Eq, Ord, Data, Typeable)

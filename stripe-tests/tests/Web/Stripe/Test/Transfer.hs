@@ -1,15 +1,16 @@
-{-# LANGUAGE RecordWildCards #-}
 {-# LANGUAGE OverloadedStrings #-}
-{-# LANGUAGE RebindableSyntax #-}
+{-# LANGUAGE RebindableSyntax  #-}
+{-# LANGUAGE RecordWildCards   #-}
 module Web.Stripe.Test.Transfer where
 
-import           Data.Maybe
 import           Data.Either
+import           Data.Maybe
 import           Data.String
 import           Web.Stripe.Test.Prelude
 
 import           Web.Stripe.Recipient
 import           Web.Stripe.Transfer
+import           Web.Stripe.Types.Currency (Currency (USD))
 
 ------------------------------------------------------------------------------
 -- the tests
@@ -86,7 +87,7 @@ transferTests stripe =
       result `shouldSatisfy` isLeft
   where
     country       = Country "US"
-    routingnumber = RoutingNumber "110000000"
+    routingnumber = Just $ RoutingNumber "110000000"
     accountnumber = AccountNumber "000123456789"
     name          = Name "David Johnson"
-    bankinfo      = NewBankAccount country routingnumber accountnumber
+    bankinfo      = NewBankAccount country USD routingnumber accountnumber

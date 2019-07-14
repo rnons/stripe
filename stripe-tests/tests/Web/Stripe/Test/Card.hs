@@ -9,9 +9,10 @@ import           Test.Hspec
 import           Web.Stripe.Card
 import           Web.Stripe.Customer
 import           Web.Stripe.Recipient
-import           Web.Stripe.StripeRequest (Expandable (Id))
+import           Web.Stripe.StripeRequest  (Expandable (Id))
 import           Web.Stripe.Test.Prelude
 import           Web.Stripe.Token
+import           Web.Stripe.Types.Currency (Currency (USD))
 
 cardTests :: StripeSpec
 cardTests stripe = do
@@ -137,7 +138,7 @@ cardTests stripe = do
 
       it "Fails to create a RecipientCard by BankAccount TokenId" $ do
         result <- stripe $ do
-          Token { tokenId = tkid } <- createBankAccountToken (Just $ NewBankAccount country routingnumber accountnumber)
+          Token { tokenId = tkid } <- createBankAccountToken (Just $ NewBankAccount country USD (Just routingnumber) accountnumber)
           Recipient { recipientId = rid } <- createRecipient name Corporation
           rcard <- createRecipientCardByToken rid tkid
           void $ deleteRecipient rid

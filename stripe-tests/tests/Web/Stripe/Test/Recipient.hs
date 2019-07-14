@@ -1,12 +1,13 @@
 {-# LANGUAGE OverloadedStrings #-}
-{-# LANGUAGE RecordWildCards #-}
-{-# LANGUAGE RebindableSyntax #-}
+{-# LANGUAGE RebindableSyntax  #-}
+{-# LANGUAGE RecordWildCards   #-}
 module Web.Stripe.Test.Recipient where
 
 import           Data.Either
 import           Test.Hspec
-import           Web.Stripe.Test.Prelude
 import           Web.Stripe.Recipient
+import           Web.Stripe.Test.Prelude
+import           Web.Stripe.Types.Currency (Currency (USD))
 
 recipientTests :: StripeSpec
 recipientTests stripe = do
@@ -65,7 +66,7 @@ recipientTests stripe = do
         recipient <- updateRecipient rid
                        -&- (Name "David R. Johnson")
                        -&- taxid
-                       -&- (NewBankAccount country routingnumber accountnumber)
+                       -&- (NewBankAccount country USD (Just routingnumber) accountnumber)
                        -&- email
                        -&- description
                        -&- meta

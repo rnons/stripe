@@ -54,5 +54,5 @@ allTests stripe' = do
     -- applicationFeeRefundTests stripe
     -- accountTests stripe
     -- balanceTests stripe
-    -- tokenTests stripe
+    tokenTests stripe
     -- eventTests stripe

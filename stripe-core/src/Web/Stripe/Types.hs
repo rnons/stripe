@@ -43,7 +43,7 @@ import           Control.Applicative                  (pure, (<$>), (<*>),
 import           Control.Monad                        (mzero)
 import           Data.Aeson                           (FromJSON (parseJSON),
                                                        Options (..),
-                                                       Value (Bool, Object, String),
+                                                       Value (Object, String),
                                                        camelTo2, defaultOptions,
                                                        genericParseJSON, (.:),
                                                        (.:?))
@@ -933,7 +933,7 @@ data BankAccount = BankAccount {
     , bankAccountObject      :: Text
     , bankAccountLast4       :: Text
     , bankAccountCountry     :: Country
-    , bankAccountCurrency    :: Currency
+    , bankAccountCurrency    :: Maybe Currency
     , bankAccountStatus      :: Maybe BankAccountStatus
     , bankAccountFingerprint :: Maybe Text
     , bankAccountName        :: Text
@@ -1354,12 +1354,13 @@ instance FromJSON ConnectApp where
 
 ------------------------------------------------------------------------------
 -- | `Token` Object
-data Token a = Token {
-      tokenId       :: TokenId
-    , tokenLiveMode :: Bool
-    , tokenCreated  :: UTCTime
-    , tokenUsed     :: Bool
+data Token a = Token
+    { tokenId       :: TokenId
     , tokenObject   :: Text
+    , tokenClientIp :: Maybe Text
+    , tokenCreated  :: UTCTime
+    , tokenLivemode :: Bool
+    , tokenUsed     :: Bool
     , tokenType     :: TokenType
     , tokenData     :: a
 } deriving (Read, Show, Eq, Ord, Data, Typeable)
@@ -1369,10 +1370,11 @@ data Token a = Token {
 instance FromJSON a => FromJSON (Token a) where
    parseJSON (Object o) = do
      tokenId <- TokenId <$> o .: "id"
-     Bool tokenLiveMode <- o .: "livemode"
+     tokenObject <- o .: "object"
+     tokenClientIp <- o .:? "client_ip"
      tokenCreated <- fromSeconds <$> o .: "created"
-     Bool tokenUsed <- o .: "used"
-     String tokenObject <- o .: "object"
+     tokenLivemode <- o .: "livemode"
+     tokenUsed <- o .: "used"
      String typ <- o .: "type"
      tokenType <- pure $ case typ of
                       "card"         -> TokenCard

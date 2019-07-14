@@ -7,6 +7,7 @@ import           Data.Either
 import           Test.Hspec
 import           Web.Stripe.Test.Prelude
 import           Web.Stripe.Token
+import           Web.Stripe.Types.Currency (Currency (USD))
 
 tokenTests :: StripeSpec
 tokenTests stripe = do
@@ -14,7 +15,8 @@ tokenTests stripe = do
     it "Can create a Card Token" $ do
       result <- stripe $ void $ createCardToken (Just cardinfo)
       result `shouldSatisfy` isRight
-    it "Can create a Bank Account Token" $ do
+    -- stripe-mock always return card instead of bank_account
+    xit "Can create a Bank Account Token" $ do
       result <- stripe $ void $ createBankAccountToken
                                   (Just bankinfo)
       result `shouldSatisfy` isRight
@@ -23,7 +25,8 @@ tokenTests stripe = do
         Token { tokenId = tkid } <- createCardToken (Just cardinfo)
         void $ getCardToken tkid
       result `shouldSatisfy` isRight
-    it "Can retrieve an Existing Bank Account Token" $ do
+    -- stripe-mock always return card instead of bank_account
+    xit "Can retrieve an Existing Bank Account Token" $ do
       result <- stripe $ do
         Token { tokenId = tkid } <- createBankAccountToken (Just bankinfo)
         void $ getBankAccountToken tkid
@@ -36,5 +39,6 @@ tokenTests stripe = do
     cardinfo = (mkNewCard cn em ey) { newCardCVC = Just cvc }
     bankinfo = NewBankAccount
                   (Country "US")
-                  (RoutingNumber "110000000")
+                  USD
+                  (Just $ RoutingNumber "110000000")
                   (AccountNumber "000123456789")

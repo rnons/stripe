@@ -9,9 +9,11 @@ import           Data.Aeson                     (FromJSON (parseJSON),
                                                  Value (String))
 import           Data.Data                      (Data, Typeable)
 import           Data.Text                      (Text)
+import qualified Data.Text                      as T
 import qualified Data.Text.Encoding             as Text
 import           Web.Stripe.StripeRequest.Class (ToStripeParam (..))
 import           Web.Stripe.Types.Country       (Country (..))
+import           Web.Stripe.Types.Currency      (Currency)
 import           Web.Stripe.Util                (getParams)
 
 ------------------------------------------------------------------------------
@@ -41,18 +43,19 @@ instance FromJSON BankAccountStatus where
 ------------------------------------------------------------------------------
 -- | Routing Number for Bank Account
 newtype RoutingNumber =
-  RoutingNumber Text deriving (Read, Show, Eq, Ord, Data, Typeable)
+  RoutingNumber { getRoutingNumber :: Text } deriving (Read, Show, Eq, Ord, Data, Typeable)
 
 ------------------------------------------------------------------------------
 -- | Account Number of a Bank Account
 newtype AccountNumber =
-  AccountNumber Text deriving (Read, Show, Eq, Ord, Data, Typeable)
+  AccountNumber { getAccountNumber :: Text } deriving (Read, Show, Eq, Ord, Data, Typeable)
 
 ------------------------------------------------------------------------------
 -- | create a new `BankAccount`
 data NewBankAccount = NewBankAccount
     { newBankAccountCountry       :: Country
-    , newBankAccountRoutingNumber :: RoutingNumber
+    , newBankAccountCurrency      :: Currency
+    , newBankAccountRoutingNumber :: Maybe RoutingNumber
     , newBankAccountAccountNumber :: AccountNumber
     }
     deriving (Read, Show, Eq, Ord, Data, Typeable)
@@ -60,7 +63,8 @@ data NewBankAccount = NewBankAccount
 instance ToStripeParam NewBankAccount where
   toStripeParam NewBankAccount{..} =
     ((getParams
-        [ ("bank_account[country]", Just $ (\(Country x) -> x) newBankAccountCountry)
-        , ("bank_account[routing_number]", Just $ (\(RoutingNumber x) -> x) newBankAccountRoutingNumber)
-        , ("bank_account[account_number]", Just $ (\(AccountNumber x) -> x) newBankAccountAccountNumber)
+        [ ("bank_account[country]", Just $ getCountry newBankAccountCountry)
+        , ("bank_account[currency]", Just $ T.pack $ show newBankAccountCurrency)
+        , ("bank_account[routing_number]", getRoutingNumber <$> newBankAccountRoutingNumber)
+        , ("bank_account[account_number]", Just $ getAccountNumber newBankAccountAccountNumber)
         ]) ++)
