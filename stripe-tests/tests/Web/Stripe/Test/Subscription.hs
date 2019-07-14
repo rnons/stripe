@@ -52,7 +52,7 @@ subscriptionTests stripe = do
                         (Amount 0) -- free plan
                         USD
                         Month
-        Subscription { id = sid } <- createSubscription' cid planid
+        Subscription { subscriptionId = sid } <- createSubscription' cid planid
         sub <- getSubscription cid sid
         void $ deletePlan planid
         void $ deleteCustomer cid
@@ -66,7 +66,7 @@ subscriptionTests stripe = do
                         (Amount 0) -- free plan
                         USD
                         Month
-        Subscription { id = sid } <- createSubscription' cid planid
+        Subscription { subscriptionId = sid } <- createSubscription' cid planid
         sub <- getSubscription cid sid -&- ExpandParams ["customer"]
         void $ deletePlan planid
         void $ deleteCustomer cid
@@ -144,7 +144,7 @@ subscriptionTests stripe = do
                         (Amount 0) -- free plan
                         USD
                         Month
-        Subscription { id = sid } <- createSubscription' cid planid
+        Subscription { subscriptionId = sid } <- createSubscription' cid planid
         sub <- updateSubscription cid sid
                 -&- couponid
                 -&- Metadata [("hi","there")]
@@ -152,8 +152,8 @@ subscriptionTests stripe = do
         return sub
       result `shouldSatisfy` isRight
       let Right Subscription {..} = result
-      metadata `shouldBe` (Metadata [("hi", "there")])
-      discount `shouldSatisfy` isJust
+      subscriptionMetadata `shouldBe` (Metadata [("hi", "there")])
+      subscriptionDiscount `shouldSatisfy` isJust
     xit "Succesfully cancels a Customer's Subscription" $ do
       planid <- makePlanId
       result <- stripe $ do
@@ -162,11 +162,11 @@ subscriptionTests stripe = do
                         (Amount 0) -- free plan
                         USD
                         Month
-        Subscription { id = sid } <- createSubscription' cid planid
+        Subscription { subscriptionId = sid } <- createSubscription' cid planid
         sub <- cancelSubscription cid sid
         void $ deletePlan planid
         void $ deleteCustomer cid
         return sub
       result `shouldSatisfy` isRight
       let Right Subscription {..} = result
-      status `shouldBe` Canceled
+      subscriptionStatus `shouldBe` Canceled

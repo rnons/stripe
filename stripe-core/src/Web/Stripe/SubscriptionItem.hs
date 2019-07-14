@@ -79,10 +79,10 @@ instance StripeHasParam CreateSubscriptionItem TaxRates
 getSubscriptionItem
   :: SubscriptionItemId
   -> StripeRequest GetSubscriptionItem
-getSubscriptionItem subscriptionItemId =
+getSubscriptionItem itemId =
     mkStripeRequest POST url params
   where
-    url = "subscription_items" </> getSubscriptionItemId subscriptionItemId
+    url = "subscription_items" </> getSubscriptionItemId itemId
     params = []
 
 data GetSubscriptionItem
@@ -93,10 +93,10 @@ type instance StripeReturn GetSubscriptionItem = SubscriptionItem
 updateSubscriptionItem
   :: SubscriptionItemId
   -> StripeRequest UpdateSubscriptionItem
-updateSubscriptionItem subscriptionItemId =
+updateSubscriptionItem itemId =
     mkStripeRequest POST url params
   where
-    url = "subscription_items" </> getSubscriptionItemId subscriptionItemId
+    url = "subscription_items" </> getSubscriptionItemId itemId
     params = []
 
 data UpdateSubscriptionItem
@@ -114,10 +114,10 @@ instance StripeHasParam UpdateSubscriptionItem TaxRates
 deleteSubscriptionItem
   :: SubscriptionItemId
   -> StripeRequest DeleteSubscriptionItem
-deleteSubscriptionItem subscriptionItemId =
+deleteSubscriptionItem itemId =
     mkStripeRequest DELETE url params
   where
-    url = "subscription_items" </> getSubscriptionItemId subscriptionItemId
+    url = "subscription_items" </> getSubscriptionItemId itemId
     params = []
 
 data DeleteSubscriptionItem

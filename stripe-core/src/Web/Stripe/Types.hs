@@ -1,12 +1,12 @@
-{-# LANGUAGE DeriveDataTypeable    #-}
-{-# LANGUAGE DeriveGeneric         #-}
-{-# LANGUAGE DuplicateRecordFields #-}
-{-# LANGUAGE FlexibleContexts      #-}
-{-# LANGUAGE OverloadedStrings     #-}
-{-# LANGUAGE RecordWildCards       #-}
-{-# LANGUAGE StandaloneDeriving    #-}
-{-# LANGUAGE TypeFamilies          #-}
-{-# LANGUAGE UndecidableInstances  #-}
+{-# LANGUAGE DeriveDataTypeable   #-}
+{-# LANGUAGE DeriveGeneric        #-}
+{-# LANGUAGE FlexibleContexts     #-}
+{-# LANGUAGE OverloadedStrings    #-}
+{-# LANGUAGE RecordWildCards      #-}
+{-# LANGUAGE StandaloneDeriving   #-}
+{-# LANGUAGE TypeApplications     #-}
+{-# LANGUAGE TypeFamilies         #-}
+{-# LANGUAGE UndecidableInstances #-}
 ------------------------------------------------------------------------------
 -- |
 -- Module      : Web.Stripe.Types
@@ -411,36 +411,36 @@ instance FromJSON RecipientCard where
 ------------------------------------------------------------------------------
 -- | Subscription Object
 data Subscription = Subscription
-    { id                    :: SubscriptionId
-    , object                :: Text
-    , applicationFeePercent :: Maybe Double
-    -- , billing
-    , billingCycleAnchor    :: BillingCycleAnchor
-    -- , billingThresholds
-    , cancelAtPeriodEnd     :: Bool
-    , canceledAt            :: Maybe UTCTime
-    , collectionMethod      :: CollectionMethod
-    , created               :: UTCTime
-    , currentPeriodEnd      :: UTCTime
-    , currentPeriodStart    :: UTCTime
-    , customerId            :: Expandable CustomerId
-    , daysUntilDue          :: Maybe Int
-    -- , defaultPaymentMethod
-    -- , defaultSource
-    , defaultTaxRates       :: [TaxRate]
-    , discount              :: Maybe Discount
-    , endedAt               :: Maybe UTCTime
-    , items                 :: StripeList SubscriptionItem
-    -- , latestInvoice
-    , livemode              :: Bool
-    , metadata              :: Metadata
-    , plan                  :: Maybe Plan
-    , quantity              :: Quantity
-    , start                 :: UTCTime
-    , startDate             :: UTCTime
-    , status                :: SubscriptionStatus
-    , trialEnd              :: Maybe UTCTime
-    , trialStart            :: Maybe UTCTime
+    { subscriptionId                    :: SubscriptionId
+    , subscriptionObject                :: Text
+    , subscriptionApplicationFeePercent :: Maybe Double
+    -- , subscriptionBilling
+    , subscriptionBillingCycleAnchor    :: BillingCycleAnchor
+    -- , subscriptionBillingThresholds
+    , subscriptionCancelAtPeriodEnd     :: Bool
+    , subscriptionCanceledAt            :: Maybe UTCTime
+    , subscriptionCollectionMethod      :: CollectionMethod
+    , subscriptionCreated               :: UTCTime
+    , subscriptionCurrentPeriodEnd      :: UTCTime
+    , subscriptionCurrentPeriodStart    :: UTCTime
+    , subscriptionCustomerId            :: Expandable CustomerId
+    , subscriptionDaysUntilDue          :: Maybe Int
+    -- , subscriptionDefaultPaymentMethod
+    -- , subscriptionDefaultSource
+    , subscriptionDefaultTaxRates       :: [TaxRate]
+    , subscriptionDiscount              :: Maybe Discount
+    , subscriptionEndedAt               :: Maybe UTCTime
+    , subscriptionItems                 :: StripeList SubscriptionItem
+    -- , subscriptionLatestInvoice
+    , subscriptionLivemode              :: Bool
+    , subscriptionMetadata              :: Metadata
+    , subscriptionPlan                  :: Maybe Plan
+    , subscriptionQuantity              :: Quantity
+    , subscriptionStart                 :: UTCTime
+    , subscriptionStartDate             :: UTCTime
+    , subscriptionStatus                :: SubscriptionStatus
+    , subscriptionTrialEnd              :: Maybe UTCTime
+    , subscriptionTrialStart            :: Maybe UTCTime
     } deriving (Read, Show, Eq, Ord, Data, Typeable)
 
 ------------------------------------------------------------------------------
@@ -477,20 +477,20 @@ instance FromJSON Subscription where
 ------------------------------------------------------------------------------
 -- | SubscriptionItem object
 data SubscriptionItem = SubscriptionItem
-    { id           :: SubscriptionItemId
-    , object       :: Text
-    -- , billing_thresholds
-    , created      :: StripeTime
-    , metadata     :: Metadata
-    , plan         :: Plan
-    , quantity     :: Quantity
-    , subscription :: SubscriptionId
-    , taxRates     :: Maybe [TaxRate]
+    { subscriptionItemId           :: SubscriptionItemId
+    , subscriptionItemObject       :: Text
+    -- , subscriptionItemBillingThresholds
+    , subscriptionItemCreated      :: StripeTime
+    , subscriptionItemMetadata     :: Metadata
+    , subscriptionItemPlan         :: Plan
+    , subscriptionItemQuantity     :: Quantity
+    , subscriptionItemSubscription :: SubscriptionId
+    , subscriptionItemTaxRates     :: Maybe [TaxRate]
     } deriving (Read, Show, Eq, Ord, Data, Typeable, Generic)
 
 instance FromJSON SubscriptionItem where
     parseJSON = genericParseJSON defaultOptions
-        { fieldLabelModifier = camelTo2 '_' }
+        { fieldLabelModifier = camelTo2 '_' . drop (length @[] "subscriptionItem") }
 
 ------------------------------------------------------------------------------
 -- | Plan object
@@ -601,64 +601,64 @@ instance FromJSON Discount where
 ------------------------------------------------------------------------------
 -- | `Invoice` Object
 data Invoice = Invoice
-    { id                   :: Maybe InvoiceId -- ^ If upcoming no ID will exist
-    , object               :: Text
-    , accountCountry       :: Country
-    , accountName          :: Maybe Text
-    , amountDue            :: Int
-    , amountPaid           :: Int
-    , amountRemaining      :: Int
-    , applicationFeeAmount :: Maybe Int
-    , attemptCount         :: Int
-    , attempted            :: Bool
-    , autoAdvance          :: AutoAdvance
-    , billingReason        :: Text
-    , charge               :: Maybe (Expandable ChargeId)
-    , collectionMethod     :: CollectionMethod
-    , created              :: UTCTime
-    , currency             :: Currency
-    -- , customFields
-    -- , customerAddress
-    , customerEmail        :: Maybe Text
-    , customerName         :: Maybe Text
-    , customerPhone        :: Maybe Text
-    -- , customerShipping :: Text
-    -- , customerTaxExempt
-    -- , customerTaxIds
-    -- , defaultPaymentMethod
-    -- , defaultSource
-    -- , defaultTaxRates
-    , description          :: Maybe Description
-    , discount             :: Maybe Discount
-    , dueDate              :: Maybe UTCTime
-    , endingBalance        :: Maybe Int
-    , footer               :: Maybe Text
-    , hostedInvoiceUrl     :: Maybe Text
-    , invoicePdf           :: Maybe Text
-    -- , lines            :: StripeList InvoiceLineItem
-    , livemode             :: Bool
-    , metadata             :: Metadata
-    , nextPaymentAttempt   :: Maybe UTCTime
-    , number               :: Text
-    , paid                 :: Bool
-    -- , paymentIntent
-    , periodEnd            :: UTCTime
-    , periodStart          :: UTCTime
-    -- , postPaymentCreditNotesAmount
-    -- , prePaymentCreditNotesAmount
-    , receiptNumber        :: Maybe Text
-    , startingBalance      :: Int
-    , statementDescription :: Maybe StatementDescriptor
-    -- , status
-    -- , statusTransitions
-    , subscription         :: Maybe SubscriptionId
-    -- , subscriptionProrationDate
-    , subtotal             :: Int
-    , tax                  :: Maybe Int
-    -- , thresholdReason
-    , total                :: Int
-    -- , totalTaxAmounts
-    , webHooksDeliveredAt  :: Maybe UTCTime
+    { invoiceId                   :: Maybe InvoiceId -- ^ If upcoming no ID will exist
+    , invoiceObject               :: Text
+    , invoiceAccountCountry       :: Country
+    , invoiceAccountName          :: Maybe Text
+    , invoiceAmountDue            :: Int
+    , invoiceAmountPaid           :: Int
+    , invoiceAmountRemaining      :: Int
+    , invoiceApplicationFeeAmount :: Maybe Int
+    , invoiceAttemptCount         :: Int
+    , invoiceAttempted            :: Bool
+    , invoiceAutoAdvance          :: AutoAdvance
+    , invoiceBillingReason        :: Text
+    , invoiceCharge               :: Maybe (Expandable ChargeId)
+    , invoiceCollectionMethod     :: CollectionMethod
+    , invoiceCreated              :: UTCTime
+    , invoiceCurrency             :: Currency
+    -- , invoiceCustomFields
+    -- , invoiceCustomerAddress
+    , invoiceCustomerEmail        :: Maybe Text
+    , invoiceCustomerName         :: Maybe Text
+    , invoiceCustomerPhone        :: Maybe Text
+    -- , invoiceCustomerShipping :: Text
+    -- , invoiceCustomerTaxExempt
+    -- , invoiceCustomerTaxIds
+    -- , invoiceDefaultPaymentMethod
+    -- , invoiceDefaultSource
+    -- , invoiceDefaultTaxRates
+    , invoiceDescription          :: Maybe Description
+    , invoiceDiscount             :: Maybe Discount
+    , invoiceDueDate              :: Maybe UTCTime
+    , invoiceEndingBalance        :: Maybe Int
+    , invoiceFooter               :: Maybe Text
+    , invoiceHostedInvoiceUrl     :: Maybe Text
+    , invoiceInvoicePdf           :: Maybe Text
+    -- , invoiceLines            :: StripeList InvoiceLineItem
+    , invoiceLivemode             :: Bool
+    , invoiceMetadata             :: Metadata
+    , invoiceNextPaymentAttempt   :: Maybe UTCTime
+    , invoiceNumber               :: Text
+    , invoicePaid                 :: Bool
+    -- , invoicePaymentIntent
+    , invoicePeriodEnd            :: UTCTime
+    , invoicePeriodStart          :: UTCTime
+    -- , invoicePostPaymentCreditNotesAmount
+    -- , invoicePrePaymentCreditNotesAmount
+    , invoiceReceiptNumber        :: Maybe Text
+    , invoiceStartingBalance      :: Int
+    , invoiceStatementDescriptor  :: Maybe StatementDescriptor
+    -- , invoiceStatus
+    -- , invoiceStatusTransitions
+    , invoiceSubscription         :: Maybe SubscriptionId
+    -- , invoiceSubscriptionProrationDate
+    , invoiceSubtotal             :: Int
+    , invoiceTax                  :: Maybe Int
+    -- , invoiceThresholdReason
+    , invoiceTotal                :: Int
+    -- , invoiceTotalTaxAmounts
+    , invoiceWebHooksDeliveredAt  :: Maybe UTCTime
 } deriving (Read, Show, Eq, Ord, Data, Typeable)
 
 ------------------------------------------------------------------------------

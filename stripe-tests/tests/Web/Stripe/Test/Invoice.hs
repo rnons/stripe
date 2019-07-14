@@ -30,7 +30,7 @@ invoiceTests stripe = do
         Customer { customerId = cid } <- createCustomer
         Plan { planId = pid} <- createPlan planid (Amount 20) USD Day
         InvoiceItem { invoiceItemId = iiid } <- createInvoiceItem cid (Amount 100) USD
-        Invoice { id = Just iid } <- createInvoice cid -&- meta
+        Invoice { invoiceId = Just iid } <- createInvoice cid -&- meta
         i <- getInvoice iid
         void $ deleteInvoiceItem iiid
         void $ deletePlan pid
@@ -43,7 +43,7 @@ invoiceTests stripe = do
         Customer { customerId = cid } <- createCustomer
         Plan { planId = pid} <- createPlan planid (Amount 20) USD Day
         InvoiceItem { invoiceItemId = iiid } <- createInvoiceItem cid (Amount 100) USD
-        Invoice { id = Just iid } <- createInvoice cid -&- meta
+        Invoice { invoiceId = Just iid } <- createInvoice cid -&- meta
         i <- getInvoice iid -&- ExpandParams ["customer", "charge"]
         void $ deleteInvoiceItem iiid
         void $ deletePlan pid
@@ -56,7 +56,7 @@ invoiceTests stripe = do
         Customer { customerId = cid } <- createCustomer
         Plan { planId = pid } <- createPlan planid (Amount 20) USD Day
         InvoiceItem { invoiceItemId = iiid } <- createInvoiceItem cid (Amount 100) USD
-        Invoice { id = Just iid } <- createInvoice cid -&- meta
+        Invoice { invoiceId = Just iid } <- createInvoice cid -&- meta
         i <- getInvoiceLineItems iid
         void $ deleteInvoiceItem iiid
         void $ deletePlan pid
@@ -76,7 +76,7 @@ invoiceTests stripe = do
         Customer { customerId = cid } <- createCustomer
         Plan { planId = pid } <- createPlan planid (Amount 20) USD Day
         InvoiceItem { invoiceItemId = iiid } <- createInvoiceItem cid (Amount 100) USD
-        Invoice { id = Just iid } <- createInvoice cid -&- meta
+        Invoice { invoiceId = Just iid } <- createInvoice cid -&- meta
         i <- updateInvoice iid -&- (Metadata [("some", "thing")])
         void $ deleteInvoiceItem iiid
         void $ deletePlan pid
@@ -84,7 +84,7 @@ invoiceTests stripe = do
         return i
       result `shouldSatisfy` isRight
       let Right Invoice {..} = result
-      metadata `shouldBe` (Metadata [("some", "thing")])
+      invoiceMetadata `shouldBe` (Metadata [("some", "thing")])
     it "Retrieve an Upcoming Invoice" $ do
       planid <- makePlanId
       result <- stripe $ do
@@ -103,14 +103,14 @@ invoiceTests stripe = do
         Customer { customerId = cid } <- createCustomer -&- cardinfo
         Plan { planId = pid } <- createPlan planid (Amount 20) USD Day
         InvoiceItem { } <- createInvoiceItem cid (Amount 100) USD
-        Invoice { id = Just iid } <- createInvoice cid -&- meta
+        Invoice { invoiceId = Just iid } <- createInvoice cid -&- meta
         i <- payInvoice iid
         void $ deletePlan pid
         void $ deleteCustomer cid
         return i
       result `shouldSatisfy` isRight
       let Right Invoice{..} = result
-      paid `shouldBe` True
+      invoicePaid `shouldBe` True
   where
     cardinfo = (mkNewCard credit em ey) { newCardCVC = Just cvc }
     meta = Metadata [ ("some","metadata") ]
