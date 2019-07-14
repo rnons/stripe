@@ -126,7 +126,7 @@ createCardByToken
   id_
   tokenid       = request
   where request = mkStripeRequest POST url params
-        url     = prefix </> id_ </> "cards"
+        url     = prefix </> id_ </> "sources"
         params  = toStripeParam tokenid []
 
 ------------------------------------------------------------------------------
@@ -169,7 +169,7 @@ createCard
   id_
   newCard       = request
   where request = mkStripeRequest POST url params
-        url     = prefix </> id_ </> "cards"
+        url     = prefix </> id_ </> "sources"
         params  = toStripeParam newCard []
 
 ------------------------------------------------------------------------------
@@ -211,7 +211,7 @@ getCard
   cardid_      = request
   where request = mkStripeRequest GET url params
         url     = prefix </> id_ </>
-                  "cards" </> cardid_
+                  "sources" </> cardid_
         params  = []
 
 ------------------------------------------------------------------------------
@@ -256,7 +256,7 @@ updateCard
   cardid_       = request
   where request = mkStripeRequest POST url params
         url     = prefix </> id_ </>
-                  "cards" </> cardid_
+                  "sources" </> cardid_
         params  = []
 
 ------------------------------------------------------------------------------
@@ -318,7 +318,7 @@ deleteCard
     id_
     cardid_ = request
   where request = mkStripeRequest DELETE url params
-        url     = prefix </> id_ </> "cards" </> cardid_
+        url     = prefix </> id_ </> "sources" </> cardid_
         params  = []
 
 ------------------------------------------------------------------------------
@@ -359,7 +359,7 @@ getCards
     id_
     = request
   where request = mkStripeRequest GET url params
-        url     = prefix </> id_ </> "cards"
+        url     = prefix </> id_ </> "sources"
         params  = []
 
 ------------------------------------------------------------------------------

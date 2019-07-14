@@ -307,28 +307,34 @@ instance FromJSON RecipientCardId where
 
 ------------------------------------------------------------------------------
 -- | `Card` Object
-data Card = Card {
-      cardId                :: CardId
+data Card = Card
+    { cardId                :: CardId
     , cardObject            :: Text
-    , cardLastFour          :: Text
+    -- , cardAccount
+    , cardAddressCity       :: Maybe AddressCity
+    , cardAddressCountry    :: Maybe AddressCountry
+    , cardAddressLine1      :: Maybe AddressLine1
+    , cardAddressLine1Check :: Maybe Text
+    , cardAddressLine2      :: Maybe AddressLine2
+    , cardAddressState      :: Maybe AddressState
+    , cardAddressZip        :: Maybe AddressZip
+    , cardAddressZipCheck   :: Maybe Text
+    -- , cardAvailablePayoutMethods
     , cardBrand             :: Brand
-    , cardFunding           :: Text
+    , cardCountry           :: Maybe Text
+    , cardCurrency          :: Maybe Currency
+    , cardCustomer          :: Maybe (Expandable CustomerId)
+    , cardCVCCheck          :: Maybe Text
+    , cardDynamicLastFour   :: Maybe Text
     , cardExpMonth          :: ExpMonth
     , cardExpYear           :: ExpYear
     , cardFingerprint       :: Text
-    , cardCountry           :: Maybe Text
-    , cardName              :: Maybe Name
-    , cardAddressLine1      :: Maybe AddressLine1
-    , cardAddressLine2      :: Maybe AddressLine2
-    , cardAddressCity       :: Maybe AddressCity
-    , cardAddressState      :: Maybe AddressState
-    , cardAddressZip        :: Maybe AddressZip
-    , cardAddressCountry    :: Maybe AddressCountry
-    , cardCVCCheck          :: Maybe Text
-    , cardAddressLine1Check :: Maybe Text
-    , cardAddressZipCheck   :: Maybe Text
-    , cardCustomerId        :: Maybe (Expandable CustomerId)
+    , cardFunding           :: Text
+    , cardLastFour          :: Text
     , cardMetadata          :: Metadata
+    , cardName              :: Maybe Name
+    -- , cardRecipient
+    -- , cardTokenizationMethod
     } deriving (Read, Show, Eq, Ord, Data, Typeable)
 
 ------------------------------------------------------------------------------
@@ -358,28 +364,30 @@ data RecipientCard = RecipientCard {
 ------------------------------------------------------------------------------
 -- | JSON Instance for `Card`
 instance FromJSON Card where
-    parseJSON (Object o) =
-        Card <$> (CardId <$> o .: "id")
-             <*> o .: "object"
-             <*> o .: "last4"
-             <*> o .: "brand"
-             <*> o .: "funding"
-             <*> (ExpMonth <$> o .: "exp_month")
-             <*> (ExpYear <$> o .: "exp_year")
-             <*> o .: "fingerprint"
-             <*> o .:? "country"
-             <*> o .:? "name"
-             <*> (fmap AddressLine1 <$> o .:? "address_line1")
-             <*> (fmap AddressLine2 <$> o .:? "address_line2")
-             <*> (fmap AddressCity <$> o .:? "address_city")
-             <*> (fmap AddressState <$> o .:? "address_state")
-             <*> (fmap AddressZip <$> o .:? "address_zip")
-             <*> (fmap AddressCountry <$> o .:? "address_country")
-             <*> o .:? "cvc_check"
-             <*> o .:? "address_line1_check"
-             <*> o .:? "address_zip_check"
-             <*> o .:? "customer"
-             <*> o .: "metadata"
+    parseJSON (Object o) = Card
+        <$> (CardId <$> o .: "id")
+        <*> o .: "object"
+        <*> (fmap AddressCity <$> o .:? "address_city")
+        <*> (fmap AddressCountry <$> o .:? "address_country")
+        <*> (fmap AddressLine1 <$> o .:? "address_line1")
+        <*> o .:? "address_line1_check"
+        <*> (fmap AddressLine2 <$> o .:? "address_line2")
+        <*> (fmap AddressState <$> o .:? "address_state")
+        <*> (fmap AddressZip <$> o .:? "address_zip")
+        <*> o .:? "address_zip_check"
+        <*> o .: "brand"
+        <*> o .:? "country"
+        <*> o .:? "currency"
+        <*> o .:? "customer"
+        <*> o .:? "cvc_check"
+        <*> o .:? "dynamic_last4"
+        <*> (ExpMonth <$> o .: "exp_month")
+        <*> (ExpYear <$> o .: "exp_year")
+        <*> o .: "fingerprint"
+        <*> o .: "funding"
+        <*> o .: "last4"
+        <*> o .: "metadata"
+        <*> o .:? "name"
     parseJSON _ = mzero
 
 ------------------------------------------------------------------------------
