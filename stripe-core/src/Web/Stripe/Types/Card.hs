@@ -15,6 +15,20 @@ import           Web.Stripe.Types.Name          (Name (..))
 import           Web.Stripe.Util                (getParams, toBytestring,
                                                  toText)
 
+------------------------------------------------------------------------------
+-- | CardId for a `Card`
+newtype CardId = CardId { getCardId :: Text }
+  deriving (Eq, Ord, Read, Show, Data, Typeable)
+
+instance ToStripeParam CardId where
+  toStripeParam (CardId cid) =
+    (("card", Text.encodeUtf8 cid) :)
+
+------------------------------------------------------------------------------
+-- | JSON Instance for `CardId`
+instance FromJSON CardId where
+   parseJSON (String x) = pure $ CardId x
+   parseJSON _          = mzero
 
 ------------------------------------------------------------------------------
 -- | City address for a `Card`
@@ -132,7 +146,8 @@ instance ToStripeParam NewCard where
 
 ------------------------------------------------------------------------------
 -- | Expiration Month for a `Card`
-newtype ExpMonth       = ExpMonth Int deriving (Read, Show, Eq, Ord, Data, Typeable)
+newtype ExpMonth = ExpMonth { getExpMonth :: Int }
+    deriving (Read, Show, Eq, Ord, Data, Typeable)
 
 instance ToStripeParam ExpMonth where
   toStripeParam (ExpMonth m) =
@@ -140,7 +155,8 @@ instance ToStripeParam ExpMonth where
 
 ------------------------------------------------------------------------------
 -- | Expiration Year for a `Card`
-newtype ExpYear        = ExpYear Int deriving (Read, Show, Eq, Ord, Data, Typeable)
+newtype ExpYear = ExpYear { getExpYear :: Int }
+    deriving (Read, Show, Eq, Ord, Data, Typeable)
 
 instance ToStripeParam ExpYear where
   toStripeParam (ExpYear y) =
@@ -184,21 +200,6 @@ instance FromJSON Brand where
    parseJSON (String "Visa")             = pure Visa
    parseJSON (String "DinersClub")       = pure DinersClub
    parseJSON _                           = mzero
-
-------------------------------------------------------------------------------
--- | CardId for a `Customer`
-newtype CardId = CardId Text
-  deriving (Eq, Ord, Read, Show, Data, Typeable)
-
-instance ToStripeParam CardId where
-  toStripeParam (CardId cid) =
-    (("card", Text.encodeUtf8 cid) :)
-
-------------------------------------------------------------------------------
--- | JSON Instance for `CardId`
-instance FromJSON CardId where
-   parseJSON (String x) = pure $ CardId x
-   parseJSON _          = mzero
 
 ------------------------------------------------------------------------------
 -- | set the `DefaultCard`

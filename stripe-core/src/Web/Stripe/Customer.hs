@@ -90,7 +90,6 @@ import           Web.Stripe.Types          (CVC (..), CardId (..),
 import           Web.Stripe.Types.Customer (AccountBalance (..))
 import           Web.Stripe.Types.Name     (Name (..))
 import           Web.Stripe.Types.Plan     (TrialEnd (..))
-import           Web.Stripe.Types.Util
 import           Web.Stripe.Util           ((</>))
 
 ------------------------------------------------------------------------------

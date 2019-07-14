@@ -31,16 +31,6 @@ getTransactionId :: TransactionId -> Text
 getTransactionId (TransactionId x) = x
 
 ------------------------------------------------------------------------------
--- | Helper for retrieving `CustomerId`
-getCustomerId :: CustomerId -> Text
-getCustomerId (CustomerId x) = x
-
-------------------------------------------------------------------------------
--- | Helper for retrieving `CardId`
-getCardId :: CardId -> Text
-getCardId (CardId x) = x
-
-------------------------------------------------------------------------------
 -- | Helper for retrieving `RecipientCardId`
 getRecipientCardId :: RecipientCardId -> Text
 getRecipientCardId (RecipientCardId x)  = x

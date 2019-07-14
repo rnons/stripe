@@ -23,8 +23,7 @@ instance ToStripeParam AccountBalance where
 
 ------------------------------------------------------------------------------
 -- | `CustomerId` for a `Customer`
-newtype CustomerId
-  = CustomerId Text
+newtype CustomerId = CustomerId { getCustomerId :: Text }
   deriving (Read, Show, Eq, Ord, Data, Typeable)
 
 ------------------------------------------------------------------------------

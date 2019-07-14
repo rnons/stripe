@@ -12,8 +12,7 @@ import           Web.Stripe.StripeRequest.Class (ToStripeParam (..))
 
 ------------------------------------------------------------------------------
 -- | `TokenId` of a `Token`
-newtype TokenId =
-    TokenId Text
+newtype TokenId = TokenId { getTokenId :: Text }
     deriving (Read, Show, Eq, Ord, Data, Typeable)
 
 instance ToStripeParam TokenId where
