@@ -11,6 +11,7 @@ import           Data.Data                      (Data, Typeable)
 import           Data.Text                      (Text)
 import qualified Data.Text.Encoding             as Text
 import           Web.Stripe.StripeRequest.Class (ToStripeParam (..))
+import           Web.Stripe.Types.Name          (Name (..))
 import           Web.Stripe.Util                (getParams, toBytestring,
                                                  toText)
 
@@ -70,18 +71,6 @@ newtype CardNumber     = CardNumber Text deriving (Read, Show, Eq, Ord, Data, Ty
 instance ToStripeParam CardNumber where
   toStripeParam (CardNumber num) =
     (("number", Text.encodeUtf8 num) :)
-
-------------------------------------------------------------------------------
--- | a cardholder's full name
-newtype Name  = Name { getName :: Text }
-   deriving (Read, Show, Eq, Ord, Data, Typeable)
-
-instance FromJSON Name where
-  parseJSON v = Name <$> parseJSON v
-
-instance ToStripeParam Name where
-  toStripeParam (Name txt) =
-    (("name", Text.encodeUtf8 txt) :)
 
 ------------------------------------------------------------------------------
 -- | `NewCard` contains the data needed to create a new `Card`

@@ -18,7 +18,7 @@ newtype TokenId =
 
 instance ToStripeParam TokenId where
   toStripeParam (TokenId tid) =
-    (("card", Text.encodeUtf8 tid) :)
+    (("source", Text.encodeUtf8 tid) :)
 
 ------------------------------------------------------------------------------
 -- | Type of `Token`

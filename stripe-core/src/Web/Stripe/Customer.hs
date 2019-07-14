@@ -60,6 +60,7 @@ module Web.Stripe.Customer
     , Limit              (..)
     , Metadata           (..)
     , mkNewCard
+    , Name(..)
     , NewCard            (..)
     , PlanId             (..)
     , Quantity           (..)
@@ -87,6 +88,7 @@ import           Web.Stripe.Types          (CVC (..), CardId (..),
                                             StripeList (..), TokenId (..),
                                             mkNewCard)
 import           Web.Stripe.Types.Customer (AccountBalance (..))
+import           Web.Stripe.Types.Name     (Name (..))
 import           Web.Stripe.Types.Plan     (TrialEnd (..))
 import           Web.Stripe.Types.Util
 import           Web.Stripe.Util           ((</>))
@@ -101,16 +103,24 @@ createCustomer = request
 
 data CreateCustomer
 type instance StripeReturn CreateCustomer = Customer
-instance StripeHasParam CreateCustomer AccountBalance
-instance StripeHasParam CreateCustomer NewCard
-instance StripeHasParam CreateCustomer TokenId
+-- instance StripeHasParam CreateCustomer Address
+-- instance StripeHasParam CreateCustomer Balance
 instance StripeHasParam CreateCustomer CouponId
 instance StripeHasParam CreateCustomer Description
 instance StripeHasParam CreateCustomer Email
+-- instance StripeHasParam CreateCustomer InvoicePrefix
+-- instance StripeHasParam CreateCustomer InvoiceSettings
 instance StripeHasParam CreateCustomer Metadata
-instance StripeHasParam CreateCustomer PlanId
-instance StripeHasParam CreateCustomer Quantity
-instance StripeHasParam CreateCustomer TrialEnd
+instance StripeHasParam CreateCustomer Name
+-- instance StripeHasParam CreateCustomer Phone
+-- instance StripeHasParam CreateCustomer PreferredLocales
+-- instance StripeHasParam CreateCustomer Shipping
+instance StripeHasParam CreateCustomer TokenId
+-- instance StripeHasParam CreateCustomer TaxExempt
+-- instance StripeHasParam CreateCustomer TaxIdData
+
+-- Only to make tests compile, to be removed
+instance StripeHasParam CreateCustomer NewCard
 
 ------------------------------------------------------------------------------
 -- | Retrieve a customer

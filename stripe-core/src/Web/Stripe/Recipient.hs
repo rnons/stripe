@@ -87,13 +87,12 @@ import           Web.Stripe.Types         (AccountNumber (..),
                                            BankAccountStatus (..), CVC (..),
                                            CardId (..), CardNumber,
                                            CardNumber (..), Country (..),
-                                           Country (..), Country (..),
-                                           DefaultCard (..), Description (..),
-                                           Email (..), EndingBefore (..),
-                                           ExpMonth (..), ExpYear (..),
-                                           ExpYear (..), ExpandParams (..),
-                                           IsVerified (..), Limit (..),
-                                           Metadata (..), Name (..),
+                                           Country (..), DefaultCard (..),
+                                           Description (..), Email (..),
+                                           EndingBefore (..), ExpMonth (..),
+                                           ExpYear (..), ExpYear (..),
+                                           ExpandParams (..), IsVerified (..),
+                                           Limit (..), Metadata (..),
                                            NewBankAccount (..), NewCard (..),
                                            Recipient (..), RecipientId (..),
                                            RecipientType (..),
@@ -103,6 +102,7 @@ import           Web.Stripe.Types         (AccountNumber (..),
                                            StripeDeleteResult (..),
                                            StripeList (..), TokenId (..),
                                            TokenId (..))
+import           Web.Stripe.Types.Name    (Name (..))
 import           Web.Stripe.Types.TaxID   (TaxID (..))
 import           Web.Stripe.Types.Util    (getRecipientId)
 import           Web.Stripe.Util          ((</>))

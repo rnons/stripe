@@ -71,8 +71,7 @@ import           Web.Stripe.Types.Card                (AddressCity (..),
                                                        ExpMonth (..),
                                                        ExpYear (..),
                                                        IsVerified (..),
-                                                       Name (..), NewCard (..),
-                                                       mkNewCard)
+                                                       NewCard (..), mkNewCard)
 import           Web.Stripe.Types.Charge              (Amount (..),
                                                        ApplicationFeeAmount (..),
                                                        ApplicationFeeId (..),
@@ -98,6 +97,7 @@ import           Web.Stripe.Types.Invoice             (AutoAdvance,
                                                        InvoiceLineItemType)
 import           Web.Stripe.Types.InvoiceItem         (InvoiceItemId (..))
 import           Web.Stripe.Types.Metadata            (Metadata (..))
+import           Web.Stripe.Types.Name                (Name)
 import           Web.Stripe.Types.Plan                (Interval (..),
                                                        PlanId (..))
 import           Web.Stripe.Types.Quantity            (Quantity (..))

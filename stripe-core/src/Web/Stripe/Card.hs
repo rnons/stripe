@@ -92,26 +92,27 @@ module Web.Stripe.Card
     ) where
 
 import           Data.Text                (Text)
-import           Web.Stripe.StripeRequest (Method (GET, POST, DELETE),
+import           Web.Stripe.StripeRequest (Method (DELETE, GET, POST),
                                            StripeHasParam, StripeRequest (..),
-                                           StripeReturn, ToStripeParam(..),
+                                           StripeReturn, ToStripeParam (..),
                                            mkStripeRequest)
-import           Web.Stripe.Util          ((</>))
-import           Web.Stripe.Types         (AddressLine1(..), AddressLine2(..)
-                                          , AddressCity(..), AddressCountry(..)
-                                          , AddressState(..), AddressZip(..)
-                                          , Brand(..), Card(..), CardId(..)
-                                          , CardNumber(..), CustomerId(..)
-                                          , CVC(..), EndingBefore(..)
-                                          , ExpandParams(..)
-                                          , ExpMonth(..), ExpYear(..), ID
-                                          , Limit(..), Name(..), NewCard(..)
-                                          , RecipientCard(..)
-                                          , RecipientId(..), RecipientCardId(..)
-                                          , StartingAfter(..)
-                                          , StripeDeleteResult(..)
-                                          , StripeList(..), TokenId(..), URL)
+import           Web.Stripe.Types         (AddressCity (..),
+                                           AddressCountry (..),
+                                           AddressLine1 (..), AddressLine2 (..),
+                                           AddressState (..), AddressZip (..),
+                                           Brand (..), CVC (..), Card (..),
+                                           CardId (..), CardNumber (..),
+                                           CustomerId (..), EndingBefore (..),
+                                           ExpMonth (..), ExpYear (..),
+                                           ExpandParams (..), ID, Limit (..),
+                                           NewCard (..), RecipientCard (..),
+                                           RecipientCardId (..),
+                                           RecipientId (..), StartingAfter (..),
+                                           StripeDeleteResult (..),
+                                           StripeList (..), TokenId (..), URL)
+import           Web.Stripe.Types.Name    (Name (..))
 import           Web.Stripe.Types.Util    (getCustomerId, getRecipientId)
+import           Web.Stripe.Util          ((</>))
 
 ------------------------------------------------------------------------------
 -- | INTERNAL: generalized `Card` creation from a `TokenId`
