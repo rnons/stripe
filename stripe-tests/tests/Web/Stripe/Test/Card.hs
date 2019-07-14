@@ -79,40 +79,40 @@ cardTests stripe = do
           return card
         result `shouldSatisfy` isRight
 
-      it "Can delete a Customer's Cards" $ do
-        result <- stripe $ do
-          Customer { customerId = customerid
-                    , customerDefaultCard = Just (Id cardid)
-                   } <- createCustomer -&- cardinfo
-          result <- deleteCustomerCard customerid cardid
-          void $ deleteCustomer customerid
-          return result
-        result `shouldSatisfy` isRight
+      -- it "Can delete a Customer's Cards" $ do
+      --   result <- stripe $ do
+      --     Customer { customerId = customerid
+      --               , customerDefaultCard = Just (Id cardid)
+      --              } <- createCustomer -&- cardinfo
+      --     result <- deleteCustomerCard customerid cardid
+      --     void $ deleteCustomer customerid
+      --     return result
+      --   result `shouldSatisfy` isRight
 
-      it "Can update a Customer's Card" $ do
-        result <- stripe $ do
-          Customer { customerId = customerid
-                    , customerDefaultCard = Just (Id cardid)
-                   } <- createCustomer -&- cardinfo
-          result <- updateCustomerCard customerid cardid
-                       -&- cardname
-                       -&- cardcity
-                       -&- cardcountry
-                       -&- cardaddressOne
-                       -&- cardaddressTwo
-                       -&- cardaddressState
-                       -&- cardzip
-          void $ deleteCustomer customerid
-          return result
-        result `shouldSatisfy` isRight
-        let Right Card{..} = result
-        cardName           `shouldBe` (Just cardname)
-        cardAddressCity    `shouldBe` (Just cardcity)
-        cardAddressCountry `shouldBe` (Just cardcountry)
-        cardAddressLine1   `shouldBe` (Just cardaddressOne)
-        cardAddressLine2   `shouldBe` (Just cardaddressTwo)
-        cardAddressState   `shouldBe` (Just cardaddressState)
-        cardAddressZip     `shouldBe` (Just cardzip)
+      -- it "Can update a Customer's Card" $ do
+      --   result <- stripe $ do
+      --     Customer { customerId = customerid
+      --               , customerDefaultCard = Just (Id cardid)
+      --              } <- createCustomer -&- cardinfo
+      --     result <- updateCustomerCard customerid cardid
+      --                  -&- cardname
+      --                  -&- cardcity
+      --                  -&- cardcountry
+      --                  -&- cardaddressOne
+      --                  -&- cardaddressTwo
+      --                  -&- cardaddressState
+      --                  -&- cardzip
+      --     void $ deleteCustomer customerid
+      --     return result
+      --   result `shouldSatisfy` isRight
+      --   let Right Card{..} = result
+      --   cardName           `shouldBe` (Just cardname)
+      --   cardAddressCity    `shouldBe` (Just cardcity)
+      --   cardAddressCountry `shouldBe` (Just cardcountry)
+      --   cardAddressLine1   `shouldBe` (Just cardaddressOne)
+      --   cardAddressLine2   `shouldBe` (Just cardaddressTwo)
+      --   cardAddressState   `shouldBe` (Just cardaddressState)
+      --   cardAddressZip     `shouldBe` (Just cardzip)
 
     describe "Recipient Card tests" $ do
       -- # Deprecated #

@@ -56,7 +56,7 @@ customerTests stripe =
         return customer
       result `shouldSatisfy` isRight
       let Right Customer{..} = result
-      (AccountBalance customerAccountBalance) `shouldBe` bal
+      (AccountBalance customerBalance) `shouldBe` bal
       customerDescription `shouldBe` (Just desc)
       customerEmail `shouldBe` (Just email)
       customerMetadata `shouldBe` meta

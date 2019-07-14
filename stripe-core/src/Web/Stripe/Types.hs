@@ -245,52 +245,53 @@ instance FromJSON Refund where
 
 ------------------------------------------------------------------------------
 -- | `Customer` object
-data Customer = Customer {
-      customerObject         :: Text
-    , customerCreated        :: UTCTime
-    , customerId             :: CustomerId
-    , customerLiveMode       :: Bool
-    , customerDescription    :: Maybe Description
-    , customerEmail          :: Maybe Email
-    , customerDelinquent     :: Bool
-    , customerSubscriptions  :: StripeList Subscription
-    , customerDiscount       :: Maybe Discount
-    , customerAccountBalance :: Int
-    -- , customerCards          :: StripeList Card
-    , customerCurrency       :: Maybe Currency
-    , customerDefaultCard    :: Maybe (Expandable CardId)
-    , customerMetadata       :: Metadata
-    } | DeletedCustomer {
-      deletedCustomer   :: Maybe Bool
-    , deletedCustomerId :: CustomerId
-  } deriving (Read, Show, Eq, Ord, Data, Typeable)
+data Customer = Customer
+    { customerId               :: CustomerId
+    , customerObject           :: Text
+    , customerAddress          :: Maybe Text
+    , customerBalance          :: Int
+    , customerCreated          :: UTCTime
+    , customerCurrency         :: Maybe Currency
+    -- , customerDefaultSource
+    , customerDelinquent       :: Bool
+    , customerDescription      :: Maybe Description
+    , customerDiscount         :: Maybe Discount
+    , customerEmail            :: Maybe Email
+    , customerInvoicePrefix    :: Maybe Text
+    -- , customerInvoiceSettings
+    , customerLivemode         :: Bool
+    , customerMetadata         :: Metadata
+    , customerName             :: Maybe Name
+    , customerPhone            :: Maybe Text
+    , customerPreferredLocales :: [Text]
+    -- , customerShipping
+    -- , customerSources
+    , customerSubscriptions    :: StripeList Subscription
+    -- , customerTaxExempt
+    -- , customerTaxIds
+    } deriving (Read, Show, Eq, Ord, Data, Typeable)
 
 ------------------------------------------------------------------------------
 -- | JSON Instance for `Customer`
 instance FromJSON Customer where
-    parseJSON (Object o)
-        = (Customer
-           <$> o .: "object"
-           <*> (fromSeconds <$> o .: "created")
-           <*> (CustomerId <$> o .: "id")
-           <*> o .: "livemode"
-           <*> o .:? "description"
-           <*> (fmap Email <$> o .:? "email")
-           <*> o .: "delinquent"
-           <*> o .: "subscriptions"
-           <*> o .:? "discount"
-           <*> o .: "account_balance"
-           -- <*> o .: "cards"
-           <*> o .:? "currency"
-           <*> o .:? "default_card"
-           <*> o .: "metadata"
-          )
-           -- <|> DeletedCustomer
-           -- <$> o .: "deleted"
-           -- <*> (CustomerId <$> o .: "id"))
-           -- <|> DeletedCustomer
-           -- <$> o .:? "deleted"
-           -- <*> (CustomerId <$> o .: "id")
+    parseJSON (Object o) = Customer
+        <$> (CustomerId <$> o .: "id")
+        <*> o .: "object"
+        <*> o .:? "address"
+        <*> o .: "balance"
+        <*> (fromSeconds <$> o .: "created")
+        <*> o .:? "currency"
+        <*> o .: "delinquent"
+        <*> o .:? "description"
+        <*> o .:? "discount"
+        <*> (fmap Email <$> o .:? "email")
+        <*> o .:? "invoice_prefix"
+        <*> o .: "livemode"
+        <*> o .: "metadata"
+        <*> o .:? "name"
+        <*> o .:? "phone"
+        <*> o .: "preferred_locales"
+        <*> o .: "subscriptions"
     parseJSON _ = mzero
 
 ------------------------------------------------------------------------------
