@@ -1,4 +1,4 @@
-{ nixpkgs ? import <nixpkgs> {}
+{ nixpkgs ? import <nixpkgs>
 , compiler ? "ghc864"
 , check ? false
 }:
@@ -30,6 +30,6 @@ let
       };
     };
 in
-  with nixpkgs.haskell.packages.${compiler}; {
-    inherit config stripe-core stripe-tests stripe-haskell stripe-http-streams stripe-http-client;
+  with (nixpkgs { inherit config; }).haskell.packages.${compiler}; {
+    inherit stripe-core stripe-tests stripe-haskell stripe-http-streams stripe-http-client;
   }
