@@ -1,4 +1,5 @@
-{ nixpkgs ? import <nixpkgs>
+# { nixpkgs ? import <nixpkgs>
+{ nixpkgs? import (fetchTarball https://github.com/NixOS/nixpkgs/archive/86191b5b91322bdd88303e31d4507a684fc1b120.tar.gz)
 , compiler ? "ghc864"
 , check ? false
 }:
@@ -31,5 +32,6 @@ let
     };
 in
   with (nixpkgs { inherit config; }).haskell.packages.${compiler}; {
-    inherit stripe-core stripe-tests stripe-haskell stripe-http-streams stripe-http-client;
+    # inherit stripe-core stripe-tests stripe-haskell stripe-http-streams stripe-http-client;
+    inherit stripe-core stripe-tests stripe-http-client;
   }
