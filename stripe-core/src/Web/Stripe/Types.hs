@@ -85,7 +85,7 @@ import           Web.Stripe.Types.Coupon              (CouponId (..),
                                                        IntervalCount (..),
                                                        TrialPeriodDays (..))
 import           Web.Stripe.Types.Currency            (Currency (..))
-import           Web.Stripe.Types.Customer            (CustomerId (..))
+import           Web.Stripe.Types.Customer            (Address, CustomerId (..))
 import           Web.Stripe.Types.Date                (Created (..), Date (..))
 import           Web.Stripe.Types.Description         (Description (..))
 import           Web.Stripe.Types.Dispute             (Evidence (..))
@@ -248,7 +248,7 @@ instance FromJSON Refund where
 data Customer = Customer
     { customerId               :: CustomerId
     , customerObject           :: Text
-    , customerAddress          :: Maybe Text
+    , customerAddress          :: Maybe Address
     , customerBalance          :: Int
     , customerCreated          :: UTCTime
     , customerCurrency         :: Maybe Currency

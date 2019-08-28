@@ -1,4 +1,5 @@
 {-# LANGUAGE DeriveDataTypeable #-}
+{-# LANGUAGE DeriveGeneric      #-}
 {-# LANGUAGE OverloadedStrings  #-}
 {-# LANGUAGE RecordWildCards    #-}
 
@@ -7,10 +8,14 @@ module Web.Stripe.Types.Customer where
 import           Control.Monad                  (join)
 import           Control.Monad                  (mzero)
 import           Data.Aeson                     (FromJSON (parseJSON),
-                                                 Value (String))
+                                                 Value (String), camelTo2,
+                                                 defaultOptions,
+                                                 fieldLabelModifier,
+                                                 genericParseJSON)
 import           Data.Data                      (Data, Typeable)
 import           Data.Text                      (Text)
 import qualified Data.Text.Encoding             as Text
+import           GHC.Generics                   (Generic)
 import           Web.Stripe.StripeRequest.Class (ToStripeParam (..))
 import           Web.Stripe.Util                (toBytestring)
 
@@ -45,7 +50,7 @@ data Address = Address
   , line1      :: Text
   , line2      :: Maybe Text
   , postalCode :: Maybe Text
-  }
+  } deriving (Read, Show, Eq, Ord, Data, Typeable, Generic)
 
 instance ToStripeParam Address where
   toStripeParam (Address {..}) = (join
@@ -56,3 +61,7 @@ instance ToStripeParam Address where
     , maybe [] (\v -> pure ("address[line2]", Text.encodeUtf8 v)) line2
     , maybe [] (\v -> pure ("address[postal_code]", Text.encodeUtf8 v)) postalCode
     ] <>)
+
+instance FromJSON Address where
+  parseJSON = genericParseJSON defaultOptions
+    { fieldLabelModifier = camelTo2 '_' }
