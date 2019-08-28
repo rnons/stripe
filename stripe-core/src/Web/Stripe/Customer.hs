@@ -150,13 +150,15 @@ updateCustomer customerid = request
 data UpdateCustomer
 type instance StripeReturn UpdateCustomer = Customer
 instance StripeHasParam UpdateCustomer AccountBalance
-instance StripeHasParam UpdateCustomer TokenId
-instance StripeHasParam UpdateCustomer NewCard
+instance StripeHasParam UpdateCustomer Address
 instance StripeHasParam UpdateCustomer CouponId
 instance StripeHasParam UpdateCustomer DefaultCard
 instance StripeHasParam UpdateCustomer Description
 instance StripeHasParam UpdateCustomer Email
 instance StripeHasParam UpdateCustomer Metadata
+instance StripeHasParam UpdateCustomer Name
+instance StripeHasParam UpdateCustomer NewCard
+instance StripeHasParam UpdateCustomer TokenId
 
 ------------------------------------------------------------------------------
 -- | Deletes the specified `Customer`
