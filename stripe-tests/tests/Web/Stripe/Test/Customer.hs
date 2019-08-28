@@ -17,6 +17,21 @@ customerTests stripe =
         _ <- deleteCustomer customerId
         return c
       result `shouldSatisfy` isRight
+    it "Creates a customer with address" $ do
+      result <- stripe $ do
+        let
+          addr = Address
+            { country = Just "US"
+            , state = Nothing
+            , city = Nothing
+            , line1 = "address line 1"
+            , line2 = Nothing
+            , postalCode = Nothing
+            }
+        c@Customer{..} <- createCustomer -&- addr
+        _ <- deleteCustomer customerId
+        return c
+      result `shouldSatisfy` isRight
     it "Deletes a customer" $ do
       result <- stripe $ do
         c@Customer{..} <- createCustomer

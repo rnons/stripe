@@ -43,6 +43,7 @@ module Web.Stripe.Customer
     , GetCustomers
     , getCustomers
       -- * Types
+    , Address     (..)
     , AccountBalance     (..)
     , CardId             (..)
     , CardNumber         (..)
@@ -87,7 +88,7 @@ import           Web.Stripe.Types          (CVC (..), CardId (..),
                                             StripeDeleteResult (..),
                                             StripeList (..), TokenId (..),
                                             mkNewCard)
-import           Web.Stripe.Types.Customer (AccountBalance (..), Address)
+import           Web.Stripe.Types.Customer (AccountBalance (..), Address (..))
 import           Web.Stripe.Types.Name     (Name (..))
 import           Web.Stripe.Types.Plan     (TrialEnd (..))
 import           Web.Stripe.Util           ((</>))
