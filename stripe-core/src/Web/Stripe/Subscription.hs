@@ -217,14 +217,12 @@ updateSubscription
 
 data UpdateSubscription
 type instance StripeReturn UpdateSubscription = Subscription
-instance StripeHasParam UpdateSubscription PlanId
+instance StripeHasParam UpdateSubscription ApplicationFeePercent
 instance StripeHasParam UpdateSubscription CouponId
+instance StripeHasParam UpdateSubscription DefaultTaxRates
+instance StripeHasParam UpdateSubscription Metadata
 instance StripeHasParam UpdateSubscription Prorate
 instance StripeHasParam UpdateSubscription TrialEnd
-instance StripeHasParam UpdateSubscription CardId
-instance StripeHasParam UpdateSubscription Quantity
-instance StripeHasParam UpdateSubscription ApplicationFeePercent
-instance StripeHasParam UpdateSubscription Metadata
 
 ------------------------------------------------------------------------------
 -- | Delete a `Subscription` by `CustomerId` and `SubscriptionId`
