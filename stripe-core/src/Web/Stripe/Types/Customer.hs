@@ -1,8 +1,10 @@
 {-# LANGUAGE DeriveDataTypeable #-}
 {-# LANGUAGE OverloadedStrings  #-}
+{-# LANGUAGE RecordWildCards    #-}
 
 module Web.Stripe.Types.Customer where
 
+import           Control.Monad                  (join)
 import           Control.Monad                  (mzero)
 import           Data.Aeson                     (FromJSON (parseJSON),
                                                  Value (String))
@@ -35,3 +37,22 @@ instance FromJSON CustomerId where
 instance ToStripeParam CustomerId where
   toStripeParam (CustomerId cid) =
     (("customer", Text.encodeUtf8 cid) :)
+
+data Address = Address
+  { country    :: Maybe Text
+  , state      :: Maybe Text
+  , city       :: Maybe Text
+  , line1      :: Text
+  , line2      :: Maybe Text
+  , postalCode :: Maybe Text
+  }
+
+instance ToStripeParam Address where
+  toStripeParam (Address {..}) = (join
+    [ pure ("address[line1]", Text.encodeUtf8 line1)
+    , maybe [] (\v -> pure ("address[country]", Text.encodeUtf8 v)) country
+    , maybe [] (\v -> pure ("address[state]", Text.encodeUtf8 v)) state
+    , maybe [] (\v -> pure ("address[city]", Text.encodeUtf8 v)) city
+    , maybe [] (\v -> pure ("address[line2]", Text.encodeUtf8 v)) line2
+    , maybe [] (\v -> pure ("address[postal_code]", Text.encodeUtf8 v)) postalCode
+    ] <>)

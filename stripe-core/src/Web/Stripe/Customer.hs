@@ -87,7 +87,7 @@ import           Web.Stripe.Types          (CVC (..), CardId (..),
                                             StripeDeleteResult (..),
                                             StripeList (..), TokenId (..),
                                             mkNewCard)
-import           Web.Stripe.Types.Customer (AccountBalance (..))
+import           Web.Stripe.Types.Customer (AccountBalance (..), Address)
 import           Web.Stripe.Types.Name     (Name (..))
 import           Web.Stripe.Types.Plan     (TrialEnd (..))
 import           Web.Stripe.Util           ((</>))
@@ -102,7 +102,7 @@ createCustomer = request
 
 data CreateCustomer
 type instance StripeReturn CreateCustomer = Customer
--- instance StripeHasParam CreateCustomer Address
+instance StripeHasParam CreateCustomer Address
 -- instance StripeHasParam CreateCustomer Balance
 instance StripeHasParam CreateCustomer CouponId
 instance StripeHasParam CreateCustomer Description
