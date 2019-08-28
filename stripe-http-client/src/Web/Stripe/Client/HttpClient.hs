@@ -170,4 +170,4 @@ urlEncodeBody headers req = req {
     body = pure (Http.renderSimpleQuery False headers)
 
 stripeVersion :: APIVersion
-stripeVersion = V20190516
+stripeVersion = V20190814
