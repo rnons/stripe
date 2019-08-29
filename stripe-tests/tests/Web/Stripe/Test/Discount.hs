@@ -58,7 +58,7 @@ discountTests stripe = do
         Subscription { subscriptionId = sid } <-
           -- createSubscription customerid plan
           createSubscription customerid []
-        void $ updateSubscription customerid sid -&- coupon
+        void $ updateSubscription sid -&- coupon
         result <- deleteSubscriptionDiscount customerid sid
         void $ deletePlan planid
         void $ deleteCustomer customerid

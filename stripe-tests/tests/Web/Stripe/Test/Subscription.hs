@@ -145,7 +145,7 @@ subscriptionTests stripe = do
                         USD
                         Month
         Subscription { subscriptionId = sid } <- createSubscription' cid planid
-        sub <- updateSubscription cid sid
+        sub <- updateSubscription sid
                 -&- couponid
                 -&- Metadata [("hi","there")]
         void $ deleteCustomer cid

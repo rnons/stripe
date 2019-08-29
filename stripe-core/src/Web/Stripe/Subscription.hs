@@ -91,8 +91,7 @@ import           Web.Stripe.StripeRequest          (Method (DELETE, GET, POST),
                                                     ToStripeParam (..),
                                                     mkStripeRequest)
 import           Web.Stripe.Types                  (ApplicationFeePercent (..),
-                                                    CardId (..), Coupon (..),
-                                                    CouponId (..),
+                                                    Coupon (..), CouponId (..),
                                                     CustomerId (..),
                                                     EndingBefore (..),
                                                     ExpandParams (..),
@@ -204,15 +203,13 @@ instance StripeHasParam GetSubscription ExpandParams
 ------------------------------------------------------------------------------
 -- | Update a `Subscription` by `CustomerId` and `SubscriptionId`
 updateSubscription
-    :: CustomerId      -- ^ The `CustomerId` of the `Subscription` to update
-    -> SubscriptionId  -- ^ The `SubscriptionId` of the `Subscription` to update
+    :: SubscriptionId  -- ^ The `SubscriptionId` of the `Subscription` to update
     -> StripeRequest UpdateSubscription
 updateSubscription
-   customerid
     (SubscriptionId subscriptionid)
   = request
   where request = mkStripeRequest POST url params
-        url     = "customers" </> getCustomerId customerid </> "subscriptions" </> subscriptionid
+        url     = "subscriptions" </> subscriptionid
         params  = []
 
 data UpdateSubscription
