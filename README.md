@@ -6,6 +6,12 @@ stripe
 [![Join the chat at https://gitter.im/dmjio/stripe](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/dmjio/stripe?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 [![Build Status](https://travis-ci.org/dmjio/stripe.svg?branch=master)](https://travis-ci.org/dmjio/stripe)
 
+## A note about this fork
+
+When a new [Stripe API version](https://stripe.com/docs/upgrades#api-changelog) is released, I will create a new branch and set it as the default branch. All developments will only happen on the default branch. Currently the latest version is `2019-08-14`.
+
+Follow `CONTRIBUTING.md` to build and test. All tests are run against [stripe-mock](https://github.com/stripe/stripe-mock) by default. Sadly, stripe-mock is stateless, tests pass doesn't mean it works with real api. You can update `stripe/stripe-http-client/tests/Main.hs` to test against real api.
+
 ## Stripe API coverage for Haskell ([Stripe API](http://stripe.com/docs/api))
 
 All Stripe commands are supported, including but not limited to:
@@ -78,7 +84,7 @@ chargeCardByToken tokenId currency amount =
 ```
 
 ## [Versioning](https://stripe.com/docs/api#versioning)
-  All versioning is hard-coded (for safety) to version `2014-10-07`.
+  All versioning is hard-coded (for safety) to version `2019-08-14`.
   Stripe API versions specified in the HTTP headers of Stripe requests take precedence
   over the API version specified in your Stripe Dashboard. In an attempt to ensure
   API consistency and correct parsing of returned JSON, all Stripe versions are hard-coded, and are
